@@ -1,0 +1,26 @@
+Coding-Style für unsere Ausarbeitung:
+=====================================
+
+- Vor jeder neuen section ein \newpage
+
+- der CAN-Bus wird genau so geschrieben...
+
+
+
+Bilder:
+-------
+
+Wir verwenden laTeX, d.h. am besten binden wir die Bilder via
+eps-format ein. Hier ein Stück beispiel-code dazu:
+
+---- CODE ----
+\begin{figure}
+  \center
+  \includegraphics[width=5.0cm]{mw/pda_bilder/agenda.eps}
+  \caption{Der Agenda VR3}
+  \label{mw_agenda}
+\end{figure}
+---- CODE ----
+
+Die Bilder sollten im jeweils eigenen Unterverzeichnis abgelegt werden.
+

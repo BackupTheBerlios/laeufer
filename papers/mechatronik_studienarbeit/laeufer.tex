@@ -1,0 +1,243 @@
+In diesem Kapitel soll ein Überblick über den Projektkontext dieser
+Arbeit und den sich daraus ergebenden Anforderungen an die Mechatronik
+des Läufers gegeben werden.
+\section{Überblick}
+
+                                %Text direkt von der Homepage
+Das Projekt läufer. wurde im Sommer 1998 von Maschinenbaustudenten der
+Technischen Universität Darmstadt und Industriedesignstudenten der
+Fachhochschule Darmstadt am Fachgebiet Maschinenelemente und
+Konstruktionslehre (MuK) der Technischen Universität Darmstadt ins
+Leben gerufen.
+
+Ziele der beteiligten Studenten, Lehrenden und Industriepartner sind
+die Entwicklung und Realisierung eines zweisitzigen Reisefahrzeugs,
+das überwiegend durch Muskelkraft angetrieben wird und mit dem
+durchschnittlich trainierte Menschen eine Reisegeschwindigkeit von 40
+km/h erreichen können. Das interdisziplinäre Projekt will ein
+innovatives Produkt realisieren und eine zeitgemäße, offene Form des
+Studiums umsetzen. Die Motivation ergibt sich hierbei aus dem
+Projektziel, und nicht aus dem Leistungsnachweis.
+
+Das studentische Team organisiert sich bezüglich der
+Arbeitsverteilung, dem internen Informationsmanagement und der
+Akquisition von unterstützenden Unternehmen und Universitätsinstituten
+selbst. Gerade letzteres zeigt, dass die grundlegenden Ideen dieses
+Projekts von vielen begeistert aufgenommen und unterstützt werden.
+
+
+\section{Schwerpunkte}
+
+\subsection{Design}
+Das Design des Läufers erzeugt ein Spannungsfeld zwischen den
+dynamischen Linien von Tragstruktur und Fahrwerk und der weichen
+Linienführung von Dach und Verkleidung. Die Form folgt der Funktion
+und mehr noch, sie unterstreicht die Funktion.  Bedienelemente,
+mechanische Knotenpunkte werden bewusst betont. Die dominanten
+Tretringe identifizieren den Läufer als muskelgetriebenes Fahrzeug.
+
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/design.eps}
+  \caption{Designdetails des Läufer}
+  \label{mw_bild_design}
+\end{figure}
+
+Maßgeblich für das Design ist die Abkehr vom modularen System
+,,Fahrrad''.  Die Entscheidung gegen eine fahr\-rad\-typische
+Gesamtstruktur er\-möglicht die gestalterische Integration der
+umfangreichen Funktionalitäten und führt letzlich auch zu einer
+Reduzierung der Teilevielfalt.
+
+Die Farbkombination aus hellgrün, schwarz und silber symbolisiert die
+Realisierung eines ökologisch vertretbaren Produktkonzepts mit Hilfe
+einer hochwertigen, industriellen Fertigung und zeigt, dass beides
+einander nicht ausschließen muss.
+
+\subsection{Antrieb}
+Mit herkömmlichen Tandemfahrrädern erreichen durchschnittlich
+trainierte Personen eine Durchschnittsgeschwindigkeit von rund 35
+km/h. Unter gleichen Bedingungen strebt das Projekt 40 km/h an. Nicht
+als rechnerisch ermittelten Wert, sondern als konstant gehaltene
+Reisegeschwindigkeit, realisiert durch einen leistungsverzweigten
+Hybridantrieb. Von den Tretringen läuft ein Zahnriemen in ein
+Zwischengetriebe. Von hier treibt ein zweiter die Hinterradnabe an.
+Die Speedhub von Rohloff ist eine 14stufige Schaltungsnabe mit einer
+Spreizung von 500\%, die damit den gewünschen Geschwindigkeitsbereich
+abdeckt.
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/antrieb.eps}
+  \caption{Antriebsstrang des Läufers}
+  \label{mw_bild_antrieb}
+\end{figure}
+Das Zwischengetriebe, ein Planetengetriebe, verfügt über drei
+elektronisch geregelte Elektromaschinen als Energiewandler. Die
+Regelung ermöglicht eine Überlagerung von Drehzahlen im
+Planetengetriebe mit dem Effekt, dass die Schaltstufen der
+Hinterradnabe ausgeglichen werden eine stufenlose Schaltung mit im
+wesentlichen mechanischer Übertragung! Ausserdem werden die
+Elektromaschinen als Generatoren betrieben, um etwa Bremsenergie
+zurück zu gewinnen.
+
+\subsection{Aerodynamik}
+Die Effektivität muskelgetriebener Fahrzeuge kann durch aerodynamische
+Verbesserungen massiv gesteigert werden. Der Luftwiderstand ist in der
+dritten Potenz abhängig von der Geschwindigkeit. Das bedeutet, dass er
+bereits bei 25 km/h weit größer ist als die übrigen Fahrwiderstände
+wie Lagerreibung und Rollreibung der Reifen.  Der Luftwiderstand ist
+das Produkt aus der Stirnfläche und dem Luftwiderstandsbeiwert cw. Ein
+her\-kömmliches Fahrrad hat etwa einen cw-Wert von 1,0, ein Tandem 1,1
+und ein Liegerad etwa 0,8.  Geschlossene Liegedreiräder erreichen
+dagegen einen cw-Wert von bis zu 0,11.
+
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/aerodynamik.eps}
+  \caption{Ein Modell des Läufers im Windkanal}
+  \label{mw_bild_aerodynamik}
+\end{figure}
+
+Dieses Potential muss mit den Anforderungen eines Reisefahrzeuges in
+Einklang gebracht werden. Eine Teilverkleidung mit großen seitlichen
+Öffnungen lässt die Fahrer ihre Umwelt näher erleben. Aus der Sicht
+der Aerodynamik steht dies im Widerspruch zu einer optimalen
+Strömungs\-führung um das Fahrzeug. Aufgabe der Optimierungen im
+Windkanal der TU Darmstadt und der anschliesenden numerischen
+Berechnungen mit der Simulationssoftware Powerflow muss es also sein,
+unter Beibehaltung der äußeren Erscheinung eine Veringerung des
+Fahrwiderstandes und ein wettergeschütztes Reisen zu ermöglichen.
+
+\subsection{Ergonomie}
+Bei einsitzigen Fahrzeugen kann auf eine Größenanpassung mit langen
+Verfahrwegen gegebenenfalls verzichtet werden. Hochwertige
+Fahrradrahmen gibt es in vielen verschiedenen Größen, einige werden
+auf Maß gefertigt. Bei einem Tandemfahrzeug ist eine flexible
+Größenanpassung der Fahrerpositionen unabdingbar, weil hier die Maße
+der beiden Fahrer auch in Relation zueinander berücksichtigt werden
+müssen. Außerdem wird ein Reisefahrzeug in vielen Fällen nicht immer
+von den selben Personen genutzt.
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/ergonomie.eps}
+  \caption{Die Verstellbarkeit des Läufers}
+  \label{mw_bild_ergonomie}
+\end{figure}
+
+Als hoch belastete Baugruppe bleibt der Antriebsstrang fest mit der
+tragenden Struktur verbunden. Stattdessen werden die Sitze
+verschoben. Die Sitzverstellung entlang einer Schrägen sorgt dafür,
+dass für jeden Fahrer nicht nur der richtige Abstand zu den Pedalen,
+sondern auch die richtige Sitzhöhe über Boden gewährleistet ist. So
+können Fahrer jeder Größe im Sitzen mit beiden Füße auf dem Boden
+stehen und das stehende Fahrzeug stabilisieren.
+
+\subsection{Fahrwerk}
+Die Tragstruktur besteht aus selbsttragenden CFK-Hohlkörpern, die aus
+Halbschalen zusammengefügt werden. Auf diese Weise können die
+Grundelemente ohne große Nacharbeit mit Hilfe einfacher Werkzeugformen
+gefertigt werden. Die Laschen, entlang derer die Schalen verklebt
+werden, erfüllen zusätzliche Funktionen, etwa als Systemschiene für
+die Sitzverstellung oder als Befestigungslasche für
+Verkleidungsteile. Alle Komponenten des Hauptrahmens werden
+miteinander fest verklebt.
+
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/fahrwerk.eps}
+  \caption{CAD-Konstruktion der Vorderradschwinge}
+  \label{mw_bild_fahrwerk}
+\end{figure}
+
+Aus den gleichen Bauteilen lassen sich Rahmen sowohl für den Ein- als
+auch für den Zweisitzer aufbauen. Die Kohlefaserteile weisen im
+Vergleich zu herkömmlichen Liegeradrahmen große eingeschlossene
+Volumina auf. Dadurch wird dem vergleichsweise langen Fahrzeug
+ausreichend Steifigkeit verliehen.
+
+Um eine einfache Verstellbarkeit des Cockpits zu garantieren, wird die
+Lenkung mit einem flexiblen Aktorsystem betätigt.
+
+\subsection{Peripherie}
+Der Anspruch, ein reisetaugliches Fahrzeug zu entwickeln, steht und
+fällt mit der Qualität sämtlicher Teilfunktionalitäten. Bei der
+Entwicklung des Läufers wird daher besonderer Wert darauf gelegt, dass
+innovative Ansätze in Antrieb und Ergonomie in allen peripheren
+Komponenten ihre Fortsetzung finden.
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/peripherie.eps}
+  \caption{Der Mechatronische Ständer in einer Funktionsanalyse}
+  \label{mw_bild_peripherie}
+\end{figure}
+
+In dieser Philosophie enstehen ein mechatronischer Fahrzeugständer,
+ein intelligentes Beleuchtungssystem, ein System zur
+Scheibenreinigung, Gepäckraum und Verkleidungsteile. Dabei verfolgen
+die Studenten den Anspruch, alle Komponenten in das Design des Läufers
+zu integrieren endlich ein Reiserad ohne Schlauchschellen, Klebeband
+und Kabelbinder.
+
+\newpage
+\section{Randbedingungen}
+\subsection{Projektstudium}
+Das Projekt Läufer wurde als studentisches Pilotprojekt am Fachgebiet
+MuK an der TU Darmstadt ins Leben gerufen.  Professoren und
+wissenschaftliche Mitarbeiter, die den Studierenden sonst als Lehrende
+gegenüber\-treten, nehmen im Projekt die Rolle eines Teamcoaches ein.
+Sie lernen dadurch ihrerseits, auch einmal weniger zu wissen als ihre
+Studenten.
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/projektstudium.eps}
+  \caption{Die Projektleiter im Gespräch}
+  \label{mw_bild_projektstudium}
+\end{figure}
+
+Die Studenten arbeiten in eigener Verantwortung auf ein selbst
+gestecktes Ziel hin. Dazu erschließen sie sich Fachwissen,
+organisieren Zusammenarbeit, managen Informationen, aquirieren
+Know-How und gewinnen die Unterstützung externer Partner.
+
+\subsection{Lernortkooperation}
+Auszubildende lernen, Studenten auch. Warum sollten sie nicht gleich
+lernen, effektiv zusammen zu arbeiten?
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/lernortkooperation.eps}
+  \caption{Besprechung bei Daimler Chrysler in Bremen}
+  \label{mw_bild_lernort}
+\end{figure}
+
+
+Im Rahmen des Projekts LETKO erarbeiten Auszubildende in technischen
+Berufen bei DaimlerChrysler, Werk Bremen, die Gelegenheit, in
+Kooperation mit externen Partnern technische Aufgaben zu realisieren.
+
+\subsection{Verteilte Produktentwicklung}
+Im Projekt Läufer werden Einsatzmöglichkeiten der modernen
+Infor\-mations- und Kommunikationstechnologie untersucht, und es wird
+aufgezeigt, welche neuen Perspektiven und Potentiale bestehen, um
+Vorgehensweisen und Prozesse der Produktentwicklung verteilt an
+mehreren Standorten durchzuführen.
+\begin{figure}
+  \center
+  \includegraphics[width=10.0cm]{mw/bilder/verteilteentwicklung.eps}
+  \caption{Diskussion vor einem sog. Smartboard}
+  \label{mw_bild_verteilteentwicklung}
+\end{figure}
+
+In einer Zusammenarbeit mit dem Lehrstuhl für Produktentwicklung an
+der Technischen Universität München (Prof. Lindemann) werden sowohl
+organisatorische und methodische Voraussetzungen für eine erfolgreiche
+Gestaltung verteilter Entwicklungsprozesse als auch Möglichkeiten zur
+technischen Durchführung solcher Prozesse herausgearbeitet.  Das
+studentische Team in München ist für die Entwicklung der periphären
+Komponenten verantwortlich.
+
+%Ende Text direkt von der Homepage
+
+%%% Local Variables:
+%%% mode: latex 
+%%% TeX-master: "master"
+%%% End:

@@ -1,0 +1,26 @@
+Dateien, die zu unserer Ausarbeitung gehoeren:
+==============================================
+
+TeX-Files:
+----------
+master.tex:		Die Haupt-TeX-Datei
+mw.tex:			Text von Markus
+j.tex:			Text von Jameson
+cr.tex:			Text von Christian
+laeufer.tex:	Einleitung
+
+Bibliographie:
+--------------
+master.bib
+
+Meta-Informationen
+------------------
+style.txt:		Absprachen, wie der TeX-Code aussehen soll
+FILES:			Diese Datei
+
+Verzeichnisse:
+--------------
+mw,j,cr:		Für eigene Bilder, Notizen etc.
+
+
+

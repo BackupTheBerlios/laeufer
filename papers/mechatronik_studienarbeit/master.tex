@@ -1,0 +1,75 @@
+\documentclass[12pt, a4paper, twoside]{report}
+\usepackage{german, isolatin1, palatino}
+\usepackage[dvips]{graphicx}
+\usepackage{epsfig}
+\usepackage{hyperref}
+\bibliographystyle{alphadin}
+\author{Christian Rüdiger, Christoph Reichenbach, Markus Weimer}
+\title{Studienarbeit}
+
+\pagestyle{headings}
+
+\begin{document}
+\begin{titlepage}
+
+\maketitle
+Verantwortlichkeit der Autoren für die Einzelnen Kapitel:
+\begin{description}
+\item[Markus Weimer]
+\item[Christoph Reichenbach]
+\item[Christian Rüdiger]
+\end{description}
+
+\end{titlepage}
+\begin{abstract}
+%mw
+  Im Rahmen des Projektes Läufer wurde während dieser Arbeit ein
+  Mechatronisches System für den Läufer entwickelt.  Dieses System
+  schliesst drei Komponenten ein: Das Fahrerinformationssystem, eine
+  Platine samt Software für die Entwicklung mechatronischer Systeme
+  sowie eine auf CANBus basierende Kommunikationsstruktur.
+
+  Die vorliegende Arbeit beschreibt die dabei getroffenen Design- und
+  Produktentscheidungen vor dem Projektkontext.(mw)
+%mw
+\end{abstract}
+
+% Inhaltsverzeichnis
+\tableofcontents
+
+% Abbildungsverzeichnis
+\listoffigures
+
+% Tabellenverzeichnis
+\listoftables
+
+
+\chapter{Das Projekt Läufer}
+von: Markus Weimer
+\include{laeufer}
+
+\chapter{Aufgabenstellung}
+\include{aufgabe}
+
+% Markus' Kapitel
+\chapter{Fahrerinterface}
+\include{mw}
+
+% Jamesons Kaptitel
+\chapter{Kommunikation}\label{jameson_kapitel}
+\include{j}
+
+% Christians Kapitel
+\chapter{Implementierung der Embedded Platinen}
+\include{cr}
+
+% Schluss
+\chapter{Fazit}
+\include{schluss}
+
+\newpage
+
+% Das Literaturverzeichnis
+\bibliography{master}
+
+\end{document}

@@ -1,0 +1,1193 @@
+\section{Aufgabenstellung}
+
+Abbildung \ref{mw_seite} zeigt eine Seitenansicht des Läufers.  Dabei
+wurden die derzeit geplanten mechatronischen Komponenten markiert.\\
+Im einzelnen sind dies:
+\begin{figure}
+  \center
+  \includegraphics[width=13.5cm]{mw/bilder/seitenansicht.eps}
+  \caption{Seitenansicht des Läufers mit Markierungen der
+    Mechatronischen Komponenten}
+  \label{mw_seite}
+\end{figure}
+
+\begin{enumerate}
+\item
+  Antriebsstrang
+\item
+  Beleuchtungssystem 
+\item
+  Fahrerinformations-System
+\item
+  Ständer
+\end{enumerate}
+
+Für die Zukunft sind weitere Komponenten möglich und auch eingeplant.
+Konkret angedacht wurde z.B. eine Anbindung eines GPS\footnote{Global
+  Positioning System}-Systems über den CAN-Bus.  Diese mechatronischen
+Komponenten des Läufers verfügen über etliche Parameter, die man als
+Fahrer einstellen können will.  Als Beispiel sei hier nur der
+Antriebsstrang genannt.  Dieser soll es dem Fahrer z.B. ermöglichen,
+bei vollen Batterien und kurzer Strecke alleine elektrisch zu fahren,
+und die Pedale ohne Widerstand zu benutzen.
+
+Außerdem gibt es Informationen über den aktuellen Zustand des
+Fahrzeuges, die an den Fahrer weitergeleitet werden müssen.  Dies sind
+zum einen Daten, wie man Sie auch vom PKW her kennt, wie z.B. die
+aktuelle Geschwindigkeit.  Dazu kommen beim Läufer spezielle
+Informationen aus dem Antriebsstrang: Wie schnell kann man bei der
+aktuell in den Pedalen abgegebenen Energie fahren? Oder, wie voll sind
+die Batterien?  Diese Informationen müssen dem Fahrer in einer Art und
+Weise zur Verfügung gestellt werden können, die der Fahrsituation
+angemessen ist.
+
+Zusätzlich möchte der Entwickler einer mechatronischen Komponente
+wahrscheinlich aufwendige Berechnungen, die sich aus den Wünschen des
+Fahrers ergeben, in einer relativ komfortablen Hochsprache wie C/C++
+programmieren, anstatt dies vergleichsweise umständlich in Assembler
+auf den Embedded Platinen zu tun.
+
+Es ergeben sich also die folgenden Anforderungen an das
+Fahrerinformationssystem des Läufers:
+
+\begin{description}
+\item[Rechenleistung] Um die geforderten Berechnungen komfortabel in
+  Hochsprachen durchführen zu können.
+\item[Display] Um die Informationen für den Fahrer darzustellen. Dies
+  ersetzt das Armaturenbrett eines PKW.
+\item[Interaktion] Um die teilweise weit\-gehenden Ein\-stellungen des
+  Fahrzeugs vornehmen zu können.
+\end{description}
+
+Diese Aufgaben lassen sich in hervorragender Weise von aktuellen
+Taschencomputern, sogenannten PDAs\footnote{PDA: Personal Digital
+  Assistent, zu Deutsch etwa: Persönlicher Digitaler Assistent.}
+erfüllen. Diese Geräte, insbesondere die neuerer Bauart, verfügen über
+genügend Rechenleistung, um die Aufgaben innerhalb des Läufers
+bewältigen zu können.  Zusätzlich sind diese Geräte sehr stark auf den
+sorgsamen Umgang mit Energie optimiert, was in einem Fahrzeug, daß
+seine Energie ausschließlich aus der Muskelkraft seiner Fahrer
+bezieht, natürlich von besonderem Interesse ist.  Ausserdem sind sie
+kommerziell in großen Stückzahlen verfügbar, was den Preis pro PDA
+stetig sinken läßt.
+
+Aufgabe im Bereich des Fahrerinformationssystems ist es also
+einerseits, einen geeigneten PDA auszuwählen und diesen andererseits
+durch das Erstellen zusätzlicher Software für das Projekt nutzbar zu
+machen.  Diese Software ist vor allem ein Kommunikationssystem
+zwischen PDA und den im Fahrzeug verteilten Komponenten.  Dies ist
+nötig, da im PDA-Bereich zwar die aus dem PC-Markt bekannten
+Schnittstellen und Kommunikationsprotokolle zur Verfügung stehen,
+diese jedoch im Allgemeinen bei mechatronischen Komponenten nicht
+verfügbar sind.
+
+Diese Kommunikation muß für den Entwickler einer mechatronischen
+Komponente für den Läufer möglichst einfach zu handhaben sein.  Diese
+Forderung ergibt sich aus der Arbeitsteilung zwischen den
+verschiedenen Disziplinen im Projekt, im konkreten Fall also zwischen
+Informatik und Maschinenbau.  Innerhalb dieser Arbeit soll ein
+Kommunikationssystem entworfen und auch implementiert werden, das es
+den Ingenieuren im Projekt ermöglicht, ihr Fachwissen auf die
+Fahrzeuglogik des Läufers zu übertragen, ohne zu tief in die Details
+der Implementierung eines Kommunikationssystems einsteigen zu müssen.
+
+Neben diesen Anforderungen der Entwickler mechatronischer Komponenten
+soll aber gerade auch bei der Auswahl des PDAs auch der spätere Nutzer
+des Läufers und seine Wünsche Berücksichtigung finden. Dieser erwartet
+von einem solchen Gerät einen Mehrfachnutzen.  Es soll also sowohl als
+,,Bordcomputer'' des Läufers fungieren können, aber gleichzeitig ein
+vollwertiger PDA sein.
+
+Im folgenden soll zunächst die Entscheidung für einen speziellen PDA
+transparent gemacht werden.  Daraufhin wird die
+Kommunikations\-schnittstelle für die Entwickler mechatronischer
+Komponenten für den Läufer beschrieben.
+
+Im Bereich der Projektarbeit ergeben sich natürlich auch
+Anforderungen, die sich nicht so direkt aus theoretischen Erwägungen
+ableiten lassen können.  Viele Anforderungen werden erst und immer
+wieder im Gespräch mit den Projektteilnehmern aus anderen
+Fachgebieten, wie z.B. dem Maschinenbau oder dem Industriedesign,
+deutlich.  Ergebnisse dieser Anforderungen sind unter anderem der so
+genannte DebugTreiber, auf den am Ende dieses Kapitels exemplarisch
+für die interdisziplinäre Zusammenarbeit innerhalb des Projektes
+eingegangen werden soll.
+
+
+\newpage
+\section{Auswahl des PDA}
+\subsection{Anforderungen}
+Die Anforderungen an den PDA ergeben sich aus den Anforderungen an die
+gesamte Mechatronik sowie das Fahrerinformationssystem im speziellen.
+Sie lassen sich in Anforderungen an die PDA Systemsoftware und
+Anforderungen an die PDA-Hardware gliedern, was im folgenden geschehen
+soll.  Diese Gliederung ist hilfreich, da sich auch der PDA-Markt sehr
+gut nach der Systemsoftware der PDAs unterteilen läßt.  Dies wird
+weiter unten zur Vorauswahl des PDAs ausgenutzt.
+
+\subsubsection{Anforderungen an die Software}
+\begin{description}
+\item[Multitasking] Diese Anforderung ergibt sich unmittelbar aus der
+  Forderung an die gesamte Mechatronik, erweiterbar zu sein.  Ein PDA
+  ohne Multitasking würde aber bei jeder Erweiterung des Systems einen
+  Eingriff in die sicherheitsrelevante Fahrsoftware des Läufers
+  erfordern, was z.B. beim Einfügen eines GPS\footnote{GPS=Global
+    Positioning System} basierten Navigationssystems nicht
+  wünschenswert ist.
+  
+\item[GUI-Flexibilität] Das Projekt Läufer geht in vielen Bereichen
+  einen Design orientierten Weg, der nicht unerheblich zu dem großen
+  Erfolg des Läufers in der Öffentlichkeit sowie beim Aufbau von
+  Industrie-Partnerschaften beigetragen hat.  Auch im Bereich der
+  graphischen Interaktion mit dem System soll dieser Design
+  orientierte Weg möglich sein, um den Läufer als ,,rundes Produkt''
+  entwickeln zu können.
+  
+  Also ist bei der Auswahl eines PDA samt zugehöriger Software darauf
+  zu achten, daß man im Bereich der Gestaltung des
+  GUI\footnote{GUI=Graphical User Interface, zu Deutsch: Graphische
+    Benutzer Schnittstelle}  grösst\-mögliche Freiheiten hat.
+
+  
+\item[Programmierung] Die Programmierung des PDA sollte einfach sein,
+  wobei mit ,,einfach'' in diesem Fall gemeint ist, daß die
+  Entwicklung für den PDA sich möglichst wenig von der Entwicklung für
+  einen PC unterscheiden sollte.  Dies ist notwendig, da die späteren
+  Nutzer unserer Software wahrscheinlich schon über Erfahrungen in der
+  Programmierung von PCs verfügen und deren Lernaufwand ja so niedrig
+  wie möglich zu halten ist.
+  
+  Außerdem ermöglicht eine solche Vorgehensweise idealerweise die
+  Entwicklung der Software auf einem PC, um sie dann später ohne
+  große Umstände einfach auf den PDA übertragen zu können.  Dies
+  spart inbesondere vor dem Projekthintergrund und der verteilten
+  Produktentwicklung erhebliche Kosten für die Beschaffung von PDAs
+  für die einzelnen Entwicklerteams in Darmstadt und München.
+  
+\item[Dokumentation und Support] Da die Entwicklung der Software über
+  diese Studienarbeit hinaus von weiteren Entwicklern fortgesetzt
+  werden soll, ist eine gute Dokumentation und ein umfassender Support
+  der Entwicklung wünschenswert.
+  
+  Aus den selben Gründen ist es nötig, auf eine möglichst
+  ,,langlebige'' Plattform zu setzen, die sich nicht innerhalb des
+  Projektes ständig verändert, bzw. für deren eingesetzte Version man
+  keine Entwicklungstools mehr erwerben kann.
+  
+\end{description}
+
+
+\subsubsection{Anforderungen an die Hardware}
+Auch an die Hardware eines PDA für den Einsatz in einem Fahrzeug
+stellen sich besondere Anforderungen, die hier erläutert werden
+sollen.
+
+\begin{description}
+\item[Display] Beim Display eines PDA für den Einsatz im Läufer gibt
+  es zwei Dinge zu beachten: zum einen sollte es sich um ein
+  Farbdisplay handeln und zum anderen sollte es vor allem unter all
+  den Lichtbedingungen, in denen der Läufer unterwegs sein wird, gut
+  ablesbar sein.
+  
+  Die Forderung nach einem Farbdisplay ergibt sich zum einen aus der
+  Design-Orientierung des Projektes und der Anforderung nach
+  GUI-Flexibilität.  Zum anderen aber auch aus der Überlegung, daß
+  man zum der Fahrsituation angemessenen Darstellen von z.B.
+  Warnmeldungen wohl kaum auf Farbe verzichten kann.  So lassen sich
+  durch Farbe gerade im Fahrbetrieb wichtige Informationen
+  hervorheben, wie man das z.B. vom PKW mit seinen \emph{roten}
+  Warnleuchten für wichtige Meldungen her kennt.
+  
+  Die Anzeigeeigenschaften des Display bei sehr extremen
+  Lichtverhältnissen sind für den Läufer entscheidend.  Das Display
+  muß bei allen Fahrsituationen möglichst gut ablesbar sein, um den
+  Fahrer über den aktuellen Zustand seines Fahrzeuges zu informieren.
+  Zu den kritischen Lichtverhältnissen gehört dabei weniger die Nacht,
+  da alle modernen PDAs über eine Leistungsfähige Beleuchtung
+  verfügen.  Wesentlich wichtiger ist das Verhalten während der
+  Dämmerung und bei starkem Sonnenschein.  Beides stellt einige
+  Display-Konzepte bei heute marktüblichen PDAs vor große Probleme.
+  
+  Als Beispiel sei hier die inverse Hintergrundbeleuchtung der PDAs
+  des Herstellers Palm genannt, die zwar bei absoluter Dunkelheit
+  hervorragende Dienste leistet, bei Dämmerung aber zu Unlesbarkeit
+  des Displays führt.
+  
+\item[Optik] Ein ebenfalls nicht zu unterschätzender, wenn auch nur
+  subjektiv zu beurteilender, Bereich ist die optische Erscheinung des
+  PDA.  Dies spielt aus technischer Sicht natürlich nur eine
+  untergeordnete Rolle, wird jedoch im Projektkontext bedeutsam, da
+  einige Elemente des Läufers nur unter ästhetischen Gesichtspunkten
+  zu Stande gekommen sind.  Da sich unsere Arbeit in das Projekt
+  integriert, müssen wir diesem Gesichtspunkt ebenfalls Bedeutung
+  zumessen.
+  
+  Ein objektiv nachprüfbarer Bereich der Optik ist die Bauform.  Für
+  den Einsatz im Läufer kommen nur sogenannte Stift-PDAs in Frage, bei
+  denen das Display hochkant steht und die Eingabe über einen Stift
+  erfolgt.  Nur diese Bauform läßt sich vernünftig in das
+  Fahrzeug-Cockpit des Läufers integrieren.
+  
+\item[Anschlußmöglichkeiten] Da das Projekt Läufer eines mit
+  ausser\-gewöhnlicher Dynamik ist, ist die Anschlussvielfalt an einem
+  PDA im Läufer ein wesentliches Argument, um sich spätere
+  Erweiterungen nicht durch einen zu beschränkten PDA zu verbauen.
+  
+  Die Mindestanforderung in diesem Bereich ist eine RS232\footnote{Im
+  PC-Bereich auch häufig nur ,,serielle Schnittstelle'' genannt.}
+  Schnittstelle, da über diese die Verbindung zu einer unserer
+  Platinen hergestellt wird.  Diese Platine verbindet dann den PDA mit
+  dem CAN-Bus. [FIXME Referenz auf Jameson]
+\end{description}
+
+
+\subsection{Auswahl der Systemsoftware}
+Der PDA Markt läßt sich, wenn man die diversen geschlossenen Systeme
+ausser Acht läßt, nach den Betriebssystemen PalmOS, WindowsCE und
+Linux aufgliedern.  Die Ebenfalls noch angebotenen PDAs der Firma
+PSION finden hier keine Beachtung, da deren Vermarktung und
+Weiterentwicklung mittlerweile eingestellt wurde.  Ausserdem paßt
+deren Tastatur-Orientiertes Design nicht in das Konzept des
+Cockpit-Entwurfs für den Läufer.
+
+Diese Einteilung nach Betriebssystem lieferte eine erste
+Kategorisierung des PDA-Marktes.  Da zu jedem System relativ viele
+verschiedene PDAs am Markt sind, war die Entscheidung anhand der
+Software die erste, die zu treffen war.
+
+Im folgenden sollen die einzelnen Systeme samt ihrer für das Projekt
+relevanten Eigenschaften vorgestellt werden, um sich unter diesen drei
+Systemen für eins zu entscheiden, daß die Software-Seitigen
+Voraussetzungen für einen Einsatz im Läufer mitbringt.
+\begin{description}
+\item[PalmOS] Dieses System wurde von der Firma 3Com entwickelt und
+  zu\-nächst ausschließlich auf deren PDAs, den sogenannten
+  ,,PalmPilots'' eingesetzt.  Mittlerweile hat es PalmOS zur
+  Marktführerschaft gebracht und ist auch auf den Geräten von
+  Herstellern wie Sony, Handspring und anderen zu finden.
+  
+  Als erstes wurden dann auch Geräte mit diesem System ins Auge
+  gefaßt.  Bei diesen Geräten kann man aufgrund der großen
+  Verbreitung mit einer guten Akzeptanz seitens der Nutzers des
+  Läufers rechnen.  Auch wird ein eventueller Kunde mit hoher
+  Wahrscheinlichkeit schon über ein solches Gerät verfügen.
+  
+  Ein ,,Palm IIIx'' wurde dann auch Basis eines ersten Versuchs der
+  Mechatronik, der im Rahmen einer Studienarbeit von Jörn
+  Schlingen\-siepen\cite{Schlinge} stattfand.  Im Rahmen dieser Arbeit
+  wurde die grund\-sätzliche Möglichkeit der Anbindung eines solchen
+  Gerätes an den CANBus untersucht und auch bestätigt.
+  
+  Allerdings verfügt PalmOS in seiner jetzigen Version nicht über
+  Multitasking, was einen Einsatz im Läufer nicht ermöglicht, da dies
+  die geforderte Erweiterbarkeit nicht in dem Masse sicherstellt, wie
+  dies gefordert war.
+  
+  Im Bereich der Graphischen Gestaltung des Fahrerinterface erwiesen
+  sich die verfügbaren Geräte dieser Bauart als recht eingeschränkt,
+  da sie weder über eine anpaßbare Bibliothek von Oberflächenelementen
+  noch über genügend Rechenleistung verfügen, diese selbst zu
+  ,,malen''.  Dies ist bei einem System wie PalmOS jedoch kein
+  Design-Fehler, sondern schlägt sich z.B. in der überwiegend
+  konstanten und guten Bedienbarkeit der Software für diese PDAs
+  nieder.  Diese an sich gute Eigenschaft wird aber vor dem
+  Hintergrund unserer Aufgabe hinderlich.
+  
+  Die Programmierung eines PalmOS-PDAs erfolgt mit speziellen Tools.
+  Allerdings haben sich diese PDAs im Laufe der Zeit so weit
+  verbreitet, daß mehrere alternative Programmierumgebungen und
+  Compiler zur Verfügung stehen.  Auch hat diese Verbreitung zu einer
+  guten und frei verfügbaren Dokumentation der Programmierung für
+  diese Geräte geführt.
+  
+\item[Windows CE / Pocket PC] PDAs mit diesem System von Microsoft
+  zeichnen sich durch Ihre leistungsfähige Hardware aus.  So ist es
+  bei diesen Geräten nicht selten, einen Prozessor mit deutlich mehr
+  als 200MHz Taktfrequenz vorzufinden.
+  
+  Auch verfügt Windows CE über Multitasking, eine permanent im
+  Hintergrund laufende Fahrsoftware ist also mit diesem System
+  realisierbar.
+  
+  Die Graphische Oberfläche ist sehr an die Desktop-Versionen von
+  Windows angelehnt.  Die Flexibilität bei der Gestaltung einer
+  Oberfläche für die Läufersoftware ist auch unter Berücksichtigung der
+  Einschränkung durch die Festlegung auf eine Entwicklungsumgebung
+  schon alleine deshalb groß, weil die Geräte über so große
+  Leistungsreserven verfügen.  Diese ermöglichen im Prinzip sogar eine
+  komplett ,,gemalte'' Oberfläche, auch wenn diese recht viel Speicher
+  verbraucht.
+  
+  Dokumentation und Support der Programmierung sind wie für Microsoft
+  typisch gut, die Entwicklungsumgebung ist kostenlos erhältlich.
+  Allerdings ist WindowsCE genauso wie PalmOS ein reines PDA-System,
+  so daß die Entwicklung für diese PDAs mit diesen speziellen Tools
+  erfolgen muß und zum Testen der Software ein Emulator zum Einsatz
+  kommt.
+
+
+\item[Linux] Linux ist im gesamten PDA und Embedded-Bereich ein
+  ziemlicher Neuling, allerdings mit steigender Verbreitung.  Dies ist
+  vor allem auf die große Flexibilität dieses Systems zurückzuführen.
+  
+  Linux verfügt natürlich auch auf dem PDA über echtes Multitasking.
+  Schließlich kommt der selbe Kernel und die selbe Systemsoftware zum
+  Einsatz wie auf den anderen Plattformen, auf denen es eine
+  Implementierung dieses freien Betriebssystems gibt.
+  
+  Diese Gleichheit in der Software bringt Linux auf dem PDA eine
+  große Flexibilität, da direkt die gesamte Software, die es für
+  Linux gibt, verfügbar ist.  Dies betrifft insbesondere die
+  Bibliotheken für Entwickler.  So existieren z.B. mehrere
+  GUI-Bibliotheken, die noch dazu auf verschiedenen Wegen mit der
+  Hardware kommunizieren können.  Diese Auswahl an Möglichkeiten ist
+  für unsere Anwendung geradezu ideal.
+  
+  Aus der identischen Software auf PC/Workstation und PDA folgt aber
+  auch, daß man Software für den PDA unter Berücksichtigung einiger
+  Randbedingungen auf dem PC entwickeln und testen kann.  Dabei kann
+  auf einen Emulator der PDA-Hardware verzichtet werden.  Dies macht
+  es möglich, daß Entwickler Software auf Ihrem PC entwickeln und mit
+  diesem testen, die dann später durch ein Übersetzen für den
+  PDA\footnote{Diesen Vorgang nennt man im Allgemeinen
+    ,,crosscompiling''} auf diesen portiert werden kann.
+  
+  Diese große Flexibilität zieht allerdings auch einen entscheidenden
+  Nachteil nach sich: Nahezu jeder Entwickler für Linux-basierte
+  Embedded Systems arbeitet mit seinem eigenen Set an Tools,
+  Bibliotheken und Compilern.  Daraus folgt, daß es keine große
+  Entwicklergemeinde gibt, die alle mit den selben Tools arbeiten, was
+  zu einer Unübersichtlichkeit der Dokumentation führt.  Dieser
+  Umstand wird allerdings durch die Gleichheit des Systems zu dem auf
+  PCs teilweise wieder ausgeglichen.
+
+
+  
+\item[Entscheidung] Letztlich war die Entscheidung zwischen Windows
+  CE, heute PocketPC, und Linux zu treffen.  PalmOS ist wegen der
+  fehlenden Multitasking-Fähigkeit für unsere Aufgabe ungeeignet.
+  
+  Wir haben uns letztendlich für Linux entschieden, um uns die größte
+  Flexibilität zu sichern.  Dies betrifft nicht nur die oben schon
+  ausgeführte Auswahl an GUI-Bibliotheken, sondern auch die
+  Möglichkeit im Falle der Notwendigkeit selbst am Betriebssystem Hand
+  anlegen zu können.  Da wir ein klassisches Embedded System durch
+  einen handelsüblichen PDA ersetzten, war zu Beginn nicht klar,
+  welche Probleme dabei auftreten können.  Und mit einem
+  unabänderlichen Betriebssystem waren diese Probleme eventuell nicht
+  lösbar.
+  
+  Zusätzlich ist es mit einem Linux-PDA möglich, Software auf PCs zu
+  entwickeln und zu testen, ohne daß dazu ein PDA oder gar ein
+  Emulator nötig ist.
+\end{description}
+\begin{table}
+  \caption{Übersicht über die verschiedenen PDA-Betriebssysteme}
+  \label{mw_pda_os_tabelle}
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|}
+      \hline
+      \emph{Anforderung} & \emph{PalmOS} & \emph{WindowsCE} & \emph{Linux} \\
+      \hline
+      \emph{Multitasking} &$\circ$ &$\bullet$ & $\bullet$\\
+      \hline
+      \emph{GUI-Flexibilität} &$\circ$ &+ & ++\\
+      \hline
+      \emph{Programmierung} &$\circ$ &+&++\\
+      \hline
+      \emph{Dokumentation und Support} &++ &+ &+\\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+
+
+\subsection{Auswahl der Hardware\label{mw_pda_uebersicht}}
+Im folgenden sollen kurz die PDAs beschrieben werden, die für das
+Projekt in Frage kamen, und die in folge dessen auch näher geprüft
+wurden.
+
+Da der Markt für Linux-basierte PDAs sehr in Bewegung ist, kann und
+soll hier keine vollständige und insbesondere keine aktuelle Übersicht
+gegeben werden.  Ein guter Anlaufpunkt für eine solche ist die
+Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
+
+\begin{table}
+  \caption{Übersicht über die verschiedenen Linux-fähigen PDAs}
+  \label{mw_pda_tabelle}
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+      \hline
+      \emph{Anforderung} & \emph{Display} & \emph{Optik} & \emph{Anschlußmöglichkeiten} & \emph {Verfügbarkeit}\\
+      \hline
+      \emph{VR3}         & -- & 0 & 0 & + \\
+      \hline
+      \emph{Yopy}        &  + & + & 0 & -- \\
+      \hline
+      \emph{Helio}       & -- & --& 0 & + \\
+      \hline
+      \emph{Cassiopeia}  &  + & + & + & -- \\
+      \hline
+      \emph{Zaurus}      & ++ & + & + & (-) \\
+      \hline
+      \emph{IPAQ}        & ++ & ++& + & + \\
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+
+\begin{description}
+\item[Agenda VR3] Diesem PDA, der in Abbildung \ref{mw_agenda} zu
+  sehen ist, gebührt die Ehre des ,,first-to-market''-Gerätes im
+  Bereich Linux-PDAs, da es Agenda Computing als erstes gelang, einen
+  endkundentauglichen PDA mit Linux als Betriebssystem in die Läden zu
+  bringen.
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/agenda.eps}
+    \caption{Der Agenda VR3}
+    \label{mw_agenda}
+  \end{figure}
+  
+  Leider gab es zum Zeitpunkt der Entscheidung noch keine
+  Farb-Variante dieses Geräts. Farbe ist aber in einer
+  Design-orientierten Entwicklung wie dem Läufer ein absolutes Muß.
+  
+\item[G.Mate Yopy] Abbildung \ref{mw_yopy} zeigt diesen PDA, der lange
+  Zeit als Mythos durch die diversen News-Seiten und -Foren des
+  Internet geisterte. Ihm wurde am ehesten zugetraut, der erste
+  brauchbare PDA mit Linux als Betriebssystem zu sein.  Diese Hoffnung
+  der Linux-Enthusiasten wurde nicht zuletzt durch die Präsentation
+  des Yopy auf der Cebit 2000 durch den damaligen G.Mate-Partner
+  Samsung genährt.
+
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/yopy.eps}
+    \caption{Der G.Mate Yopy}
+    \label{mw_yopy}
+  \end{figure}
+  
+  Nachdem Samsung jedoch aus dem Projekt ausgestiegen ist, ist es
+  ruhig um den Yopy geworden. In Deutschland war kein solches Gerät
+  auszumachen.  Somit kam dieser PDA leider nicht für das Projekt in
+  Frage, zumal seine Zukunft nach wie vor ungeklärt ist und somit eine
+  Versorgung der Nullserie des Läufers mit Geräten nicht sicher war.
+  
+  Auf der Cebit 2002 wurde der Yopy wieder gezeigt, nun jedoch vom
+  mechanischen Aufbau komplett anders in Ähnlichkeit zu einem
+  Mobiltelefon.  Diese Form paßt nicht zu den Anforderungen an einen
+  PDA im Läufer, weshalb sich die Entscheidung gegen diesen PDA auch
+  im Nachhinein als richtig erwiesen hat.
+
+  
+\item[VTech Helio] Siehe Abbildung \ref{mw_helio}.  Dies ist
+  eigentlich ein PDA der Firma VTech, der mit dem proprietären VT-OS
+  als Betriebssystem betrieben wird.  Zu diesem PDA unterstützt VTech
+  allerdings auch die Entwicklung einer Linux-Distribution.
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/helio.eps}
+    \caption{Der VTech Helio}
+    \label{mw_helio}
+  \end{figure}
+  
+  Der PDA macht von seiner äußeren Erscheinung mehr den Eindruck eines
+  Spielgerätes für Kinder, was ja auch der Haupt-Markt des Anbieters
+  VTech ist.  Der PDA verfügt ausserdem nicht über ein Farb-Display,
+  so daß er für das Projekt ebenfalls nicht in Frage kam.
+  
+  
+\item[Casio Cassiopeia] Die PDAs dieser Serie sind überaus
+  leistungsfähig.  Sie verfügen über einen Prozessor auf Basis der
+  MIPS-Architektur bei 125MHz-150MHz, bis zu 32MB RAM und Farbdisplays
+  mit einer Auflösung von 320x240 Pixel.  Auf der Seite der Hardware
+  spricht also vieles für den Cassiopeia. Abbildung \ref{mw_casio}
+  zeigt den Cassiopeia.
+  
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/casio.eps}
+    \caption{Der Casio Cassiopeia}
+    \label{mw_casio}
+  \end{figure}
+  
+  Es ist auch eine Implementierung des Linux Kernels für diese Geräte
+  verfügbar.  Allerdings besitzen die Geräte dieser Serie kein
+  wiederbeschreibbares Flash-ROM, sondern nur ein ROM für das
+  Betriebssystem, so daß ein Start von Linux immer über spezielles
+  Windows-CE Programm namens ,,CyaCE'' erfolgen muß.  Dies ist jedoch
+  im Rahmen einer \emph{Produkt}entwicklung nicht wünschenswert, da
+  sich ein potentieller Nutzer nicht zu sehr mit den technischem
+  Details des Fahrzeuges auseinandersetzen müssen soll.
+  
+  Ein weiteres, nicht zu unterschätzendes Argument gegen die Geräte
+  dieser Serie ist, daß sie von einem Asiatischen Hersteller vertrieben
+  werden, und diese sich bisher als eher unwillige Sponsoren des Projektes
+  erwiesen haben.
+
+\item[Sharp Zaurus] Dieser PDA verfügt über ähnliche technische Daten
+  wie der Compaq IPAQ.  Wie dieser verfügt er über einen StrongARM
+  206MHz Prozessor, 64MB RAM und 16MB Flash.  Auch das Display ist
+  ähnlich dem des Compaq. Abbildung \ref{mw_sharp} zeigt dieses Gerät.
+
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/sharp.eps}
+    \caption{Der Sharp Zaurus}
+    \label{mw_sharp}
+  \end{figure}
+  
+  Allerdings wird dieser, zu Beginn dieser Arbeit noch nicht mit einem
+  Namen versehene, PDA nicht mit Windows CE, sondern mit Linux als
+  Betriebssystem ausgeliefert. Die Software entspricht weitgehend der,
+  die wir auf dem IPAQ einsetzen. Es kommt also ein Linux Kernel 2.4.X
+  mit QTopia als graphischer Oberfläche zum Einsatz.
+
+  Leider war das Gerät zu Beginn unserer Arbeit noch nicht verfügbar,
+  so daß wir dieses von all seinen Daten her ideale Gerät leider
+  nicht verwenden konnten.  Auf der Cebit 2002 wurden erste Kontakte
+  mit Sharp geknüpft, um ein eventuelles Wechseln auf diesen PDA
+  vorzubereiten.
+  
+  
+\item[Compaq IPAQ] Der Compaq IPAQ (siehe auch Abbildung
+  \ref{mw_ipaq_bild}ist von der Hardware her dem Sharp-PDA sehr
+  ähnlich, der einzige Unterschied liegt in der standardmäßig
+  ausgelieferten Software.  Der IPAQ kommt standardmäßig mit Windows
+  CE, während der Sharp mit Linux ausgestattet wird.
+  \begin{figure}
+    \center
+    \includegraphics[width=7.0cm]{mw/bilder/Menu.eps}
+    \caption{Der Compaq IPAQ mit der Läufer-Software für die Cebit 2002}
+    \label{mw_ipaq_bild}
+  \end{figure}
+
+  Für den IPAQ existiert allerdings eine sehr weit fortgeschrittene
+  Portierung des Linux Kernels und etlicher Programme, so daß
+  mittlerweile sogar schon mehrere Distributionen um die Gunst des
+  IPAQ-Besitzers buhlen.  Siehe dazu auch Kapitel \ref{mw_ipaq_linux}
+  
+  Die Hardware des IPAQ H3660 stellt wohl derzeit das technisch
+  machbare im PDA-Umfeld dar und bietet Leistungen, die ein Entwickeln
+  auf normalen Desktop-Rechnern ermöglicht, ohne das Unbehagen, die
+  Zielplattform könnte eine bestimmte Funktionalität aus Gründen der
+  dort vorhandenen Ressourcen nicht zur Verfügung stellen.
+  
+  Die Hardware des IPAQ im Einzelnen:
+  
+  \begin{description}
+  \item[CPU]
+    StrongARM 206MHz
+  \item[RAM]
+    64MB
+  \item[Flash]
+    16MB interner Flash-Speicher
+  \item[Display]
+    240x320 12Bit reflektives Farbdisplay
+  \item[Schnittstellen]
+    RS-232, USB, IRDA, Analog Sound
+  \item[Erweiterungen]
+    
+    Es besteht die Möglichkeit, den IPAQ um folgende Slots zu
+    erweitern: CompactFlash, 1x PCMCIA oder 2x PCMCIA.  Hierzu wird
+    der IPAQ in seine eigene Erweiterung, ein so genanntes ,,Jacket''
+    hineingesteckt, was Veränderungen im Formfaktor zur Folge hat. Die
+    Jackets gibt es in Ausführungen mit den genannten
+    Steckplatz-Konfiguration.
+  \end{description}
+  
+\end{description}
+
+
+
+\subsubsection{Entscheidung}
+Die Wahl fiel letztlich auf einen Compaq IPAQ, da dieser nach den
+Informationen, die zur Zeit der Entscheidung im WWW zur Verfügung
+standen, über die weitestgehende Unterstützung unter Linux verfügt.
+Ein weiteres wesentliches Argument für dieses Gerät ist das reflektive
+Display, wodurch eine Nutzung als zentrale Anzeige in einem Fahrzeug
+überhaupt erst möglich wird.  Durch dieses Display wird die Anzeige
+des IPAQ bei stärkerer Sonneneinstrahlung automatisch heller, so daß
+im Gegensatz zu z.B. Notebooks ein Ablesen auch im Sommer bei großer
+Helligkeit möglich ist.
+
+Leider war es zu Beginn dieser Arbeit nicht möglich, den Sharp Zaurus
+zu berücksichtigen, da dieser zu diesem Zeitpunkt nicht zur Verfügung
+stand.  Im weiteren Projektverlauf wird allerdings versucht, auf
+diesen PDA umzusteigen, da er über ähnliche Leistungen wie der IPAQ
+verfügt, jedoch direkt mit Linux ausgeliefert wird.  Diese Verwendung
+eines Standard-PDA macht vor dem Hintergrund einer
+\emph{Produkt}entwicklung natürlich Sinn.
+
+
+\subsection{Zusammenfassung}
+Wie weiter oben beschrieben wurde die Entscheidung zugunsten von Linux
+gefällt, da Linux auf dem PDA sehr PC-ähnlich zu programmieren ist und
+über Multitasking verfügt.  Ausserdem ist es im Bereich der GUI sehr
+flexibel und es ist nicht unbedingt ein PDA nötig, um Komponenten für
+die Läufer-Software zu entwickeln.
+
+Für den IPAQ wurde sich entschieden, weil er die beste Wahl nach dem
+noch nicht verfügbaren Sharp Zaurus darstellt.  Das Gerät verfügte als
+erstes am Markt über ein \emph{reflektives}
+TFT-Display\footnote{TFT=Thin Film Transistor}, was den Einsatz in
+einem offenen Fahrzeug überhaupt erst möglich macht.  Im Laufe des
+Projektes wurden im Rahmen des Cebit-Auftritts des Läufers erste
+Kontakte zu Sharp aufgebaut, um diesen PDA für die Nullserie gegen
+einen Sharp Zaurus zu ersetzen.
+
+
+\newpage
+\section{Auswahl der Linux-Distribution}
+\subsection{Anforderungen}
+Für den IPAQ stehen mehrere Linux-Distributionen zur Auswahl.  Es
+mußte sich also innerhalb des Projektes für eine entschieden werden.
+Dabei waren die Anforderungen der Entwickler mechatronischer
+Komponenten ebenso zu berücksichtigen wie die späterer Nutzer des
+Läufers.
+
+Für Entwickler ist es am wichtigsten, daß ihnen die Entwicklung für
+das System möglichst leicht gemacht wird.  Dies schließt eine
+ordentliche Programmierschnittstelle ebenso ein wie gute Werkzeuge zum
+erstellen der Graphischen Benutzerschnittstelle.  Aber auch ein gutes
+Management der Softwareinstallation auf dem Gerät ist dem Entwickler
+wichtig.
+
+Für den Anwender ist der Mehrfachnutzen des Gerätes entscheidend.  Es
+soll zusätzlich noch als ,,normaler'' PDA nutzbar bleiben.  Dazu
+gehört eine ausgereifte Auswahl an Anwendungen zur Termin- und
+Adreßverwaltung.  Aber natürlich auch ein Umfangreiches
+Softwareangebot, was auch die Möglichkeit bietet, neue Versionen der
+installierten Software einfach installieren zu können.  Dies gilt zum
+einen natürlich und insbesondere für die Systemsoftware, also die
+Distribution an sich, aber auch für die für den Läufer speziell
+angefertigte Software.
+
+
+
+\subsection{Die Alternativen}\label{mw_ipaq_linux}
+Compaq selbst unterstützt maßgeblich die Portierung des
+Linux-Kernels, ist aber bei der darauf aufsetzenden Linux-Distribution
+mittlerweile aus der Entwicklung einer eigenen ausgestiegen, da
+mehrere aus der Sicht Compaqs besser Alternativen zur Verfügung
+stehen.  Derzeit befindet sich Linux auf PDAs und insbesondere auf dem
+IPAQ unter dem Einfluß starker Entwicklertätigkeit, so daß viele
+Entwicklungen sich noch im Zustand ,,Projekt'' befinden und erst nach
+und nach zu ,,Produkten'' werden.  Das prominenteste ,,Produkt''
+dürfte der Sharp Zaurus sein, dessen Software weitgehend mit der
+freien Oberfläche OPIE übereinstimmt.
+
+Im folgenden sollen die einzelnen Projekte, die sich um Linux auf dem
+IPAQ bemühen, vorgestellt werden.  Wie auch schon bei der Übersicht
+über aktuelle Linux-PDAs (siehe \ref{mw_pda_uebersicht}) kann und soll
+hier kein vollständiger Überblick über diese Projekte gegeben werden.
+Die Projekte, die hier genannt werden, sind die, die im Rahmen dieser
+Studienarbeit näher untersucht wurden.\\
+Im einzelnen sind dies:
+
+\begin{description}
+\item[PocketLinux] PocketLinux\cite{plinux} kann man wohl mit Fug und
+  Recht als das ambitionierteste der Projekte bezeichnen.  PocketLinux
+  setzt sich aus einem Linux-Kernel, eine Java Virtual Machine sowie
+  einer XML-basierten GUI zusammen.  Leider hat ein kurzer Test der
+  Version für x86-Linux zu der Erkenntnis geführt, daß die Kombination
+  Java+XML+PDA wohl (noch) nicht performat genug ist, um die Ansprüche
+  des Projekts Läufer an das Ansprechverhalten der Software zu
+  erfüllen.
+  
+  Mittlerweile wurde die Entwicklung dieses Systems auch eingestellt.
+  Die Entwicklung der Java VM geht allerdings weiter und wird als
+  eigenständige VM für Embedded Devices entwickelt.
+
+\item[Familiar Linux] Familiar\cite{flinux} ist die Brot-Und-Butter
+  Distribution von Linux auf dem IPAQ.  In Ihr sind auch die früheren
+  Compaq-Distri\-butionen aufgegangen.
+  
+  Familiar verfügt über ein Debian-ähnliches Paketsystem, wodurch die
+  Installation weiterer Software sehr einfach möglich ist.  Jede
+  verfügbare Software ist hierzu in Pakete organisiert, die womöglich
+  untereinander durch Beziehungen verbunden sind.  Die Pakete
+  werden dazu automatisch aus dem Internet geladen und eventuelle
+  Abhängigkeiten zu anderen Softwarepaketen werden aufgelöst.  Dies
+  erspart dem Anwender die von anderen Linux-Systemen bekannten
+  Probleme mit Abhängigkeiten zwischen Sodtwarepaketen.  So führt
+  z.B. die Installation eines graphischen Programms automatisch zur
+  Installation der benötigten Umgebung.  Für dieses System existieren
+  verschiedene Graphische Frontends, so daß die Handhabung der
+  Softwareverwaltung für den Anwender sehr einfach möglich ist.
+  
+  In der Standardinstallation verwendet Familiar das von
+  UNIX-Workstations bekannte XWindow System in der Version 11 (kurz
+  X11) als Graphische Schnittstelle, es existieren aber auch andere
+  Graphische Oberflächen.  Die Portierung bestehender Anwendungen ist
+  recht einfach, da X11 als Fenstersystem auf nahezu jeder auf UNIX
+  oder seinen Artverwandten basierenden Workstation Verwendung findet.
+  Allerdings sind diese Anwendungen in der Regel nicht auf den kleinen
+  Bildschirm des PDA hin optimiert, da an UNIX Workstations historisch
+  gesehen schon immer sehr große Monitore mit großer Auflösung üblich
+  waren.  Ebenfalls verfügbar sind die ersten X11-basierte Anwendungen,
+  die speziell für Familiar entwickelt wurden.  Diese Anwendungen
+  berücksichtigen decken den Bereich der Organizer-Software ab und
+  berücksichtigen natürlich die spezielle Hardware, auf der sie
+  laufen.
+  
+\item[Intimate] Das Ziel dieses Projektes ist es, ein komplettes
+  Debian-Linux auf den IPAQ zu bringen.  Dies ist natürlich nicht in
+  den internen 16MB Flashspeicher als Festplattenersatz des IPAQ
+  möglich.  Deshalb setzt die Installation von Intimate zwingend das
+  Vorhandensein einer externen Speichermöglichkeit voraus.  Meistens
+  wird dies ein IBM Microdrive sein, das 1GB an Speicher im Formfaktor
+  einer CompactFlash-Karte bietet.
+
+  Intimate entschädigt für diesen Aufwand mit einer Softwareauswahl,
+  die (fast) auf dem Niveau von Linux auf Intel-Rechnern liegt.
+  Insbesondere sind die bekannten Pakte wie Gnome, KDE, Mozilla, Emacs
+  und andere verfügbar.  Diese Anwendungen leiden jedoch unter dem
+  kleinen Display des PDA, das über eine Auflösung von 240x320 Pixel
+  verfügt.  
+  
+  Für den Läufer ist allerdings diese weitgehende Verfügbarkeit von
+  Desktop- und Server-Anwendungen nicht unbedingt erforderlich, ja
+  sogar hinderlich, da es im Bereich der XWindow-Anwendungen derzeit
+  noch keine wirklich zufriedenstellende Software für den PDA-Einsatz
+  gibt.  Die benötigte Festplatte braucht überdies recht viel Strom,
+  wodurch sich Intimate für die gegebene Anwendung als ungeeignet
+  erwies.
+
+
+\item[QTOPIA] QTopia ist keine eigene Distribution, sondern ein Set
+  von PDA-Anwendungen die auf der QT-Bibliothek des Norwegischen
+  Herstellers Trolltech basieren. 
+  
+  Diese Bibliothek wurde in der Version QT/Embedded (QTE) speziell an
+  die Bedürfnisse von PDAs angepaßt.  QTE benötigt kein XWindow
+  System, sondern operiert direkt auf dem Linux Framebuffer.  Dadurch
+  spart es Speicherplatz und Rechenzeit, verliert aber den Vorteil von
+  X11, nämlich die Netzwerkfunktionalität.
+  
+  QTE ist je nach Art der Kompilierung voll Sourcecode-kompatibel zu
+  den anderen QT-Varianten für Windows, XWindow, MacOS, etc.  Um aus
+  einer bestehenden QT-Anwendung für z.B. das XWindow System eine
+  Anwendung für den PDA zu machen Bedarf es keiner Änderungen,
+  vorausgesetzt, die GUI paßt auf den Bildschirm des PDA.  Dies
+  vereinfacht die Entwicklung ungemein.
+
+  QT genießt ausserdem den Ruf einer sehr guten Dokumentation, was
+  den Entwicklern mechatronischer Komponenten sicher zugute kommen
+  sollte.
+  
+  QTopia stellt nun eine komplette PDA-Umgebung auf Basis dieser
+  Klassenbibliothek zur Verfügung.  Dies beginnt mit den
+  Rahmenbedingungen, wie verschiedenen Formen der Texteingabe
+  (Handschrift, Virtuelle Tastatur, T9\footnote{Bei T9 werden wie beim
+    Handy die Worte nach einigen wenigen Zeichen erkannt} etc.) und
+  umfaßt auch einen ordentlichen Grundstock an Anwendungen, die man
+  auf einem PDA erwartet.  Dazu gehören neben der
+  PIM\footnote{Personal Information Manager}-Suite auch ein Betrachter
+  für Dateien von Tabellenkalkulationen, ein Webbrowser sowie
+  Email-Client und nicht zuletzt eine Anzahl an Spielen.
+  
+  QTOPIA findet z.B. auf dem Sharp Zaurus Verwendung, was für die
+  Produktreife von QTOPIA spricht.
+\end{description}
+
+\subsection{Die Entscheidung}
+Für die Verwendung im Läufer wurde QTOPIA auf Familiar gewählt, da
+dies unter den gegebenen Umständen die fortgeschrittenste Wahl
+darstellte.  Familiar mit X11 kam trotz der technischen Überlegenheit
+des XWindow Systems nicht zum Zuge, da es an guten PDA Anwendungen für
+diese Grafikschnittstelle fehlte.  QTOPIA ist explizit für diesen
+Zweck entwickelt und stellt über dies sogar eine sehr gute
+Programmierschnittstelle zur Verfügung.
+
+Auch die Aussicht auf kommerziell verfügbare PDAs mit diesem System
+beeinflußte die Entscheidung maßgeblich, genauso wie die Qualität
+anderer auf QT aufsetzender Softwarepakete wie z.B. KDE.
+
+
+
+\newpage
+\section{Klassenbibliothek}
+
+\subsection{Anforderungen}
+Die den Entwicklern mechatronischer Komponenten zur Verfügung
+gestellte Programmierschnittstelle bestimmt maßgeblich deren
+Produktivität und die Qualität der von ihnen erstellten Software.  Aus
+diesem Grund kommt dieser Klassenbibliothek eine besondere Bedeutung
+zu, die in etwa der des richtigen PDAs aus der Sicht der späteren
+Nutzer des Läufers entspricht.
+
+Die Programmierschnittstelle hat zwei wichtige Aufgaben: Die
+Bereitstellung einer einfach zu verwendenden Kommunikation zwischen
+PDA und Platinen sowie eine Schnittstellendefinition zwischen PDA
+Software und dem Interface, mit dem der Fahrer auf die Fahrzeugsysteme
+zugreifen kann.
+
+Dabei müssen die für das Projekt spezifischen Randbedingungen
+Beachtung finden: Zu diesen Randbedingungen zählt, daß mehrere
+Entwickler parallel und wahrscheinlich ohne Kenntnis voneinander an
+Komponenten für den Läufer arbeiten werden. Ausserdem war zu Beginn
+dieser Arbeit noch nicht vollständig sicher, über welche
+mechatronischen Systeme der Läufer mal verfügen wird.  Trotz dieses
+unsicheren Umfeldes müssen die gesamten Software- und
+Hardware-Komponenten am Ende der Entwicklung an einer Stelle zentral
+zusammengeführt und kontrolliert werden können.
+
+Es ist also nötig, die Entwickler so gut es möglich ist voneinander
+unabhängig zu machen, es aber trotzdem zu ermöglichen, deren Arbeit am
+Ende in einem Gesamtsystem zusammen zu führen.
+
+
+\subsection{Die Kommunikation im Läufer aus PDA Sicht}\label{mw_com}
+Um die Entwickler mechatronischer Komponenten für den Läufer
+voneinander zu trennen, ist eine Kommunikationsstruktur nötig, die dem
+durch die Bereitstellung virtueller privater Verbindungen zwischen PDA
+Software und Platine Rechnung trägt.  Somit wurde ein Designmerkmal
+des CANBus' dieser Anforderung geopfert.  Für die näheren Details
+dieses Aspekts verweise ich auf Kapitel \ref{jameson_kapitel}.  Hier
+soll nun im folgenden auf die Anwender- bzw. Entwicklersicht auf diese
+Kommunikation vom PDA aus eingegangen werden.
+
+Grundbausteine der Kommunikation im Läufer sind so genannte
+Nachrichten\footnote{im folgenden auch: Message}, die von einem
+Bus\-teil\-nehmer zum anderen gesendet werden.  Jeder Busteilnehmer
+erhält dazu eine im System eindeutige Nummer, die sogenannte
+ID\footnote{ID: für IDentifier}.  Über diese Komponenten-ID wird die
+Verbindung zwischen einem realen Gerät, also z.B. einem
+Scheibenwischer und dem entsprechenden Treiber auf dem PDA
+hergestellt.  Die Kommunikationsstruktur des Läufers macht dies für
+den Entwickler transparent, d.h. er muß sich lediglich darum kümmern,
+daß sich sein Gerät und der dazugehörige Treiber unter der selben ID
+beim System anmelden.
+
+Die eigentliche Kommunikation erfolgt dann wie schon gesagt in Form
+von Nachrichten, die zwischen dem Treiber und dem zu ihm gehörenden
+Gerät ausgetauscht werden.  Bei diesen Nachrichten handelt es sich
+immer um einen Befehl (8Bit) mit optionalen Parametern (15Bytes).
+Dadurch kann sich jeder Entwickler für sein Gerät einen eigenen Satz
+an Befehlen definieren, ohne daß dieser den anderen Teilnehmern im
+System bekannt sein müßten.
+[FIXME -- MEHR!]
+
+
+\subsection{Implementierung}\label{mw_klasse}
+Ziel der Entwicklung der Klassenbibliothek ist es, die Entwicklung
+darauf aufsetzender Komponenten so einfach wie möglich zu machen, da
+die Entwickler, die diese entwickeln werden, dies nur als Teil ihrer
+Aufgabe auffassen können.  Die auf dieser Bibliothek aufsetzenden
+Module sind genauer:
+
+\begin{description}
+\item[Treiber] Diese Komponenten stellen ein Interface zu den
+  einzelnen mechatronischen Komponenten her.  Dazu sollen sie das
+  Gerät durch eine Klasse repräsentieren, die als Methoden die
+  speziellen Fähigkeiten dieses Gerätes exportiert.  Hierzu ist es
+  nötig, den Entwicklern durch diese Klassenbibliothek ein Interface
+  zum CANBus zur Verfügung zu stellen.  Ausserdem müssen diese Treiber
+  auf Nachrichten sowohl von der GUI als auch von ihrem Gerät am
+  CANBus reagieren können.
+  
+\item[GUI] Die GUI soll später das Interface zum Fahrer darstellen.
+  In ihr werden alle Fäden zusammengeführt werden, die als Methoden
+  aus den einzelnen Klassen laufen.  Dazu muß es für den Entwickler
+  dieser GUI einfach sein, auf die Methoden der Treiber zuzugreifen
+  und deren Statusmeldungen zu erhalten.
+\end{description}
+
+Diese Module sind nicht Teil dieser Studienarbeit, da ihre
+Implementierung im falle der Treiber am besten durch den Entwickler
+der mechatronischen Komponenten durchgeführt wird.  Nur dieser hat das
+Detailwissen, um die Treiber dem mechatronischen Gerät angemessen zu
+entwickeln.  Im Falle der GUI kann diese erst dann erstellt werden,
+wenn alle Fahrzeugkomponenten feststehen, da in ihr auch die
+Fahrzeuglogik festgehalten wird.  Um diese Logik zu implementieren,
+bedarf es genauerer Kenntnisse der Fahrdynamik des Läufers als die
+Autoren dieser Arbeit haben können, schon aufgrund ihrer Fachrichtung.
+
+Aufgabe war es also, zwei Schnittstellen zu definieren. Im einzelnen
+sind dies die Anbindung der GUI an die Treiber sowie die Kommunikation
+zwischen Treiber und CANBus.
+
+\subsection{Anbindung der GUI an die Treiber}
+Die GUI muß an die Treiber Befehle geben können.  Dies läßt sich
+recht einfach dadurch erreichen, daß die Treiber als lokale Variablen
+in der GUI Vorliegen.  Die GUI wird also zum Hauptbestandteil des
+Software-Systems des Läufers.
+
+Die umgekehrte Kommunikation gestaltet sich etwas schwieriger.  Bei
+dieser Anbindung der GUI an die Treiber kann man grundsätzlich
+Verschiedene Wege gehen:
+\begin{description}
+\item[Callback] Zum einen kann man allen Treibern bei der
+  Initialisierung einen Pointer auf die GUI übergeben.  Dabei muß
+  aber jeder Treiber die GUI und ihre Methoden schon kennen.  Da diese
+  aber nicht Teil dieser Arbeit sein kann, ist diese verbreitete
+  Methode für unsere Anwendung leider nicht sehr geeignet.
+  
+\item[Polling] Die GUI könnte auch die Treiber in regelmäßigen
+  Abständen Pollen, d.h. eine bestimmte, im Framework zu definierende,
+  Methode der Treiber-Objekte aufrufen.  Über diesen Mechanismus würde
+  dann jeder Treiber Rechenzeit erhalten und könnte eingehende
+  Nachrichten bearbeiten.
+  
+  Diese Methode bietet die gewünschte Flexibilität, da die GUI nur
+  noch die Treiber kennen muß, aber nicht umgekehrt.  Allerdings ist
+  es offensichtlich, daß ein solches Vorgehen starke Probleme
+  hinsichtlich der Leistung hat.  Zum einen wird so keine
+  bedarfsgerechte Verteilung der CPU Leistung erreicht und zum anderen
+  kostet das unnötige Aufrufen von Methoden, die derzeit nichts zu tun
+  haben, unnötig Rechenzeit.
+  
+\item[Signals und Slots] Da für die GUI das Produkt ,,QTopia'' der
+  Firma Trolltech zum Einsatz kommt, stand eine weitere Möglichkeit,
+  diese Anbindung zu realisieren, zur Verfügung.  Da dies im Gegensatz
+  zu den anderen Möglichkeiten nicht zu den Standard-Techniken gehört,
+  soll hier eine Erläuterung dieses Verfahrens gegeben werden.
+  
+  QT verfügt über einen Mechanismus, der mit sogenannten ,,Signals''
+  und ,,Slots'' arbeitet.  Signale und Slots können eine beliebige
+  Anzahl Argumente beliebigen Typs übermitteln und sind überdies
+  typsicher.
+    
+  Ein Objekt verschickt Signale, durch welche Slots von verknüpften
+  (connected) Objekten aufgerufen werden. Am besten läßt sich dies an
+  einem kleinen Beispiel zeigen:
+  
+\begin{verbatim}
+class Foo : public QObject
+ {
+  Q\_OBJECT
+  public:
+    Foo();
+    int  value() const { return val; }
+  public slots:
+    void setValue( int );
+  signals:
+    void valueChanged( int );
+  private:
+    int  val;
+ };
+\end{verbatim}
+    
+  Die Ausdrücke ,,Q\_OBJECT'', ,,slots'' und ,,signals'' werden vom
+  Meta Object Compiler (moc) benötigt.  Dieser Compiler erzeugt ein
+  neues C++-Sourcefile, das Code enthält, der das Objekt
+  initialisiert.  Dieses File muß compiliert und zu den anderen
+  Objekt-Files gelinkt werden.  Die genannten Ausdrücke werden vom
+  Präprozessor entfernt bzw. so verändert, daß der C++-Compiler den
+  Code problemlos übersetzen kann.
+    
+  Die Implementation von Foo::setValue():
+\begin{verbatim}
+void Foo::setValue( int v ) 
+ {
+   if ( v != val ) {
+    val = v;
+    emit valueChanged(v);
+   }
+ }
+\end{verbatim}
+  
+  Ein weiterer moc-Ausdruck ist ,,emit'', womit ein Signal versendet
+  wird.  Nun werden zwei Instanzen von Foo miteinander verbunden:
+
+\begin{verbatim}
+Foo a, b;
+connect(&a, SIGNAL(valueChanged(int)), &b, SLOT(setValue(int)));
+b.setValue( 11 );
+a.setValue( 79 );
+b.value();          // gibt 79 zurück
+\end{verbatim}
+    
+  Durch Aufrufen von a.setValue() verschickt a ein Signal, worauf der
+  damit verbundene Slot b.setValue() aufgerufen wird.
+  
+  Durch den Signal/Slot-Mechanismus von QT können zwei Objekte
+  zusammen\-arbeiten, ohne daß sie sich gegenseitig kennen (es muß
+  nur jemand da sein, der sie verknüpft).  Dies erleichtert die
+  Programmierung von GUIs ungemein, da in einem neuen
+  Widget\footnote{Element einer graphischen Oberfläche} oft
+  Standardkomponenten wie Pushbuttons etc. eingebunden werden müssen.
+  QT übernimmt für den Programmierer die Verwaltung solcher
+  Standardkomponenten, sie müssen nur dynamisch alloziert (mit new)
+  und connected werden.
+  
+  Genau dies ist aber auch bei der Kommunikation im Läufer mehr als
+  nützlich: Die Treiber können unabhängig von der GUI entwickelt
+  werden und auch in eventuellen Nachfolgeprojekten Verwendung finden.
+  Sie stellen ihre Funktionalität als Slot zur Verfügung und emittieren
+  Signale, wenn sie der GUI etwas mitteilen wollen.  Wohin diese
+  Signale dann geleitet werden, ist Sache desjenigen, der den Treiber
+  verwenden wird.
+  
+  Aufgrund dieser Flexibilität wurde sich für diese Art der Anbindung
+  entschieden.  Informationen über QT finden sich auf \cite{mwtt}.
+  Der einzige Nachteil an dieser Lösung ist die Abhängigkeit von QT,
+  was bei der Nutzung von QT als GUI für den PDA aber kein großes
+  Hindernis darstellt.
+
+\end{description}
+
+\subsection{Zugriff der Treiber auf den CANBus}
+Für den Zugriff auf den CANBus kann man ebenfalls die sehr mächtigen
+Strukturen von QTopia nutzen.  In diesem Fall sendet das Framework ein
+Signal, daß eine neue Nachricht vorliegt.  Über einen
+Verteilermechanismus würde diese Nachricht dann als Signal an den
+entsprechenden Treiber als Signal gesendet.
+
+Im Läufer wird dieser Ansatz allerdings nicht verfolgt.  Statt dessen
+erben alle Treiber von einer gemeinsamen Basisklasse, die die
+Funktionalität des Sendens und Empfangens von Nachrichten zur
+Verfügung stellt.  Das Empfangen ist dabei eine abstrakte virtuelle
+Methode, die von jedem Treiber einzeln implementiert werden muß.  Zu
+diesem Vorgehen haben zwei Überlegungen geführt.
+
+Zum einen, den Teil der Bibliothek, der nicht direkt mit der GUI
+zusammenhängt, möglichst portabel zu gestalten.  Dies bedeutet auch,
+daß man sich in diesem Bereich nicht von QT's Präprozessor abhängig
+machen kann.
+
+Zum anderen sind die anzubietenden Funktionalitäten in diesem Bereich
+wesentlich übersichtlicher und auch schon im Laufe dieser Arbeit
+bekannt: Das Senden und Empfangen von Nachrichten.  Diese genaue
+Kenntnis der anzubietenden Funktionen nicht zu nutzen würde unnötige
+Komplexität im Programm hervorrufen und die Bibliothek nur unnötig
+vergrößern.
+
+\subsection{Implementierungsdetails}
+Abbildung \ref{mw_uml} zeigt ein UML der entstandenen Bibliothek.  Auf
+weitere Details zur Implementierung soll an dieser Stelle unter
+Hinweis auf die im Anhang vorhandene API\footnote{API: Application
+  Programming Interface}-Referenz verzichtet werden.
+
+\begin{figure}
+  \center \includegraphics[width=15.0cm]{mw/bilder/uml.eps}
+  \caption{UML der Klassenbibliothek}
+  \label{mw_uml}
+\end{figure}
+
+
+%------------------------------------------------------------
+\newpage
+\section{Entstandene Software: DebugTreiber}
+
+\subsection{Zweck des Tools}
+Im Rahmen der Gespräche mit den ebenfalls am Projekt Läufer
+beteiligten Maschinenbau-Studenten kam immer mehr zum Vorschein, daß
+diese für die Entwicklung der mechatronischen Teile noch zusätzliche
+Werkzeuge benötigen.  So ist es für eine zügige Entwicklung von
+Komponenten nicht vertretbar, die Hardware parallel zum Treiber
+entwickeln zu müssen.
+
+Ein Entwickler z.B. eines Blinkers sollte die Möglichkeit erhalten,
+seine Hardware zu testen, ohne tatsächlich schon den Treiber dazu
+entwickelt zu haben. Da dieser Entwickler ja weiß, welche ID sein
+Gerät hat und welche Operationen es versteht, kann er diese manuell
+eingeben und die korrekte Funktionsweise entweder anhand von
+Änderungen am Gerät selber (z.B.: Lampe blinkt) oder aber anhand von
+Rückmeldung über den CAN-Bus beurteilen.  Genau dies soll der
+DebugTreiber ermöglichen: Manuelles Senden und Empfangen von
+Nachrichten an ein bzw. von einem bestimmten Gerät, um den
+Hardware-Entwicklern die Arbeit zu erleichtern.
+
+Da wir bei der Kommunikation zwischen Gerät und Treiber(siehe
+\ref{mw_com}) ein hinreichend generisches Verfahren einsetzen, war es
+leicht möglich, ein Programm zu entwickeln, das einen solchen
+,,Handbetrieb'' eines Gerätes ermöglicht.
+
+\subsection{Funktionalitätsübersicht}
+
+\subsubsection{Senden}
+Abbildung \ref{mw_screen_senden} Zeigt die GUI zum Senden einer
+Message an ein Gerät am CAN-Bus.  Wie in \ref{mw_com} beschrieben setzt
+sich das Protokoll aus Operationen und eventuellen Parametern
+zusammen.
+
+Diese Messages kann man hier (numerisch) zusammenstellen, um dem unter
+,,Setup'' eingestellten Gerät eine Message zu senden.  Die GUI sollte
+weitgehend selbsterklärend sein.  Sie verhindert, daß man zwar
+Parameter eingibt, diese aber nicht gesendet werden, indem man vorher
+auswählen muß, wieviele Parameter es denn werden sollen.  Dies
+geschieht mit dem Eingabefeld ,,Anzahl Datenbytes''.
+
+Dieses Tool kann (und will) allerdings nicht verhindern, daß einem
+Gerät Befehle gesendet werden, die dieses nicht verstehen kann.  Dies
+muß der Benutzer sicherstellen, der ja in der Regel mit dem Entwickler
+des Treibers für dieses Gerät identisch sein wird.
+
+\begin{figure}
+  \center
+  \includegraphics[width=5.0cm]{mw/bilder/GUI_senden.eps}
+  \caption{Screenshot Senden}
+  \label{mw_screen_senden}
+\end{figure}
+
+
+\subsubsection{Empfangen}
+Abbildung \ref{mw_screen_empfangen} zeigt die GUI zum Empfangen von
+Messages vom CAN-Bus.  Das Tool speichert eingehende Messages, die
+unter der im ,,Setup'' eingestellten ID eintreffen.
+
+Mit dem Feld ,,Übertragung'' kann man auswählen, welche der
+gespeicherten Messages man betrachten möchte.  Dieses Feld zeigt
+standardmäßig immer die Nummer der letzten empfangenen Message an.
+
+Da dieser Wechsel jedoch recht häufig sehr schnell von statten gehen
+kann, ist es möglich, diesen Prozeß zu pausieren.  Dies geschieht
+mittels des Kontrollfeldes ,,Pause''.  Einkommende Nachrichten werden
+bei dieser Einstellung natürlich weiterhin im Hintergrund archiviert.
+
+\begin{figure}
+  \center \includegraphics[width=5.0cm]{mw/bilder/GUI_empfangen.eps}
+  \caption{Screenshot Empfangen}
+  \label{mw_screen_empfangen}
+\end{figure}
+
+\subsubsection{Setup}
+Abbildung \ref{mw_screen_setup} zeigt die GUI zum Einrichten des
+Debug-Tools.  Hier kann man die gewünschte ID des Gerätes einstellen,
+für das sich das Tool als Treiber registriert.  Alternativ kann man
+hier auswählen, einen sogenannten ,,Broadcast'' zu senden, der dann an
+alle Busteilnehmer gesendet wird.
+
+\begin{figure}
+  \center \includegraphics[width=7.0cm]{mw/bilder/GUI_setup.eps}
+  \caption{Screenshot Setup}
+  \label{mw_screen_setup}
+\end{figure}
+
+
+\newpage
+\section{Fazit}
+Im Rahmen dieses Teilbereichs der Mechatronik-Entwicklung für das
+Projekt Läufer wurde der Rahmen für das Fahrerinformationssystem des
+Läufers entworfen und implementiert.  Dieser Rahmen wird dann von den
+Maschinenbauern mit ihrer spezifischen Fachkenntnis ausgefüllt
+werden.
+
+Daß das Framework hinreichend Leistungsfähig ist, bewies die zügige
+Entwicklung der Demo für die Cebit 2002, bei der der Läufer und seine
+Mechatronik ausgestellt wurde.  Abbildung \ref{mw_cebit_gui} zeigt die
+hierzu entwickelte GUI.  Auch bei dieser Entwicklung hat sich die Wahl
+von Linux als PDA-System bewährt, da umfangreicher Support seitens der
+Entwickler auf den entsprechenden Mailinglisten gegeben wurde, ohne
+den eine solch schnelle Entwicklung sicher nicht möglich gewesen wäre.
+
+\begin{figure}
+  \center \includegraphics[width=7.0cm]{mw/bilder/Menu.eps}
+  \caption{Der Compaq IPAQ mit der Läufer-Software für die Cebit 2002}
+  \label{mw_cebit_gui} 
+\end{figure}
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex 
+%%% TeX-master: "master"
+%%% End:
+
