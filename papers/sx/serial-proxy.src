@@ -1148,13 +1148,13 @@ _SPI_CAN_read_instr
 
 	cploop_for_CAN_read2
 	
-	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	MOV	SPI_CAN_ADRESS, #SPI_CAN_BANK
 	ADD	SPI_CAN_ADRESS, #2
 	ADD	SPI_CAN_ADRESS,SPI_temp
 	MOV	FSR,SPI_CAN_ADRESS
 	MOV	STORE_FOR_IND, IND
 	SET_BANK SPI_BANK	
-	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	MOV	SPI_CAN_ADRESS, #GLO_XCH_BANK
 	ADD	SPI_CAN_ADRESS, SPI_temp
 	MOV	FSR,SPI_CAN_ADRESS
 	MOV	IND,STORE_FOR_IND
@@ -1190,12 +1190,12 @@ _SPI_CAN_write_instr
 	
 	cploop_for_CAN_read1
 	
-	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	MOV	SPI_CAN_ADRESS, #GLO_XCH_BANK
 	ADD	SPI_CAN_ADRESS, SPI_temp
 	MOV	FSR,SPI_CAN_ADRESS
 	MOV	STORE_FOR_IND, IND
 	SET_BANK SPI_BANK
-	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	MOV	SPI_CAN_ADRESS, #SPI_CAN_BANK
 	ADD	SPI_CAN_ADRESS, #2
 	ADD	SPI_CAN_ADRESS,SPI_temp
 	MOV	FSR,SPI_CAN_ADRESS
@@ -1208,6 +1208,8 @@ _SPI_CAN_write_instr
 	; select device
 	MOV	W, #SPI_CAN
 	CALL	@SPI_select_device
+	INC	PARAM1
+	INC	PARAM1
 	CALL	@SPI_CAN_rwx
 	MOV	W, #SPI_NOTCON
 	CALL	@SPI_select_device
@@ -1221,8 +1223,9 @@ _SPI_CAN_write_instr
 _SPI_CAN_RTS
 
 	SET_BANK	SPI_CAN_BANK
-	MOV	CAN_instr_byte, #%1000_0111 ; code for write
+	MOV	CAN_instr_byte, #%0000_0111 ; code for write
 	AND	CAN_instr_byte,PARAM1
+	OR	CAN_instr_byte, #%1000_0000 ; Mark as ready to send
 	
 	MOV	CAN_Adr_byte, PARAM2  ;any adress
 	CLR	PARAM2	; keine Bytes einlesen
@@ -1284,11 +1287,11 @@ _SPI_CAN_bit_mod_instr ; bit modify instruction
 
 	; zu schreibendes Bytes aus GLO_XCH holen
 	SET_BANK SPI_BANK
-	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	MOV	SPI_CAN_ADRESS, #GLO_XCH_BANK
 	MOV	FSR,SPI_CAN_ADRESS
 	MOV	STORE_FOR_IND, IND
 	SET_BANK SPI_BANK
-	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	MOV	SPI_CAN_ADRESS, #SPI_CAN_BANK
 	ADD	SPI_CAN_ADRESS, #3
 	MOV	FSR,SPI_CAN_ADRESS
 	MOV	IND, STORE_FOR_IND
@@ -1422,12 +1425,6 @@ _SPI_CAN_rwx	;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		
 		
 	
-			JB	TESTBIT, test_it
-			SETB	TESTBIT
-			SKIP
-			test_it
-			CLRB	TESTBIT
-		
 		DEC	SPI_numofwords
 
 		MOV	SPI_bitcounter , #8		; Bitcounter neu initialisieren
@@ -1573,6 +1570,34 @@ DATA_SEG_COM MACRO
 INIT_SEG_COM MACRO
 	SET_BANK COM_BANK
 	CLRB com_f_sent
+
+	;; Disable all interrupts on CAN controller
+	MOV PARAM1, #%0001_1111
+	MOV PARAM2, #%0010_1011	; CANINTE
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #$0
+	CALL @SPI_CAN_bit_mod_instr
+
+	;; Set max. msg priority for 0
+	MOV PARAM1, #%0000_0011	; Lowest two bits
+	MOV PARAM2, #%0011_0000	; TXB0CTRL
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #%0000_0011	; Max. priority
+	CALL @SPI_CAN_bit_mod_instr
+	
+	;; Set max. msg priority for 1
+	MOV PARAM1, #%0000_0011	; Lowest two bits
+	MOV PARAM2, #%0101_0000	; TXB1CTRL
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #%0000_0001	; Avg. priority
+	CALL @SPI_CAN_bit_mod_instr
+	
+	;; Set max. msg priority for 2
+	MOV PARAM1, #%0000_0011	; Lowest two bits
+	MOV PARAM2, #%0110_0000	; TXB2CTRL
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #%0000_0000	; Low priority
+	CALL @SPI_CAN_bit_mod_instr
 	ENDM
 
 	
@@ -1601,6 +1626,7 @@ COM_signal_fatal
 
 ;;; INTERNE API
 CAN_send_mlp
+	JMP _can_send_mlp
 	ENDM
 
 
@@ -1618,7 +1644,7 @@ _com_read_message_any
 	CALL @SPI_CAN_read_status_instr
 	MOV TMPREG, RETVAL
 	CLR RETVAL
-	SNB TMPREG.0		; CANINTF.RX0IF nicht gesetzt -> nichts empfangen
+	SB TMPREG.0		; CANINTF.RX0IF nicht gesetzt -> nichts empfangen
 	RETP
 
 	;; Etwas empfangen: Nachricht auslesen!
@@ -1682,17 +1708,17 @@ _can_send_mlp
 	SET_BANK COM_BANK
 	
 	MOV OUTPUT, #%0011_0000	; TX-Bank 0
-	MOV com_port, #1
+	MOV com_port, #%0000_0001
 	SB RETVAL.2
 	JMP :have_writer	; TX-Bank 0 ist frei
 	
 	MOV OUTPUT, #%0100_0000	; TX-Bank 1
-	MOV com_port, #2
+	MOV com_port, #%0000_0010
 	SB RETVAL.4
 	JMP :have_writer	; TX-Bank 1 ist frei
 	
 	MOV OUTPUT, #%0101_0000	; TX-Bank 2
-	MOV com_port, #4
+	MOV com_port, #%0000_0100
 	SB RETVAL.6
 	JMP :have_writer	; TX-Bank 2 ist frei
 	
@@ -1708,6 +1734,11 @@ _can_send_mlp
 	SET_BANK COM_BANK
 	MOV PARAM1, com_addr0
 	MOV PARAM2, com_addr1
+	CLC
+	RR PARAM2
+	RR PARAM2
+	RR PARAM2
+	RR PARAM2 		; Plaziere Opbits auf 3 MSBs
 	SET_BANK GLO_XCH_BANK
 	MOV $10, PARAM1
 	MOV $11, PARAM2
@@ -1723,6 +1754,14 @@ _can_send_mlp
 	OR PARAM2, #$05		; TXBnDLC
 	CALL @SPI_CAN_write_instr ; Payload-Groesse schreiben
 
+	SET_BANK COM_BANK
+	MOV PARAM1, com_port
+	SET_BANK GLO_XCH_BANK
+	MOV $10,	#%0000_1000
+	MOV PARAM1, 	#%0000_1000
+	MOV PARAM2, OUTPUT	; TXBnCTRL
+	CALL @SPI_CAN_bit_mod_instr
+			
 	SET_BANK COM_BANK
 	MOV PARAM1, com_port
 	CALL @SPI_CAN_RTS	; Fire, Mr Worf!
@@ -1877,6 +1916,27 @@ start		JMP		@main
 
 
 ;--------------------------------------
+; Routinen Page 0
+;--------------------------------------
+
+
+	org $600
+	
+		CALL_SEG_COM
+
+		CODE_SEG_COM
+
+
+	org $800
+
+		SPI_CALL_SEG
+	
+		SPI_CODE_SEG
+
+
+	
+			
+;--------------------------------------
 ;Initialisierung
 ;--------------------------------------
 
@@ -1947,6 +2007,14 @@ main
 		INIT_SEG_MLP
 		INIT_SEG_COM
 		SPI_INIT_SEG
+
+		CLRB TESTBIT
+
+		SET_BANK GLO_XCH_BANK
+		MOV $10, #$42
+		MOV PARAM1, #5
+		MOV PARAM2, #7
+		CALL @CAN_send_mlp
 			
 		; interrupt aktivieren
                 MOV !OPTION, #OPTION_ACCRTCC_INT  ;interrupt wieder anschalten
@@ -1976,25 +2044,6 @@ main
 	JMP	mainloop
 
 	
-;--------------------------------------
-; Routinen Page 0
-;--------------------------------------
-
-
-	org $600
-	
-		CALL_SEG_COM
-
-		CODE_SEG_COM
-
-
-	org $800
-
-		SPI_CALL_SEG
-	
-		SPI_CODE_SEG
-
-		
 ;;; Globale Fehlerbehandlung 
 	
 ORG	$c00

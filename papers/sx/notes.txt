@@ -1,0 +1,108 @@
+===================================
+ comtest
+
+- Testprogramm fuer Serielle (standard /dev/ttyS1)
+
+- papers/mechatronik_studienarbeit/Source/laeufer-lib
+  * mit Makefile
+  * Schritt 1:
+     'make'
+  * Schritt 2:
+     './comtest'
+  * Hilfe per '?'
+
+- mlp_bus.cc hat momentan IO_DEBUG definiert, das gibt zusaetzliche Debugausgaben
+
+
+===================================
+  serial-proxy.src
+
+- Wesentliche Ergebnisse in serial-proxy.src: "Der" Proxy, der Verbindung zwischen
+  Seriell und CAN machen soll.
+  (laeuft auf 48 MHz).
+
+- Verwendet MLP/Seriell Protokoll (mlp_bus.cc)
+
+- Implementierung erlaubt 5 Parameter neben Kommandobyte
+
+- Alle Sendungen (ausser seriell von der Platine zum Rechner) senden immer 5
+  Bytes mit
+
+- Makefile erzeugt 'comtest'-Programm zum Debuggen des serial-proxy
+
+- Serial-Proxy hat Geraete-ID 1, versteht Kommandos:
+
+  00: Lampe loeschen
+      Parameter 1: Bit 0: LED blau
+		   Bit 1: LED gruen
+
+  01: Lampe aktivieren
+      Parameter 1: Bit 0: LED blau
+		   Bit 1: LED gruen
+
+  02: (keine Parameter) Versionsnummer abfragen
+
+
+- Serial-Proxy leitet alle anderen Kommandos an CAN-Bus weiter (theoretisch)
+
+
+=====================================
+  com.src
+
+- Framework fuer Clients
+
+- Koennen eigene Geraete-ID definieren
+
+
+
+======================================
+  com-led-slave.src
+
+- Verwendung von com.src (fast identisch dazu) 
+
+- Zusaetzlich zu com.src in der Hauptschleife:
+
+		CALL @COM_read_message
+
+		TEST RETVAL
+		JZ loopeindeutig ; Keine Botschaft angekommen
+
+		CSNE OUTPUT, #1
+		CLRB LEDblue
+		CSNE OUTPUT, #2
+		SETB LEDblue
+	
+		CSNE OUTPUT, #3
+		CLRB LEDgreen
+		CSNE OUTPUT, #4
+		CLRB LEDgreen
+
+
+
+
+======================================
+         API-Implementierung
+======================================
+
+* Ringbuffer fuer SERIAL
+  - Dokumentation in Source-Dateien
+
+* COM (serial-proxy.src (hat nur Teilmenge der Funktionen), com.src)
+  - KommunikationsAPI, die auf CAN_SPI aufbaut
+  - Wesentliche Sendefunktion (geshared zw. com.src und serial-proxy.src) ist
+    CAN_send_mlp
+  - API in Dateien
+  - CALL_SEG_COM
+  - CODE_SEG_COM
+  - ...
+
+* MLP (serial-proxy.src, serial.src)
+  - Verwendet SERIAL-API mit Ringbuffern
+  - API zum Versand von MLP/Serial-codierten Daten ueber serielle Schnittstelle
+  - MLP_MAINLOOP implementiert wesentliche Funktionalitaet
+  - API in Dateien
+  - CALL_SEG_MLP
+  - CODE_SEG_MLP
+  - DATA_SEG_MLP
+  - DATA_SEG_MLP_WRITE
+  - ...
