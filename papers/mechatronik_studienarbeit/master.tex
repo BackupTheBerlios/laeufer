@@ -15,13 +15,15 @@
   Informatik\\Prof. Dr.-Ing. S. A. Huss \vfill Entwicklung eines
   Mechatronik-Frameworks für das Projekt Läufer \vfill }
 
-\lhead[\chaptername{} \thechapter{}: \chaptermark{}]{}
+\pagestyle{headings}
+
+\lhead[Unterkapitel]{\chaptername{} \thechapter{}: \chaptermark{}} % der inhalt der geschweiten ist neu
 \chead[]{}
-\rhead[]{Unterkapitel}
+\rhead[\chaptername{} \thechapter{}: \chaptermark{}]{Unterkapitel}	% der inhalt der eckigen ist neu
 \lfoot[\thepage]{}
 \cfoot[]{}
 \rfoot[]{\thepage}
-\pagestyle{headings}
+
 \sloppy 
 
 \begin{document}
@@ -85,35 +87,35 @@ angegebenen Literatur und Hilfsmittel angefertigt zu haben.
 \noindent
 Darmstadt, den \today \hfill Christoph Reichenbach
 
+\newpage
 
-\begin{abstract}
+\section*{Zusammenfassung}
   
-  Im Rahmen des Projektes Läufer wurde mit dieser Arbeit ein
-  mechatronisches System für den Läufer entwickelt. Dieses System
-  schliesst drei Komponenten ein: Das Fahrerinformationssystem, eine
-  Platine samt Software für die Entwicklung mechatronischer Systeme
-  sowie eine auf CANBus basierende Kommunikationsstruktur.
-
+ Im Rahmen des Projektes Läufer wurde mit dieser Arbeit ein
+ mechatronisches System für den Läufer entwickelt. Dieses System
+ schliesst drei Komponenten ein: Das Fahrerinformationssystem, eine
+ Platine samt Software für die Entwicklung mechatronischer Systeme
+ sowie eine auf CANBus basierende Kommunikationsstruktur.
   
-  Die vorliegende Arbeit beschreibt die dabei getroffenen Design- und
-  Produktentscheidungen vor dem Projektkontext. Im ersten Kapitel soll
-  zu diesem Zweck zunächst ein Überblick über das Projekt Läufer
-  gegeben werden. Darauf folgt im zweiten Kapitel eine sich aus dem
-  Projekt ergebende Anforderungsdarstellund an die Mechatronik. Diese
-  beiden Kapitel wurden in enger Zusammenarbeit mit den Projektleitern
-  des Läufers erstellt.
+ Die vorliegende Arbeit beschreibt die dabei getroffenen Design- und
+ Produktentscheidungen vor dem Projektkontext. Im ersten Kapitel soll
+ zu diesem Zweck zunächst ein Überblick über das Projekt Läufer
+ gegeben werden. Darauf folgt im zweiten Kapitel eine sich aus dem
+ Projekt ergebende Anforderungsdarstellund an die Mechatronik. Diese
+ beiden Kapitel wurden in enger Zusammenarbeit mit den Projektleitern
+ des Läufers erstellt.
   
-  Die folgenden drei Kapitel beschreiben die drei Komponenten des
-  mechatronischen Systems. Dabei wird von der Anwenderschnittstelle
-  über die Kommunikation der Geräte bis zu den Geräten selbst
-  vorgegangen.
+ Die folgenden drei Kapitel beschreiben die drei Komponenten des
+ mechatronischen Systems. Dabei wird von der Anwenderschnittstelle
+ über die Kommunikation der Geräte bis zu den Geräten selbst
+ vorgegangen.
   
-  Im letzten Kapitel wird dann eine kurze Zusammenfassung und ein
-  Ausblick gegeben.
+ Im letzten Kapitel wird dann eine kurze Zusammenfassung und ein
+ Ausblick gegeben.
 
-\end{abstract}
+\newpage
 
-
+%
 % Inhaltsverzeichnis
 \tableofcontents
 
