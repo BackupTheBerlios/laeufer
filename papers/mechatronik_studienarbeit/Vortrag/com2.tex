@@ -1,3 +1,39 @@
-\begin{slide}{Kommunikation zum zweiten}
+\overlays{1}{
+  \begin{slide}{R\"uckversand}
+    \begin{itemize}
+      \item{Codierung in {\bf LLZ}/{\bf LLO}}
+      \item{Versand \"uber CAN mit nachrichtenspezifischer Priorit\"at
+	\begin{itemize}
+	\item{Transfer bei expliziter Busfreigabe des Masters (in regelm\"a\ss igen Intervallen)}
+	\item{Acknowledge direkt von Proxy}
+	\end{itemize}
+      }
+      \item{Serieller Versand an PDA
+	\begin{itemize}
+	\item{Codierung in {\bf SLP}}
+	\end{itemize}
+      }
+    \end{itemize}
+  \end{slide}
+}
 
-\end{slide}
+
+\overlays{1}{
+  \begin{slide}{Fehlerbehandlung}
+    \begin{itemize}
+    \item{Bitfehler von CAN erkannt}
+    \item{Regelm\"a\ss ige Keep-Alives, sonst Selbstabschaltung der Peripherie}
+    \item{{\bf LLO}: Explizite Acknowledgements}
+    \item{PDA $\rightarrow$ Peripherie
+      \begin{itemize}
+      \item{Entkopplung durch Sequenzz\"ahler}
+      \end{itemize}
+    }
+    \item{Peripherie $\rightarrow$ PDA
+      \begin{itemize}
+      \item{Nachrichten werden unmittelbar von Proxy best\"atigt}
+      \end{itemize}
+    }
+    \end{itemize}
+  \end{slide}
+}
