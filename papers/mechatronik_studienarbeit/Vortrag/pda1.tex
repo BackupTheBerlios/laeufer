@@ -33,28 +33,22 @@
 
 \overlays{5}{
   \begin{slide}{DPI aus Entwicklersicht}
-    \untilSlide{1}{
+    \untilSlide*{1}{
       \begin{center}
-        \includegraphics[width=8cm]{zustaende.eps}
+        \includegraphics[width=8cm]{zustaende.eps}\\
         Informal: Konzept der kommunizierenden Automaten
       \end{center}
     }
     \fromSlide{2}{
-      \begin{minipage}{7.5cm}
-        Vaterklasse \texttt{Driver} für alle Treiber
-        \begin{itemize}
-          \fromSlide{3}{\item GUI ruft \texttt{Blinken()} des Treibers
-            auf.}
-          \fromSlide{4}{\item \texttt{send(Message)}: Versenden von
-            \emph{Nachrichten}.}
-          \fromSlide{5}{\item \texttt{receive(Message)}: Empfang von
-            Nachrichten.}
-        \end{itemize}
-      \end{minipage}
-      \begin{minipage}{3cm}
-        \center
-        \includegraphics[width=3cm]{dpi.eps}
-      \end{minipage}
+      Vaterklasse \texttt{Driver} für alle Treiber
+      \begin{itemize}
+        \fromSlide{3}{\item GUI ruft \texttt{Blinken()} des Treibers
+          auf.}
+        \fromSlide{4}{\item \texttt{send(Message)}: Versenden von
+          \emph{Nachrichten}.}
+        \fromSlide{5}{\item \texttt{receive(Message)}: Empfang von
+          Nachrichten.}
+      \end{itemize}
     }
   \end{slide}
 }%Overlays
