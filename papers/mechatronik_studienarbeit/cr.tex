@@ -58,56 +58,52 @@ Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe d
 
 \newpage
 \section{Wahl der Komponenten}
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Komentar zur interdiszipl. Erörterung der Anforderungen
-
-
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+%Komentar zur interdiszipl. Erörterung der Anforderungen
 \subsection{Microcontroller}
-HC-Familie Motorola
 
-8051-Familie 
--Infineon
-SAB80C35
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Intels 8-Bit Industriestandard:
-Vom 8008 zu 8080 und 8085, Vergleich mit Zilog Z80 22.4.2002 
+%HC-Familie Motorola
 
-Preiswert und leistungsfähig:
-Motorola 6800 und 6809 im Vergleich zu MOS 6502 
+%8051-Familie 
+%-Infineon
+%SAB80C35
+%xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+%Intels 8-Bit Industriestandard:
+%Vom 8008 zu 8080 und 8085, Vergleich mit Zilog Z80 22.4.2002 
 
-Die 16Bit-Ära
-Die Konkurrenten:
-Intel 8086/88 vs. Motorola 68K 29.4.2002
+%Preiswert und leistungsfähig:
+%Motorola 6800 und 6809 im Vergleich zu MOS 6502 
 
-Texas Instruments TI9900, Zilog Z8000 und National Semi. NS16016
+%Die 16Bit-Ära
+%Die Konkurrenten:
+%Intel 8086/88 vs. Motorola 68K 29.4.2002
 
-Von 16 auf 32Bit:
-Intel 80286-486 und Pentium(I) vs. Motorola 68020-060 und NS16032 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+%Texas Instruments TI9900, Zilog Z8000 und National Semi. NS16016
 
-SAB80C166
+%Von 16 auf 32Bit:
+%Intel 80286-486 und Pentium(I) vs. Motorola 68020-060 und NS16032 
+%xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-SAB C167LM
+%SAB80C166
 
-80C31
+%SAB C167LM
 
-68HC11
+%80C31
 
-HC12-Familie Motorola
+%68HC11
 
-MC68HC812A4
+%HC12-Familie Motorola
 
-8-16-32 bit MCs
+%MC68HC812A4
 
-PIC by Microchip
+%8-16-32 bit MCs
+
+%PIC by Microchip
 
 
-Taktfrequenz
-Preis
-Erhältlich
-Entwicklungsumgebung
+%Taktfrequenz
+%Preis
+%Erhältlich
+%Entwicklungsumgebung
 
 
 Die Wahl des Microcontrollers beruht auf der Empfehlung der Firma Cetron. Im folgenden werden im groben die Eigenschaften beschrieben. Weitere Details
@@ -139,16 +135,17 @@ Um eine flexible Nutzung der Platine zu sichern gilt es eine Vielzahl von Anschl
 genutzen Bauelemente und Funktionalitäten der Platine beschrieben.
 \begin{description}
 \item[Serial Peripheral Interface (SPI)]
+\label{cr_SPI-Bus}
 Die große Anzahl an Bauelementen macht eine sparsame Nutzung der I/O-Ports am Microprozessor nötig.
 Zu diesem Zweck sind der CAN-Bus-Chip, zwei Low-Side-Switches, ein Analog-Digital-Wandler und ein Digital-Analog-Wandler über ein SPI-Bus System mit
 dem Microcontroller verbunden. Jeder dieser Bausteine hat einen Chipselect-Eingang der bei einer logischen Null den jeweiligen Baustein aktiviert. Der
 Datentransfer geschieht dann zwischen Microcontroller und dem selektierten Baustein. 
 
-Das jeweilige Chipselect wird über einen Multplexer gesetzt. Diese Lösung spart nicht nur wertvolle Pins am Port des Microcontrollers, sie garaniert
+Das jeweilige Chipselect wird über einen Multiplexer gesetzt. Diese Lösung spart nicht nur wertvolle Pins am Port des Microcontrollers, sie garaniert
 auch das keine zwei oder mehr Geräte auf den Datentransfer reagieren.
 \item[Kommunikation]
-Neben dem SPI-Bus zur internen Kommunikation stehen eine serielle Schnittstelle und ein CAN-Bus für die externe Kommunikation zur Verfügung. 
-CAN -Jameson Fragen.
+Neben dem SPI-Bus zur internen Kommunikation stehen eine serielle Schnittstelle und, wie bereits im vorangegangenem Kapitel
+beschrieben, ein CAN-Bus für die externe Kommunikation zur Verfügung. 
 Die serielle Schnittstelle ist direkt über einen Wandlerbaustein (MAX202CSE) mit dem Microcontroller verbunden. Durch die Anbindung des 
 RXD- (RXD = Receive Data) und CTS-Signals (CTS = Clear To Send) an den weckfähigen Port des Microcontrollers ist eine Aktivierung der Platine über die
 serielle Schnittstelle möglich.
@@ -369,17 +366,14 @@ Im folgenden werden einige der Direktiven beschrieben und wie sie genutzt werden
 \subsubsection{EQU-Direktive}
 Mit der EQU-Direktive werden Konstanten oder Registern Namen zugeordnet.
 \begin{verbatim}
-
 LED	EQU 	RB.5        ; sechstes Bit auf Port B wird mit LED benannt
 FOO	EQU 	\$0a         ; das Register 0a wird mit FOO benannt
 BAR	EQU 	#%0000_0011 ; die Konstante BAR hat den Wert drei
-
 \end{verbatim}
 \subsubsection{ORG-Direktive}
 Die ORG-Direktive dient der genauen Platzierung von Programmcode im Programmspeicher. Man definiert eine Speicheradresse zwischen 000 und FFF 
 (hexadezimal) an welcher der folgende Programmcode beginnen soll.
 \begin{verbatim}
-
 ORG  #000	;der folgende Code wird ab Adresse 000 eingefügt
 # Es folgt die Interrupt-Routine
 ...
@@ -388,15 +382,12 @@ ORG  #200	;der folgende Code steht ab Adresse 200 (hex)
 CALL FOO	
 MOV  \$01, #2	
 ...
-
 \end{verbatim}
 \subsubsection{DS-Direktive}
 Die DS-Direktive benennt einen Programmspeicherbereich. Die größe des Bereichs in Byte wird als Argumnet übergeben.
 \begin{verbatim}
-
 FOO	DS	1
 BAR	DS	2
-
 \end{verbatim}
 \subsubsection{MACRO-Direktive}
 Ein nützliches Werkzeug bei der Speicherorganisation ist die MACRO-Direktive. Programmcode, der in ein Macro eingebunden wird lässt sich leicht aus dem
@@ -417,23 +408,19 @@ FOO		; Macro FOO wird bei 200 (hex) eingefügt
 \subsubsection{\$-Direktive}
 Das Dollarzeichen liefert die aktuelle Bank zurück.
 \begin{verbatim}
-
 FOO EQU \$	;FOO enthält die aktuelle Bank
-
 \end{verbatim}
 \subsection{Konzeption}
 \label{Konzeption}
-
 Bei der Konzeption der Module galt es die potentiellen Schwierigkeiten mit Unterprogrammaufruf, Verteilung der Programmteile auf den Speicher, sowie
 den Zugriff auf Register für den Entwickler möglichst einfach handhabbar zu machen.
 Um dies zu erreichen eignet sich eine Modulstruktur die durch geschicktes Einsetzen der Macro-Direktiven die oben genannten Schwierigkeiten umgeht.
-
 \subsubsection{Modulstruktur}
 Man unterteilt jedes Modul in verschiedene Segmente. Begreift man nun ein Assemblerprogramm als Automat mit den Zuständen Initialisierung,
 Hauptfunktion und Interrupt, so werden die einzelnen Segmente an der passenden Stelle eingebunden.
 \begin{figure}
   \center
-  \includegraphics[width=400pt]{Automat2.eps}
+  \includegraphics[width=400pt]{Automat.eps}
   \caption{Ein Assemblerprogramm als Automat}
   \label{Automat}
 \end{figure}
@@ -625,28 +612,53 @@ Mittels Puls-Weit-Modulation läßt sich an digital angeteuerten geräten analogen 
 Dabei wird die Trägheit der jeweiligen elektromechanischen Gerätes augenutzt um die digitalen Impulse zu einer monoton steigenden Funktion zu
 ,,wandeln''. 
 Man unterteilt ein Zeitintervall $I$ äquidistant in $n$ kleinere Zeitintervalle $z_{i}$ mit $i = 0,...,n$. 
-Geht man davon aus das ein Ausgang zwei Zustände $low$ und $high$ einnehmen kann, und das jedes Zeitintervall $z_{i}$
-In jedem Zeitintervall $z_{i}$ wählt man nun ein $t_{i}$ mit $0 < t_{i} < |z_{i}|$ ab welchem .
+Geht man davon aus das ein Ausgang zwei Zustände $low$ und $high$ einnehmen kann, und das jedes Zeitintervall $z_{i}$ mit dem Zustand
+$low$ beginnt. In jedem Zeitintervall $z_{i}$ wählt man dann ein $t_{i}$ mit $0 < t_{i} < |z_{i}|$ ab welchem der Wert des Ausgangs
+auf $high$ geht.
+Die Grösse $t_{i}$ bestimmt dann die Intensität mit der das am Ausgang angeschlossene Gerät betrieben wird. Im folgenden wird $t_{i}$
+auch Pulsweite genannt.
+Ein angeschlossener Gleichstromotor zum Beispiel dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als normal.
+Ändert man nun $t_{i}$ in die eine oder andere Richtung, so erzeugt man Dim-effekte.
+Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$, die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$ nach $high$
+übergeht (siehe dazu \ref{cr_pwm}).
 
-Jedes der kleinen Zeitintervalle $z_i$ repräsentiert einen 
-
-Für eine monoton steigende Funktion wie in ------ Abbildung------ wechselt nun der Zustand von logisch 0 auf logisch
-Innerhalb eines Zeitintervalls $z_i$ wechselt der 
-reverse iterations
-
+Auf die Platine sind die Brücken und die PWM-baren Low-Side-Switchs für die Puls Weit Modulation vorgesehen.
+Ein $z_{i}$ entspricht 256 Interrups. In jedem Interrupt wird ein Zähler iterriert bis dieser überläuft. Bei jedem Übelauf wird der
+Zustand auf $low$ bzw $high$ gesetzt (je nachdem ob von Aus nach An oder umgekehrt moduliert wird). Im Hauptprogramm (CODE-Segment)
+wird dann der Zähler mit einer Variable verglichen die dei Pulsweite bestimmt. Je nach Anwendung kann man nun die Pulsweite veändern,
+indem man sie iterriert oder decrementiert bzw. unterschiedlich initialisiert.
+%reverse iterations
 \begin{figure}
   \center
   \includegraphics[width=400pt]{pwm.eps}
   \caption{Puls Weit Modulation einer linearen Funktion}
-  \label{pwm}
+  \label{cr_pwm}
 \end{figure}
 
 \item[SPI]
-mux 
-\item[Sensorik]
-
-Rückkopplung
-
+Um eines der Geräte über den SPI-Bus zu adressieren muss das betreffende Gerät per Chip-Select aktiviert werden.
+Wie in \ref{cr_SPI-Bus} beschrieben erfolgt die Aktivierung der einzelnen Geräte über einen Multiplexer der über die Pins 
+drei bis fünf am Port D an den SX52 angeschlossen ist.
+Die folgenden Konstanten repräsentieren die Pinbelegungen des Port D für die einzelnen Geräte:
+\begin{verbatin}
+SPI_TLE1		EQU \%0000_0000 ; Low-Side-Switch
+SPI_TLE2		EQU \%0000_1000 ; Low-Side-Switch
+SPI_ADC			EQU \%0001_0000 ; Analog-Digital-Wandler
+SPI_DAC			EQU \%0001_1000 ; Digital-Analog-Wandler
+SPI_CAN			EQU \%0010_0000 ; CAN-Controller
+SPI_RESET		EQU \%0010_1000 ; RESET aller RESET-fähigen Geräte
+SPI_NOTCON		EQU \%0011_0000 ; zu keinem Gerät verbunden
+\end{verbatim}
+Das Bitmuster SPI_NOTCON kann genutzt werden um mit Sicherheit kein Gerät anzuwählen, so das man bei der Programmierung nicht auf die
+Pinbelegungen auf Port D achten zu müssen.
+Wenn das Gerät ausgewählt ist, erfolgt Gerätespeziefisch die Übertragung verschiedener Bitmuster.
+Im Detail werden die geräte wie folgt behandelt:
+\begin{description}
+\item{TLE}2 x 12 Bit
+\item{ADC}4 Bit CS 
+\item{DAC}12 Bit
+\item{CAN}siehe dazu Kapitel \ref{jameson_kapitel}.
+\end{description}
 \end{description}
 \newpage
 \section{Fazit}
@@ -655,6 +667,11 @@ Sicht eines Informatikers gilt, hat die Schulung des Münchner Projektteams im Ma
 mechatronischen Projekten genutzt werden. Ebenso hat die Arbeit gezeigt wie wichtig der Austausch zwischen den Teammitgliedern und den
 beteiligten Disziplinen für eine adäquate Anforderungslösung ist.
 \section{Ausblick}
-Anleitung
-C-Compiler
-Techn Docu
+Die Grundlagen für die Nutzung der Platine ist erfolgt. Um die Nutzung noch komfortabler zu gestalten ist es wünschenswert eine
+didaktisch sinnvolle schriftliche Anleitung zu schaffen. Darüber hinaus ist eine ausführliche Technische Dokumentation brauchbar.
+Während meiner Recherchen für Beispielprogramme stieß ich auch auf einen C-Compiler für den SX52. Würde man nun eine grafische Oberfläche
+zur Nutzung der Module mit dem C-Kompiler verbinden, könnte man eine komplette und komfortable Mechatronik-Entwicklungsumgebung als
+Produkt anbieten. Insbesondere in Bildungsbereich könnte dies Anklang finden.
+%Anleitung
+%C-Compiler
+%Techn Docu
