@@ -159,49 +159,23 @@ DATA_SEG_SERIAL_READ	MACRO
 
 SERIAL_READ_BANK	= $
 
-	SER01	DS 1
-	SER02	DS 1
-	SER03	DS 1
-	SER04	DS 1
-	SER05	DS 1
-	SER06	DS 1
-	SER07	DS 1
-	SER08	DS 1
-	SER09	DS 1
-	SER0A	DS 1
-	SER0B	DS 1
-	SER0C	DS 1
-	SER0D	DS 1
-	SER0E	DS 1
-	SER0F	DS 1
+	SER	DS 16
 	
 		ENDM
 
 DATA_SEG_SERIAL_WRITE	MACRO
 SERIAL_WRITE_BANK	= $
 
-	SEW01	DS 1
-	SEW02	DS 1
-	SEW03	DS 1
-	SEW04	DS 1
-	SEW05	DS 1
-	SEW06	DS 1
-	SEW07	DS 1
-	SEW08	DS 1
-	SEW09	DS 1
-	SEW0A	DS 1
-	SEW0B	DS 1
-	SEW0C	DS 1
-	SEW0D	DS 1
-	SEW0E	DS 1
-	SEW0F	DS 1
+	SEW	DS 16
 	
 		ENDM
 
 
 DATA_SEG_GLOBAL_XCHANGE	MACRO
-GLO_XCH_BANK	= $
+GLO_XCH_BANK		= $
+	
 	XCHG	DS 16
+	
 		ENDM
 
 	
@@ -232,6 +206,7 @@ MLP_SOB	EQU #$f0
 MLP_EOB	EQU #$f1
 MLP_ESC EQU #$f2
 MLP_MAXSIZE EQU #$7
+MLP_VERSION EQU #1
 	
 		ENDM
 	
@@ -304,6 +279,44 @@ _mlp_writebuf
 	;; --- END OF DEBUG CODE ---
 	
 	RETP
+
+;;; ============================================================
+	;; handle_command
+	;; Behandelt internes Kommando der Seriell<->CAN Translationsschicht
+	;; PARAMETER:	PARAM1:	CMD
+	;;		PARAM2:	Parameter
+_mlp_handle_command
+	CJNE PARAM1, #0, :no_turnoff_light
+	SNB PARAM1.0
+	CLRB LEDblue
+	SNB PARAM1.1
+	CLRB LEDgreen
+	RETP
+:no_turnoff_light
+
+	CJNE PARAM1, #1, :no_turnon_light
+	SNB PARAM1.0
+	SETB LEDblue
+	SNB PARAM1.1
+	SETB LEDgreen
+	RETP
+:no_turnon_light
+
+	CJNE PARAM1, #2, :no_echo_version
+	SET_BANK GLO_XCH_BANK
+	MOV $10, MLP_SOB
+	MOV $11, #2
+	MOV $12, MLP_VERSION
+	MOV $13, MLP_EOB
+	
+	MOV PARAM1, #4
+	MOV PARAM2, #0
+	CALL @MLP_writebuf
+	RETP
+:no_echo_version
+
+	;; Unrecognized command
+	RETP
 	ENDM
 	
 
@@ -314,8 +327,13 @@ CALL_SEG_MLP	MACRO 0
 	;; PARAMETER:	PARAM1:	Anzahl der zu schreibenden Bytes
 	;;		PARAM2:	Offset des ersten zu schreibenden Bytes in der global exchange bank
 	;; RUECKGABE:	Rueckgabe des anschliessenden seriellen Sendebefehls
-MLP_writebuf:
+MLP_writebuf
 	JMP _mlp_writebuf
+
+
+;;; INTERNE API
+_MLP_handle_command
+	JMP _mlp_handle_command
 	ENDM
 
 
@@ -397,15 +415,26 @@ MLP_MAINLOOP	MACRO 0
 	INC PARAM1
 	CJB PARAM1, MLP_MAXSIZE, :mlp_read_finished_loop
 
-;;; --- TESTCODE ---
 	SET_BANK GLO_XCH_BANK
+	MOV TMPREG, $10
+;;; --- TESTCODE ---
 	OR $10, #$f0		; REPORT from same device
 ;;; --- ENDE DES TESTCODES ---
+
+	AND TMPREG, $1f
+	CJNE TMPREG, #1, :mlp_read_handle_remote
+	;; Handle local command
+	CALL @_MLP_handle_command
+	MOV PARAM1, $11
+	MOV PARAM2, $12
+	JMP :mlp_read_loop_start
 	
+:mlp_read_handle_remote
 	MOV PARAM1, MLP_MAXSIZE
 	MOV PARAM2, 0
 	CALL @MLP_writebuf	; TESTCODE!!!
 ;;; 	CALL @CAN_send_mlp
+	JMP :mlp_read_loop_start
 	
 :mlp_read_loop_error
 	SETB LEDblue
