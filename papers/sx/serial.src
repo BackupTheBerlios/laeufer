@@ -238,6 +238,11 @@ Port_reg	    DS		1	; register zum Zwischenspeichern des Ports
 wait_counter	    DS		1	; quasi der scancounter fürs senden (verzögert die änderung des Output um 4 Interrupts)
 bitcounter2	    DS		1	; zählt die Bits die gesendet wurden
 tosend		    DS		1	; zu sendendes Byte
+	
+	;; Gebufferte Uebertragung:
+serial_transmit_ctr	DS	1 ; Anzahl der noch zu uebertragenden bytes
+serial_transmit_pos	DS	1 ; Aktuelle Position im Transferbuffer
+
 
 
 RTS		EQU		RC.5	; clear to send
@@ -449,6 +454,65 @@ _sendbyte_status
 	INC	RETVAL
 
 	RETP
+
+;; **********************************************************************
+	;; sendbuf
+	;; Uebertraegt den global exchange buffer
+	;; PARAMETER:	PARAM1:	Anzahl der zu uebertragenden Bytes
+	;;              PARAM2:	Index des ersten zu uebertragenden Bytes
+	;; 			in der Bank (meistens 0)
+	;; RUECKGABE:	RETVAL:	0 falls nicht genug Platz war, 1 sonst
+_serial_sendbuf
+
+	;; First, check to see if sufficient space is available
+	CALL _serial_sendbuf_status
+	MOV OUTPUT, RETVAL
+	CLR RETVAL
+	CSAE OUTPUT, PARAM1
+	RETP			; Return with 0 if not
+
+	MOV RETVAL, #1		; Sufficient space
+
+	;; Now precompute registers for memcpy
+	ADD serial_transmit_ctr, PARAM1	; Fix number of bytes to send
+	
+	;; And enter copy loop
+:copy_loop
+	MOV FSR, PARAM2
+	SET_BANK GLO_XCH_BANK 	; READ address
+
+	MOV OUTPUT, IND
+
+	SET_BANK SERIAL_BANK
+	MOV FSR, serial_transmit_pos
+	SET_BANK SERIAL_WRITE_BANK 	; WRITE address
+
+	MOV IND, OUTPUT
+
+	;; Modify counters
+	SET_BANK SERIAL_BANK
+	INC serial_transmit_pos
+	AND serial_transmit_pos, #$0f
+	INC PARAM2
+	AND PARAM2, #$0f
+
+	DECSZ PARAM1
+	JMP :copy_loop
+	
+	RETP
+
+;; **********************************************************************
+	;; sendbuf_status
+	;; Liefert die Anzahl der noch verfuegbaren Bytes im Uebertragungsbuffer
+	;; RUECKGABE:	RETVAL:	Anzahl noch freier Bytes im Transferbuffer
+_serial_sendbuf_status
+	SET_BANK SERIAL_BANK
+	MOV RETVAL, serial_transmit_ctr
+	XOR RETVAL, #$ff		; Negate
+	ADD RETVAL, #$11		; subtract serial_transmit_ctr from $10
+	RETP
+	
+;;; ----------------- Segment-Ende:
 			ENDM
 
 ;--------------------------------------
@@ -460,12 +524,82 @@ SERIAL_CALL_SEG	MACRO
 SERIAL_sendbyte
 	JMP	_sendbyte
 	
-	
 SERIAL_sendbyte_status
 	JMP	_sendbyte_status
 
+	
+SERIAL_sendbuf
+	JMP	_serial_sendbuf
+	
+SERIAL_sendbuf_status
+	JMP	_serial_sendbuf_status
 			ENDM
 
+
+SERIAL_MAINLOOP		MACRO 0
+		
+		; wenn 0 dann ist das Byte nicht lesbar
+
+	SET_BANK SERIAL_READ_BANK	
+
+	;TEST	UART_XCH_STATUS
+	;JZ	nothinToDo
+	
+	;CALL	@sendstatus	; liefert '0' in OUTPUT1 wenn belegt
+	
+	;TEST	OUTPUT1
+	;JZ	nothinToDo
+	
+
+	
+	CJNE UART_XCH_STATUS, #15, nothinToDo
+	
+	;MOV	W, #SERIAL_READ_BANK
+	;ADD	W, UART_XCH_STATUS	; die Adresse des Registers
+
+	; je nach stand des XCH_STTUS byte wir das gelesene Byte an die höchste oder keine stelle geschrieben	
+		
+	;MOV	FSR,W		; die errechnete adresse ins FSR
+	;MOV	PARAM1,IND	; und das gelesenen Byte per indirekte Adressierung wegschreiben
+	;DEC	UART_XCH_STATUS	; -1 damit kein Byte doppelt gelesen wird
+
+	MOV	PARAM1, SER01
+	
+	CALL	@SERIAL_sendbyte
+	DEC	UART_XCH_STATUS
+	
+	nothinToDo
+	;; Transmit buffer management
+
+	SET_BANK SERIAL_BANK
+	MOV W, serial_transmit_ctr
+	TEST W
+	SNZ			; Nothing to write?
+	JMP :no_byte_write
+
+	CALL @SERIAL_sendbyte_status
+	TEST RETVAL
+	SNZ			; Busy writing?
+	JMP :no_byte_write
+
+	;; Load address of byte to transfer and increment it
+	MOV PARAM2, serial_transmit_ctr
+	XOR PARAM2, #$ff 		; Negate for subtraction
+	ADD PARAM2, serial_transmit_pos
+	INC PARAM2
+	AND PARAM2, #$0f
+	DEC serial_transmit_ctr
+
+	;; Transmit
+	MOV FSR, PARAM2
+	SET_BANK SERIAL_WRITE_BANK
+	MOV PARAM1, IND
+	CALL @SERIAL_sendbyte	; ...and engage!
+
+:no_byte_write
+	ENDM
+
+		
 ;####################################################################			
 ;####################################################################			
 ;####################################################################			
@@ -515,20 +649,22 @@ DATA_SEG_SERIAL_READ
 ;-------------------------
                          org $70
                          
-                         
 DATA_SEG_SERIAL
 
 
 ;-------------------------
 ; --- Bank 4 Variablen ---
 ;-------------------------
-                        ; org $90
+                        org $90
+	
 DATA_SEG_SERIAL_WRITE	
                         
+	
 ;-------------------------
 ; --- Bank 5 Variablen ---
 ;-------------------------
-                        ; org $B0
+                        org $B0
+	
 DATA_SEG_GLOBAL_XCHANGE
                         
                         
@@ -657,41 +793,36 @@ main
 ;--------------------------------------
 
 
+
+		SET_BANK GLO_XCH_BANK
+		MOV $10, #'F'
+		MOV $11, #'r'
+		MOV $12, #'e'
+		MOV $13, #'e'
+		MOV $14, #'S'
+		MOV $15, #'C'
+		MOV $16, #'I'
+		MOV $17, #' '
+		MOV $18, #'r'
+		MOV $19, #'o'
+		MOV $1a, #'c'
+		MOV $1b, #'k'
+		MOV $1c, #'s'
+		MOV $1d, #'!'
+		MOV $1e, #$d
+
+		MOV PARAM1, #$e
+		MOV PARAM2, #0
+		CALL @SERIAL_sendbuf
+
+	
 ; #$41 ist A #$42 ist B
 
  mainloop
-		; wenn 0 dann ist das Byte nicht lesbar
 
-	SET_BANK SERIAL_READ_BANK	
-
-	;TEST	UART_XCH_STATUS
-	;JZ	nothinToDo
+	SERIAL_MAINLOOP
 	
-	;CALL	@sendstatus	; liefert '0' in OUTPUT1 wenn belegt
-	
-	;TEST	OUTPUT1
-	;JZ	nothinToDo
-	
-
-	
-	CJNE UART_XCH_STATUS, #15, nothinToDo
-	
-	;MOV	W, #SERIAL_READ_BANK
-	;ADD	W, UART_XCH_STATUS	; die Adresse des Registers
-
-	; je nach stand des XCH_STTUS byte wir das gelesene Byte an die höchste oder keine stelle geschrieben	
 		
-	;MOV	FSR,W		; die errechnete adresse ins FSR
-	;MOV	PARAM1,IND	; und das gelesenen Byte per indirekte Adressierung wegschreiben
-	;DEC	UART_XCH_STATUS	; -1 damit kein Byte doppelt gelesen wird
-
-	MOV	PARAM1, SER01
-	
-	CALL	@SERIAL_sendbyte
-	DEC	UART_XCH_STATUS
-	
-	nothinToDo
-	
 	JMP	mainloop
 	
 	
