@@ -189,13 +189,13 @@ gezogen worden: Infineon/Siemens (C500-Familie), Motorola
 \item Infineons SABC500-Familie bietet mit zum Teil integrierten
   RS232-Bauelementen eine reiche Auswahl für
   Kommunikationsanwendungen. Mit bis zu 24MHz sind die
-  Mikrocontroller für die vorgesehene
+  Microcontroller für die vorgesehene
   Anwendungen schnell genug. Der Preis von 9 bis 14 Euro
-  pro Mikrocontroller ist vergleichbar hoch. Desweiteren müssen für
+  pro Microcontroller ist vergleichbar hoch. Desweiteren müssen für
   den SABC515 die Programme in externen Speicherbausteinen abgelegt
   werden, die unnötig viel Platz in Anspruch nehmen.
   
-\item Die Mikrocontrollerreihen 68HC11, 68HC05, 68HC08 von Motorola wird bereits
+\item Die Microcontrollerreihen 68HC11, 68HC05, 68HC08 von Motorola wird bereits
   vielfach in der Autoindustrie genutzt. Die CISC-Architektur
   machen die Implementierung von Kommunikationsanwendungen \linebreak
   schwierig, da das auszählen des exakten Timings mit unterschiedlich 
@@ -203,7 +203,7 @@ gezogen worden: Infineon/Siemens (C500-Familie), Motorola
   dies durch eine reiche Auswahl an
   Modellen mit integrierter Kommunikationslogik aus.  Für die 68HC11Fx
   Familie sind mehrere Entwicklungsumgebungen, und reichlich
-  Beispielapplikationen erhältlich. Die betrachteten Mikrocontroller
+  Beispielapplikationen erhältlich. Die betrachteten Microcontroller
   wiesen jedoch höchstens einen interruptfähigen Pin auf, um
   Interrupts durch externe Geräte auszulösen. Desweiteren existiert
   kein Stromsparmodus.  Auch die Preise von bis zu 14 Euro
@@ -222,7 +222,7 @@ gezogen worden: Infineon/Siemens (C500-Familie), Motorola
   schränkt die Eignung für die Mechatronikplatine jedoch wieder ein.
   
 \item Mit dem SX52 von Ubicom steht zusätzlich ein 
-  PIC-kompatibler Mikrocontroller zur Auswahl. Mit acht interruptfähigen PIN's ist
+  PIC-kompatibler Microcontroller zur Auswahl. Mit acht interruptfähigen PIN's ist
   der SX52 nicht ganz so gut ausgestattet wie der PIC16F87x, reicht
   aber für die vorgegebenen Zwecke aus. Den Mangel an Programmspeicher
   teilt der SX52 mit vier Kilobyte nicht mit seinem Konkurrenten. Sein
@@ -241,7 +241,7 @@ gezogen worden: Infineon/Siemens (C500-Familie), Motorola
 \end{itemize}
 
 
-Ein tabellarischer Vergleich der Mikrocontroller findet sich nochmals
+Ein tabellarischer Vergleich der Microcontroller findet sich nochmals
 in Tabelle \ref{cr_microcontroller}.
 
 \subsubsection{Die erste Wahl im Detail}
@@ -263,11 +263,11 @@ Einsatzumfeld erprobt werden können, ohne große Kosten zu verursachen.
 Der SX52 hat fünf 8-Bit Ports, die sowohl als Input als auch als Output
 nutzbar sind. Es existiert ein Stromsparmodus (Sleep-Mode) der zur
 Laufzeit an- und durch externe Quellen wieder abschalbar ist. Der
-Mikrocontroller hat eine Interruptfunktion, die ebenfalls zur Laufzeit
+Microcontroller hat eine Interruptfunktion, die ebenfalls zur Laufzeit
 aktivier- und deaktivierbar ist. Einer der fünf Ports kann als
 Interrupt oder Weck-Port konfiguriert werden. Das heißt ein Signal an
 diesem Port löst einen Interrupt aus bzw. ,,weckt'' den
-Mikrocontroller aus dem Stromsparmodus.
+Microcontroller aus dem Stromsparmodus.
 
 
 
@@ -317,7 +317,7 @@ Platine beschrieben.
   Verfügung.  Die serielle Schnittstelle ist direkt über einen
   Wandlerbaustein (MAX202CSE) mit dem Microcontroller verbunden. Durch
   die Anbindung des RXD- (RXD = Receive Data) und CTS-Signals (CTS =
-  Clear To Send) an den interruptfähigen Port des Mikrocontrollers ist
+  Clear To Send) an den interruptfähigen Port des Microcontrollers ist
   eine Aktivierung der Platine via serieller Schnittstelle
   möglich.
 
@@ -343,7 +343,7 @@ Platine beschrieben.
   Verfügung. Vier der Acht Anschlüsse sind PWM\footnote{PWM: Puls Weit
   Modulation oder engl. Pulse Width Modulation}-bar (Mehr über die
   Puls Weit Modulation in Kapitel \ref{cr_puls}). Die notwendigen Signale für
-  die PWM gehen direkt vom Mikrocontroller aus (also ohne den Umweg
+  die PWM gehen direkt vom Microcontroller aus (also ohne den Umweg
   über den SPI-Bus).  Der TLE hat einen Kurzschlußschutz integriert.
 
 \item[Serial Peripheral Interface (SPI)]\label{cr_SPI-Bus} Die große
@@ -351,7 +351,7 @@ Platine beschrieben.
   Mikroprozessor nötig.  Zu diesem Zweck sind der CAN-Bus-Chip, zwei
   Low-Side-Switches, ein Analog-Digital-Wandler und ein
   Digital-Analog-Wandler über ein SPI-Bus-System mit dem
-  Mikrocontroller verbunden. Jeder dieser Bausteine hat einen
+  Microcontroller verbunden. Jeder dieser Bausteine hat einen
   Chipselect-Eingang der bei einer logischen Null den jeweiligen
   Baustein aktiviert. Der SPI-Bus wickelt die Kommunikation der
   Komponenten über zwei Leitungen SI (SPI-Input) und SO (SPI-Output)
@@ -362,7 +362,7 @@ Platine beschrieben.
 
 In dieser Applikation wird das jeweilige Chip-Select über einen
   Multiplexer\cite{74HC138} gesetzt. Diese Lösung spart nicht nur wertvolle Pins am
-  Port des Mikrocontroller, sie garantiert auch, das nur genau ein Gerät
+  Port des Microcontroller, sie garantiert auch, das nur genau ein Gerät
   auf den Datentransfer reagiert. Dies macht die
   Applikation also ein Stück sicherer.
 
@@ -386,11 +386,11 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
   Brücke angeschlossenen Verbraucher (z.B. Motoren).
   
 \item[Digitale Eingänge] Mit dem ULN2004A gibt es über 7 Anschlüsse
-  einen direkten Zugang zum Mikrocontroller.  Der sieben Darlington
+  einen direkten Zugang zum Microcontroller.  Der sieben Darlington
   Schaltungen enthaltende Baustein von STMicroelectronics akzeptiert
   eine Eingangsspannung von fünf bis zu acht Volt, je nach
   Eingangsstrom.  Drei der Eingänge werden an den interruptfähigen
-  Port des Mikrocontrollers durchgeschaltet. Dadurch ergibt sich eine
+  Port des Microcontrollers durchgeschaltet. Dadurch ergibt sich eine
   weitere Möglichkeit die Platine von außerhalb zu ,,wecken''.
   
 \item[Speicher] Mit dem FM24C64\cite{FM24c} steht ein 64 Kilobyte großer seriell
@@ -404,7 +404,7 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
   
 \item[LED] Um ein optisches Feedback (zum Beispiel für den Fall einer
   Fehlfunktion) für den Programmierer zu ermöglichen, sind zwei
-  LEDs\footnote{LED = Light Emitting Diode} an den Mikrocontroller
+  LEDs\footnote{LED = Light Emitting Diode} an den Microcontroller
   angeschlossen. Eine davon ist blau, die andere grün.
 
 \end{description}
@@ -428,7 +428,7 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
       \hline
       \emph{Darlington Array}           & ULN2004A & STMicroelectronics & 0,66 \\
       \hline
-      \emph{Mikrocontroller}        & SX52 & Ubicom & 7 \\
+      \emph{Microcontroller}        & SX52 & Ubicom & 7 \\
       \hline
       \emph{Low Side Switch}        & TLE 6230 GP & Infineon & 3.79\\
       \hline
@@ -452,11 +452,11 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
 
 \section{Anforderungen an die Assemblerprogramme}
 Im folgenden werden die Auswirkungen der Vorgaben auf die
-Assembler-Programme des Mikrocontrollers beschrieben.
+Assembler-Programme des Microcontrollers beschrieben.
 
 \subsection{Bedienbarkeit}
 Was bedeutet Bedienbarkeit im Bezug auf die Programme des
-Mikrocontrollers?
+Microcontrollers?
 
 Ziel ist es, dem Entwickler eine Art Bibliothek zur Ansteuerung der
 einzelnen Platinenkomponenten anzubieten.  Folgende Punkte sind dabei
@@ -505,7 +505,7 @@ in Kontakt mit der Steuereinheit treten. Auf der Platine muß der
 reibungslose Austausch zwischen den Programmmodulen sichergestellt
 sein, ohne Inkonsistenzen hervorzurufen. Auf Hardwareebene werden
 einzelne Komponenten über ein serielles Protokoll angesprochen (SPI).
-Und nicht zuletzt muß der Mikrocontroller die zeitkritische serielle
+Und nicht zuletzt muß der Microcontroller die zeitkritische serielle
 Schnittstelle betreiben (sofern das Modul eingebunden ist).
 
 \subsection{Erweiterbarkeit}
@@ -535,7 +535,7 @@ des SX52 ein.  Er stellt außerdem, im entsprechenden Modus betrieben,
 die Debugfunktionen für die SX-Software bereit (Spiegeln und Ändern
 der Register und Zähler, sowie externe Taktung). Der SX-Key ist über
 die serielle Schnittstelle an den PC angeschlossen. Der Anschluß an
-den Mikrocontroller erfolgt über eigens dafür vorgesehene Anschlußpins
+den Microcontroller erfolgt über eigens dafür vorgesehene Anschlußpins
 auf der Platine.
 
 \begin{figure}
@@ -630,12 +630,12 @@ können den eben beschriebenen Kreislauf unterbrechen:
     erkannt.
   
 \item[SLEEP-Befehl] Durch den SLEEP-Befehl wird die Clock
-  ausgeschaltet und der Mikrocontroller nur
+  ausgeschaltet und der Microcontroller nur
   noch minimal mit Strom versorgt. Das Programm hält an.
   
 \item[Multi-Input-Wakeup-Interrupt] Der Multi-Input-Wakeup-Interrupt
   wird durch ein Signal am Port B ausgelöst. Er bewirkt entweder das
-  ,,aufwachen'' des Mikrocontrollers, wenn dieser im SLEEP-Modus war,
+  ,,aufwachen'' des Microcontrollers, wenn dieser im SLEEP-Modus war,
   oder er startet die Interrupt-Routine.
   
 \item[Endlosschleife] Man kann das Rrreichen der höchsten
@@ -643,7 +643,7 @@ können den eben beschriebenen Kreislauf unterbrechen:
   während des Programmablaufes nicht verlassen wird.
   
 \item[Neustart durch ab- und einschalten der Versorgungsspannung]
-  Natürlich kann man den Mikrocontroller auch aus- und wieder
+  Natürlich kann man den Microcontroller auch aus- und wieder
   anschalten um das Programm zu unterbrechen. Man führt also
   einen Hardware Reset durch.
 \end{description}
@@ -1127,7 +1127,7 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
 \item{ADC:} Noch bevor der Analog-Digital-Wandler per Chip-Select
   aktiviert wird, werden vier Bit zum auswählen des zu wandelnden Eingangs
   übertragen, erst nachdem Chip-Select auf $low$ gesenkt wurde,
-  wird nach kurzer Verzögerung das Ergebnis an den Mikrocontroller
+  wird nach kurzer Verzögerung das Ergebnis an den Microcontroller
   geschickt.
 \item{DAC:} Zwei $\times{}$ 12 Bit werden in das Shift-Register des
   Digital-Analog-Wandlers übertragen und dann, beim Wechsel des
@@ -1145,12 +1145,12 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
   Einstellungen durch den Befehl Request to Send (RTS).
 \end{description}
 
-\item[Speicher] Der Speicher ist über eigene Anschlüsse an den Mikrocontroller angeschlossen.
+\item[Speicher] Der Speicher ist über eigene Anschlüsse an den Microcontroller angeschlossen.
 Über eine serielle Datenleitung erfolgt der Datentransfer. Für jede Operation (ob schreiben oder lesen) , wird
   das Gerät über die Bits 1 bis 3 der ersten 8 Bit adressiert. In den
   Bits 7 bis 4 steht die Slave ID (hier 1010). Das nullte Bit zeigt an,
   ob eine Lese- (1) oder Schreibe-Operation (0) anschließt. Nach der
-  Adressierung sendet der Master (hier der Mikrocontroller) beliebig viele acht-Bit Worte und
+  Adressierung sendet der Master (hier der Microcontroller) beliebig viele acht-Bit Worte und
   erhält nach jedem Word eine Bestätigung (engl. acknowledge) vom
   Speicherbaustein.  Bei der Lese-Operation unterscheidet man zwischen
   sequentiellem Lesen und selektivem Lesen.
@@ -1206,7 +1206,7 @@ der Arbeit und ihr Abgleichen mit den anderen Gebieten des Projekts
 (insbesondere vor der CeBit) sowie der fachliche Austausch untereinander
 zählen zu den reichsten Erfahrungen aus dieser Arbeit.
 
-% Die Wahl des Mikrocontrollers hat sich als richtig erwiesen, da sich
+% Die Wahl des Microcontrollers hat sich als richtig erwiesen, da sich
 %eine gut handhabbare Programmstruktur erstellen lies. Das dies nicht
 %nur aus der Sicht eines Informatikers gilt, hat die Schulung des
 %Münchner Projektteams im Mai 2002 gezeigt.  Bereits jetzt sind
