@@ -17,7 +17,7 @@ Läufer Layer One (LLO)-Protokolls.\\
 \subsection{Kommunikation}
 Das Protokoll sieht ein Multi-Master-Netzwerk als Basis vor, mit einem
 Master in der Funktion des LLO-Controllers. Das Netzwerk muß entweder
-drei Klassen von Nachrichten-Prioritäten, oder voll-Duplex-Kommunikation
+drei Klassen von Nachrichten-Prioritäten, oder voll-Duplex-Kom-\\munikation
 unterstützen.\\
 Im Kontrast zum LLO-Controller (kurz: Controller) werden die anderen
 Busteilnehmer als LLO-Clients (kurz: Clients) bezeichnet, auch, wenn diese
@@ -60,9 +60,9 @@ Masters:
   $\rightarrow$	& {\tt ACK(id, more)}\\
 \end{tabular}
 
-Wobei die Bedeutungen wie folgt sind:
+Wobei die Bedeutungen wie folgt sind:\vspace{0.3cm}\\
 
-\begin{tabular}{ll}
+\begin{tabular}{lp{10cm}}
 {\bf Name}	& {\bf Bedeutung}\\
 \hline
 
@@ -72,7 +72,7 @@ Wobei die Bedeutungen wie folgt sind:
 {\tt size}	& Menge an folgenden Datenbytes\\
 {\tt data}	& Sequenz von {\it size} Bytes an Daten\\
 \end{tabular}
-
+\vspace{0.3cm}\\
 
 Wenn bei einer Übertragung das {\it more}-Flag gesetzt ist, müssen die
 Daten der nächstes Übertragung ans Ende der vorherigen Übertragung
@@ -81,7 +81,7 @@ Zwischen Controller und Client findet maximal eine Übertragung
 gleichzeitig statt; somit ist gewährleistet, daß Pakete einer Übertragung
 eindeutig zugeordnet werden können.\\
 
-Ein Ausbleiben des Acknowledgements für eine bestimmte, implementierungs-
+Ein Ausbleiben des Acknowledgements für eine bestimmte, imple-\\mentierungs-
 abhängige Zeit wird als Timeout gewertet; der Sender führt in diesem Fall
 eine Neuübertragung durch.\\
 Nach einer angemessenen Anzahl von versuchten Neuübertragungen wird
@@ -186,18 +186,19 @@ gewährleisten.
 Bei einem SYS werden Systemcodes (meist Fehlercodes) mitversandt.
 Sie sind definiert wie folgt:
 
-\begin{tabular}{llll}
+\begin{tabular}{ccp{4.5cm}p{4.5cm}}
 {\bf NR}& {\bf ID}	& {\bf Bedeutung}				& {\bf Kommunikation}\\
 \hline
-1	& {\tt EINTN}	& Interner Fehler				Abbruch\\
-2	& {\tt EINSQ}	& Unpassende Sequenznummer		Retry oder {\tt ABORT}\\
-3	& {\tt ABORT}	& Übertragung Ungültig, Abbruch		Abbruch\\
-4	& {\tt CONTN}	& Übertragung ab hier fortgesetzt	Fortsetzung\\
-5	& {\tt EOVFL}	& Nachricht zu lang: Buffer-Überlauf	Abbruch\\
-6	& {\tt EINVR}	& Ungültige Version			Abbruch\\
-7	& {\tt EGLBL}	& Globales Versagen			Sicherer Betriebszustand\\
-8	& {\tt ENRDY}	& Gerät nicht bereit			Retry nach Verzögerung\\
+1	& {\tt EINTN}	& Interner Fehler			&Abbruch\\
+2	& {\tt EINSQ}	& Unpassende Sequenznummer		&Retry oder {\tt ABORT}\\
+3	& {\tt ABORT}	& Übertragung Ungültig, Abbruch		&Abbruch\\
+4	& {\tt CONTN}	& Übertragung ab hier fortgesetzt	&Fortsetzung\\
+5	& {\tt EOVFL}	& Nachricht zu lang: Buffer-Überlauf	&Abbruch\\
+6	& {\tt EINVR}	& Ungültige Version			&Abbruch\\
+7	& {\tt EGLBL}	& Globales Versagen			&Sicherer Betriebszustand\\
+8	& {\tt ENRDY}	& Gerät nicht bereit			&Retry nach Verzögerung\\
 \end{tabular}
+\vspace{0.3cm}
 
 Ein SYS:GLOBL kann als Broadcast vom Controller eingesetzt werden, um alle
 Geräte in den sicheren Betriebszustand zurückzufahren (und damit den Bus
@@ -226,7 +227,7 @@ Systeme können eine eigene, angemessenere Kodierung verwenden.
 
 \subsubsection{Erstes Präfixbyte}
 %----------------------
-Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:
+Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:\vspace{0.3cm}\\
 
 \begin{tabular}{ll}
 {\bf Bits}	& {\bf Bedeutung} \\
@@ -234,10 +235,12 @@ Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:
 7-5		& Operation \\
 4-0		& Rezipient \\
 \end{tabular}
+\vspace{0.3cm}\\
 
 
-\paragraph{Operationen}
+\subsubsection{Operationen}
 %------------------
+\vspace{0.3cm}
 
 \begin{tabular}{ll}
 {\bf Nummer}	& {\bf ID} \\
@@ -253,6 +256,7 @@ Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:
 
 \subsubsection{Zweites Präfixbyte}
 %-----------------------
+\vspace{0.3cm}
 
 \begin{tabular}{cl}
 {\bf Bits} & {\bf Bedeutung}\\
@@ -261,7 +265,7 @@ Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:
 6,5	& Version (hier immer 0)\\
 4	& Das 'mehr'-Flag\\
 3-0	& Sequenznummer\\
-\end{tabular}
+\end{tabular}\vspace{0.3cm}\\
 
 
 \subsubsection{STX, RTX: Übetragungspakete}
@@ -285,20 +289,20 @@ Message.
 %-------------------------------------------
 Bei einer Implementierung auf dem CAN-Bus (LLO/CAN) wird das komplette
 erste Präfixbyte im Identifyer dargestellt:
-
+\ \vspace{0.1cm}\\
 \begin{tabular}{cl}
-Bits	& Bedeutung\\
+{\bf Bits}	& {\bf Bedeutung}\\
 \hline
 10-8	& LLO/CAN-Operation\\
 7-5	& Priorität für {\tt RTX}-Botschaften, sonst 011\\
 4-0	& ID des Rezipienten
 \end{tabular}
-
+\ \vspace{0.1cm}\\
 
 \subsubsection{A.1 Codierung der LLO/CAN-Operationen}
 %-------------------------------------
 
-\begin{tabular}{llll}
+\begin{tabular}{cccl}
 {\bf Bit 10} 	& {\bf Bit 9}	& {\bf Bit 8}	& {\bf ID}\\
 \hline
 0	& 0	& 0	& {\tt SYS}\\
@@ -307,10 +311,10 @@ Bits	& Bedeutung\\
 1	& 0	& 0	& {\tt STX}\\
 1	& 1	& 0	& {\tt RTX}\\
 1	& 1	& 1	& {\tt NOP}\\
-\end{tabular}
+\end{tabular}\vspace{0.3cm}\\
 
-Somit gilt: \{{\tt SYS}, {\tt ACK}, {\tt KAL}\} > \{{\tt STX}\} > \{{\tt RTX}\} > \{{\tt NOP}\},
-wobei A > B bedeutet, daß alle Elemente von A eine höhere
+Somit gilt: \{{\tt SYS}, {\tt ACK}, {\tt KAL}\} $>$ \{{\tt STX}\} $>$ \{{\tt RTX}\} $>$ \{{\tt NOP}\},
+wobei A $>$ B bedeutet, daß alle Elemente von A eine höhere
 Priorität als ein beliebiges Element aus B haben.
 
 Bei STX und RTX wird die Längenangabe im dafür von

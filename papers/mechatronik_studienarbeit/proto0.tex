@@ -85,13 +85,13 @@ Payload der Länge n+1 sieht aus wie folgt:
 I.e. ein 8-Bit-Präfix, gefolgt von n+1 Datenbytes.
 
 Der Präfix hat folgende Form:
-
-\begin{tabular}{cp{0.8 cm}p{3.5 cm}}
+\vspace{0.3cm}\\
+\begin{tabular}{cp{1.0 cm}p{10 cm}}
 {\bf Bit}	& {\bf ID}	& {\bf Bedeutung}\\
 \hline
 7-5	& {\tt TOP}	& Transmissionsoperation (siehe \ref{j-app-1.3.1})\\
 4	& --	& reserviert (muß 0 sein)\\
-3-0	& {\tt LEN/ERC/VNR}
+3-0	& {\tt LEN/ ERC/ VNR}
 		& {\tt LEN}: Anzahl der folgenden Bytes an Daten minus 1.
 		  Falls {\tt TOP} den Wert {\tt ERR} hat, ist dies der Error-
 		  code; es folgen keine weiteren Daten.
@@ -100,10 +100,11 @@ Der Präfix hat folgende Form:
 \end{tabular}
 
 
-\paragraph{Transmissionsoperationen}\label{j-app-1.3.1}
+\subsubsection{Transmissionsoperationen}\label{j-app-1.3.1}
 %------------------------------
+\ \vspace{0.3cm}\\
 
-\begin{tabular}{clp{3.5cm}}
+\begin{tabular}{clp{10cm}}
 {\bf Code}	& {\bf ID}	& {\bf Semantik}\\
 \hline
 0	& {\tt SDN}	& Der Empfänger soll einen sicheren Betriebs-
@@ -132,8 +133,9 @@ Falls ein Sender eine ungültige Übertragung absetzt, muß der Empfänger
 ihn darüber benachrichtigen. Zu diesem Zweck ist {\tt TOP ERR} definiert. 
 
 Die folgenden Werte für {\tt ERC} sind definiert:
+\ \vspace{0.3cm}\\
 
-\begin{tabular}{lp{3.5cm}}
+\begin{tabular}{lp{11cm}}
 {\bf \tt ERC}	& {\bf Bedeutung} \\
 \hline
 0	& Sonstiger Fehler (catch-all-code) \\
@@ -144,6 +146,7 @@ Die folgenden Werte für {\tt ERC} sind definiert:
 5	& Paket korrupt: Ein reserviertes Bit ist falsch gesetzt \\
 6-15	& -- {\it reserviert} --\\
 \end{tabular}
+\ \vspace{0.3cm}\\
 
 \subsection{Payload}
 %----------
@@ -162,8 +165,9 @@ die entsprechenden Zustände und Übergänge finden sich in 3.1.
 \subsubsection{Empfänger}
 %--------------
 Das LLZ-Protokoll definiert folgende Zustände eines Empfängers:
+\ \vspace{0.3cm}\\
 
-\begin{tabular}{lll}
+\begin{tabular}{ccp{8cm}}
 {\bf Code}	& {\bf Name}		& {\bf Erklärung}\\
 \hline
 {\bf S0}	& {\tt PRE-INIT}	& Initialer Zustand. Gerät darf keine Fehlercodes senden.\\
@@ -172,6 +176,7 @@ Das LLZ-Protokoll definiert folgende Zustände eines Empfängers:
 {\bf S3}	& {\tt DOWN}		& Gerät hat SDN erhalten und den sicheren
                                           Betriebszustand eingenommen, es darf keine Fehlercodes mehr senden. \\
 \end{tabular}
+\ \vspace{0.3cm}\\
 
 
 %Das Zustandsübergangsdiagramm ist wie folgt:
@@ -202,8 +207,10 @@ gesicherten "Failsafe"-Betriebszustand einnehmen kann.
 Die korrekte Sequenz zur Initialisierung eines Empfängers verläuft aus
 Sicht des SENDERS wie folgt:
 
-$\leftarrow$	{\tt INI(VNR=0)}
-$\rightarrow$	{\tt IOK(VNR=0) ops[16]}
+\begin{tabular}{cl}
+$\leftarrow$	&{\tt INI(VNR=0)}\\
+$\rightarrow$	&{\tt IOK(VNR=0) ops[16]}\\
+\end{tabular}
 
 Folgt keine Antwort, so muß der Sender annehmen, daß der Empfänger nicht
 existiert.
@@ -213,11 +220,11 @@ siehe \ref{j-app-3.3.1}.
 
 Das Datenfeld ops[16] beinhaltet eine Liste aller vom Gerät unterstützten
 Operationen, codiert in 128 Bits. Der Test auf Vorhandensein der Operation
-x (für x > 7) ist also in Hochsprachensemantik wie folgt:
-
+x (für x $>$ 7) ist also in Hochsprachensemantik wie folgt:
+\ \vspace{0.2cm}\\
 {\tt have-op(x) := ((x >> 3) < n) {\bf /* Byte is defined */}\\
-\hspace{2cm}		\&\& (ops[x >> 3] \& (1 << (x \& 7)))}
-
+\mbox{\hspace{2cm}\&\& (ops[x >> 3] \& (1 << (x \& 7)))}}
+\ \vspace{0.2cm}\\
 Dies erlaubt die Deklaration der Operationen 0-127. Die Deklaration dient
 Debugzwecken und ist in dieser Protokollversion nicht verbindlich.
 
