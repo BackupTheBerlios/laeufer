@@ -1,19 +1,20 @@
-%\section{Die Verbindung zwischen PDA und Mechatronik}
+\section{Die Verbindung zwischen PDA und Mechatronik}
 
 All dies sind interessante Experimente für sich-- die Platine und ihre
-Programmierung wie der PDA als Bedienelement-- doch damit das bunte
-Bild der Bedienelemente nicht blosse Façade bleibt und die Mechatronik
-vom Willen des Fahrers erfahren kann, ist eine Kommunikationsschicht
-nötig.
+Programmierung wie der PDA als Bedienelement--
+doch damit das bunte Bild der Bedienelemente nicht blosse Façade
+bleibt und die Mechatronik vom Willen des Fahrers 
+erfahren kann, ist eine Kommunikationsschicht nötig.
 
-%\subsection{Kommunikation}
+\subsection{Kommunikation}
 
 Für das Projekt Läufer war von vorneherein die Entscheidung für ein
-verkabeltes System gefallen.  Auf Protokollseite wird hierbei auf CAN
-(Controller Area Network, siehe \cite{canspec}) gesetzt, ein
+verkabeltes System gefallen.
+Auf Protokollseite wird hierbei auf CAN (Controller Area Network,
+siehe \cite{canspec}) gesetzt, ein
 verhältnismäßig einfaches und verbreitetes Kommunikationsprotokoll,
-das unter anderem von BMW und Mercedes zur Datenübertragung innerhalb
-von Fahrzeugen eingesetzt wird.
+das unter anderem von BMW und Mercedes zur Datenübertragung innerhalb von
+Fahrzeugen eingesetzt wird.
 
 % IMG: CAN-Protokollframe
 % Subtitel: Ein CAN-Frame, die atomare Kommunikationseinheit auf dem Bus
@@ -21,15 +22,15 @@ von Fahrzeugen eingesetzt wird.
 Ein unmittelbarer Vorteil der Wahl eines bereits verbreiteten
 Protokolls ist das Vorhandensein existierender
 Hardware-Implementierungen, von denen eine [-- FIXME: der sowieso-Chip
---] hier die Aufgabe eines Kommunikationsteilnehmers wahrimmt.
+  --] hier die Aufgabe eines Kommunikationsteilnehmers wahrimmt.
 
 
 Das CAN-Protokoll gewährleistet Korrektheit der übertragenen Daten,
-erzwingt Arbitrierung der auf dem Bus gesandten Kommunikation und
-erlaubt theoretisch 2048 logische und eine beliebige Anzahl
+erzwingt Arbitrierung der auf dem Bus gesandten Kommunikation
+und erlaubt theoretisch 2048 logische und eine beliebige Anzahl
 physikalischer Kommunikationsteilnehmer.
 
-%\subsubsection{Ergänzungsprotokolle}
+\subsubsection{Ergänzungsprotokolle}
 
 Zwei weitere Probleme jedoch löst CAN nicht: Übertragungssicherheit,
 also die Gewährleistung, daß der Sender dem Erfolgen einer Übertragung
@@ -38,14 +39,15 @@ Vorhandenseins des vorgesehenen Bus-Masters, ein insbesondere durch
 die problemlose Entfernbarkeit des PDAs relevantes Problem.
 
 
-Die Lösungen erfolgten auf höherer Protokollebene, die in Form des
-eigens entworfenen LLO-Protokolles (Läufer Layer One) entstand. Zwar
-existiert mit CAN/Open (siehe \cite{canopen}) bereits ein etabliertes
-und umfangreiches Standardprotokoll zur Kommunikation auf dem CAN-Bus,
-das jedoch für eine Implementierung mit der gewählten Hardware und in
-dem gegebenen Rahmen zu umfangreich gewesen wäre.
+Die Lösungen erfolgten auf höherer
+Protokollebene, die in Form des eigens entworfenen LLO-Protokolles
+(Läufer Layer One) entstand. Zwar existiert mit CAN/Open (siehe
+\cite{canopen}) bereits ein etabliertes und
+umfangreiches Standardprotokoll zur Kommunikation auf dem CAN-Bus, das
+jedoch für eine Implementierung mit der gewählten Hardware und in dem
+gegebenen Rahmen zu umfangreich gewesen wäre.
 
-\subsection*{Die LLO- und LLZ-Protokolle}
+\subsection{Die LLO- und LLZ-Protokolle}
 
 LLO setzt direkt auf dem CAN-Protokoll auf und kodiert seine
 Operationen in Teilen des CAN-Adressfeldes, so daß sich die Anzahl der
@@ -53,28 +55,28 @@ adressierbaren Geräte auf 32 vermindert. Zwei dieser Adressen sind
 wiederum reserviert, eine für den Bus-Master, eine für Broadcasts. Die
 Notwendigkeiten des Läufers fordern zur Zeit keinen größeren
 Adressraum\footnote{Durch geeignete Versionnierung wurde jedoch
-  spätere Erweiterbarkeit sichergestellt}.  Mittels eines regelmäßigen
-Keep-Alive-Signals stellt LLO sicher, daß die Sklaven im Bus einen
-Ausfall des Bus-Masters bemerken; die andere noch fehlende
-Anforderung, die Korrektheit von Übertragungen, wird allerdings durch
-ein zweites Protokoll erfüllt: LLZ (Läufer Layer Zero), konrastierend
-zu den üblichen Konventionen benannt, liefert dies und auch eine
-allgemeine Zustandsverwaltung der Busteilnehmer.
+ spätere Erweiterbarkeit sichergestellt}.
+Mittels eines regelmäßigen Keep-Alive-Signals stellt LLO sicher, daß
+die Sklaven im Bus einen Ausfall des Bus-Masters bemerken; die andere noch
+fehlende Anforderung, die Korrektheit von Übertragungen, wird
+allerdings durch ein zweites Protokoll erfüllt: LLZ (Läufer Layer
+Zero), konrastierend zu den üblichen Konventionen benannt, liefert
+dies und auch eine allgemeine Zustandsverwaltung der Busteilnehmer.
 
-\subsubsection*{Ausgewählte Eingeweide}
+\subsubsection{Ausgewählte Eingeweide}
 %---- Ausgewaehlte Protokoll-Details
 
 % Zustaende, sicherer Basiszustand
 % Keep-Alive
 Dabei werden vom Protokoll einige Zustände gefordert, insbesondere ein
-stabiler Einzelbetriebszustand, in dem das angesteuerte Gerät
-eingehende Nachrichten ignoriert. Dieser wird eingenommen, wenn, zum
-Beispiel durch mehrfaches Ausbleiben eines Keep-Alive-Signals vom
-Busmaster, das Gerät davon ausgehen muß, daß es nicht mehr unter der
-Aufsicht des PDAs steht und eine Fehlfunktion vorliegt. Wie genau
-dieser sichere Betriebszustand tatsächlich aussieht, hängt vom
-Gerätetyp ab; der Motor beispielsweise nimmt in diesem Fall die
-Drehzahl langsam zurück, eine vorhandene Warnblink-Anlage würde sich
+stabiler Einzelbetriebszustand, in dem das angesteuerte Gerät eingehende
+Nachrichten ignoriert. Dieser wird eingenommen, wenn, zum Beispiel
+durch mehrfaches Ausbleiben eines Keep-Alive-Signals vom Busmaster,
+das Gerät davon ausgehen muß, daß es nicht mehr unter der Aufsicht des PDAs
+steht und eine Fehlfunktion vorliegt. Wie genau dieser sichere
+Betriebszustand tatsächlich aussieht, hängt vom Gerätetyp ab;
+der Motor beispielsweise nimmt in diesem Fall die Drehzahl
+langsam zurück, eine vorhandene Warnblink-Anlage würde sich
 automatisch aktivieren.
 
 % Uebertragungssicherheit (Sequenzzaehler)
@@ -85,25 +87,59 @@ der Zähler in LLO-Botschaften einkodiert werden, kann der Empfänger
 bei Erhalt einer Nachricht seine Synchronität zum Bus-Master mit einem
 hohen Grad an Sicherheit überprüfen.
 
-\subsection*{Aus dem Tagebuch einer Nachricht}
+\subsection{Aus dem Tagebuch einer Nachricht}
 %---- Weg einer Nachricht, mit Diagramm(en)
+Begleiten wir nun einmal eine konkrete Nachricht auf ihrer Reise auf
+dem Bus. Eine typische Botschaft wäre eine Aufforderung an einen Scheibenwischer
+({\tt SW}), sich selbst einzuschalten ({\tt ON}) und die Scheibe mit einer
+bestimmten Geschwindigkeit ({\tt FR}) zu putzen.
 
-% Die Nachricht und ihre Semantik
-%\begin{code}
-%\end{code}
+Beobachten wir nun die Reise dieser Botschaft.
 
 
-% Verpackung Highlevel-Protokoll
-% Verpackung Lowlevel-Protokoll
-% LL: An der Bushaltestelle
-% LL: Der erste faehrt vorbei: Keepalive
-% LL: Alles einsteigen, die Reise geht los
-% LL: Gestrandet, aber keine Nausicaä: Paket verloren
-% LL: Unser Nachfolger kommt
-% LL: Vermisstenmeldung: Der war doch direkt vor euch?
-% LL: Suchtrupp, oder eher: Neuversandt eines Klons
-% LL: Registrierungsnummer stimmt-- Welcome at the US Army Headquarters! Would you like to play a game?
-% LL: Quittung fuer uns
-% LL: Jacke ausziehen
-% HL: Hose runter- der volle Monty!
-% Wir haben unsre Semantik, und keiner kann zusehen, weil der Chip so klein und schwarz ist! Wie ein Zensierkaestchen... Hmm...
+\begin{tabular}{r|c||c|lp{3cm}}
+\textbf{Master}	& {\bf Seq}	& \bf{Seq}	& \bf{Client}	& \\
+\hline
+{\tt ON FR		}& 	& 	&{\tt			}& Rohform\\
+{\tt REQ:2 ON FR	}& 	& 	&{\tt			}& LLZ-Encodierung\\
+{\tt STX:SW[ON FR]	}& 0	& 0	&{\tt			}& LLO-Encodierung\\
+{\tt STX:SW[ON FR]	}$\rightarrow$& 0	& 0	&{\tt			}& LLO-Versand\\
+{\tt 		}& 1	& 0	&$\nrightarrow${\tt		}& Übertragungsfehler!\\
+
+{\tt STX:SW[X]	}$\rightarrow$& 1	& 0	&{\tt			}& Neuer Versand\\
+{\tt		}		& 2	& 0	&$\rightarrow${\tt STX:SW[X](1)	}& Seq-Fehler\\
+{\tt 		}		& 2	& 0	&$\leftarrow${\tt ERR:EINSQ(0)		}& Fehlermeldung\\
+{\tt ERR:EINSQ(0)}$\leftarrow$	& 0	& 0	&	& Reset\\
+{\tt STX:SW[ON FR]	}$\rightarrow$& 0	& 0	&{\tt			}& Neuversand\\
+
+{\tt 		}& 1	& 1	&$\rightarrow${\tt STX:SW[ON FR]}& Übertragung erfolgreich!\\
+{\tt		}& 1	& 1	&$\leftarrow${\tt ACK(0)} & Bestätigung der Übertragung...\\
+{\tt ACK(0)	}$\leftarrow$& 1& 1&{\tt}	 & ...an den Master\\
+{\tt 		}& 1	& 1	&{\tt STX:SW[ON FR]}& Dekodierung nach LLZ\\
+{\tt 		}& 	& 	&{\tt REQ:2 ON FR}& Übertragung erfolgreich!\\
+{\tt 		}& 	& 	&{\tt ON FR}& Auswertung und...\\
+{\tt 		}& 	& 	&{\tt RES:1 ON}& ...Konstruktion der Antwort\\
+\end{tabular}
+
+\newpage
+
+
+
+Im obigen Beispiel sehen wir-- neben den Schritten der Kodierung und Dekodierung des Paketes--
+auch die Behandlung eines Fehlerfalles: Durch z.B. eine temporaere Leitungsstoerung ging ein
+Paket verloren. Auf der LLZ-Ebene des Masters wird über versandte Pakete Protokoll gefuehrt, so
+daß das Nicht-antworten auf eine LLZ-Anfrage registriert und durch einem Neuversand behandelt
+werden kann; das erfordert natürlich eine bestimmte Form von Botschaften, nämlich solche, die
+Zustände setzen, anstatt sie zu modifizieren.
+Unter Umständen können jedoch schon vorher auf LLO- bzw. LLZ-Ebene Fehlübertragungen erkannt
+werden, da beide Ebenen Bestätigungen der versandten Nachrichten erwarten. Infolge dessen, daß
+diese jedoch nicht unmittelbar in Konsequenz der Übertragung geschehen müssen, ist es möglich,
+daß davor schon eine oder mehrere weitere Botschaften übertragen wurden; dies wird durch Vergleich
+der Sequenznummern von Client und Master, die in jeder LLO-Übertragung einkodiert sind, erreicht.
+
+In diesem hier illustrierten Fall fand eben diese letztbeschriebene Erkennung statt. Der
+zurückgesandte Fehlercode, {\tt EINSQ(0)}, beschrieb zum Einen die Art des Fehlers, eben gerade
+die unpassende Sequenznummer, war zum Anderen jedoch auch mit der clientseitig verwendeten
+Nummer parametrisiert-- diese Information war somit ausreichend, das letzte fehlende Paket
+neu zu senden und die Übertragung an der Fehlerstelle neu aufzunehmen.
+
