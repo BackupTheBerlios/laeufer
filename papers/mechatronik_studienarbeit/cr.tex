@@ -52,7 +52,7 @@ einer Checkkarte (siehe Abbildung \ref{Platine-Karte}).
 %Komentar zur interdiszipl. Erörterung der Anforderungen
 \subsection{Platine}
 Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der später
-er\-wähnte Multiplexer war noch nicht vorgesehen), die Low-Side Switches waren nicht integriert und die andeschlossene Peripherie wurde durch einen SX28 
+erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side Switches waren nicht integriert und die andeschlossene Peripherie wurde durch einen SX28 
 gesteuert (zwei I/O-Ports weniger als der SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue vierlagige Chequekartengroße Trägerplatine ersetzt. Erst die Entwicklung dieser
 zweiten Platine wurde von dieser Studienarbeit begleitet. Der zweite Iteration berücksichtigte dann eine Reihe weiterer Ideen zur Anäherung an das Ziel
 einer multifunktionalen Mechatronikapplikation für Maschinenbauingenieure.
@@ -67,7 +67,7 @@ Aufgabenfeldern der Maschinenbauer nötig.
 Der Markt für Microcontroller stellt eine große Auswahl an verschiedensten Konfigurationen zur Verfügung. Um bei der großen Auswahl zügig zu einer guten
 Entscheidung zu kommen gilt es die Menge der Kriterien frühzeitig einzuschränken.
 
-Wichtigste Kriterien bei der Auswahl waren dementsprechend: Preis, Anzahl I/O-Ports, Taktfrequenz (für die Kommunikation nach RS232-\-Standard wichtig),
+Wichtigste Kriterien bei der Auswahl waren dementsprechend: Preis, Anzahl I/O-Ports, Taktfrequenz (für die Kommunikation nach RS232-\linebreak Standard wichtig),
 Qualität erhältlicher Entwicklungsumgebungen, Energieverbrauch, Grösse des Programm- und Arbeitsspeichers sowie vorhandene
 Interrupt-Möglichkeiten.
 
@@ -75,25 +75,27 @@ Um den Preis gering zu halten empfahl sich eine 8-Bit Architektur.
 Im 8-Bit Bereich sind Produkte folgender Hersteller näher in Betracht gezogen worden: Infineon/Siemens (C515-Familie), Motorola (68HC11),Microchip
 (PIC16Fx), Ubicom (SX).
 
-Infineons SABC515-Familie bietet mit zum Teil integrierten RS232-\-Bauelementen eine reiche Auswahl für Kommunikationsanwendungen. Mit bis zu 24Mhz 
+\begin{itemize}
+
+\item Infineons SABC515-Familie bietet mit zum Teil integrierten RS232-Bauelementen eine reiche Auswahl für Kommunikationsanwendungen. Mit bis zu 24Mhz 
 erfüllt der Microcontroller sind die Microcontroller für die vorgesehene Anwendungen schnell genug. Der Preis von 9 bis 14 \geneuronarrow{} pro
 Microcontroller ist vergleichbar hoch. Desweiteren müssen für den SABC515 die Programme in externen Speicherbausteinen abgelegt werden, die
 unnötig viel Platz in Anspruch nehmen.
 
-Die Microcontrollerreihe 68HC11 von Motorola wird bereits vielfach inder Autoindustrie genutzt. 
+\item Die Microcontrollerreihe 68HC11 von Motorola wird bereits vielfach inder Autoindustrie genutzt. 
 Die Betrachtungen beschränken sich auf die 68HC11F-Familie aus dieser Reihe. Die CISC-Architektur machen die Implementierung
-von Kommunikationsanwendungen schwierig. Motorola gleicht dies durch eine reiche Auswahl an Modellen mit integrierter Kommunikationslogik aus. 
+von Kommunikationsanwendungen \linebreak schwierig. Motorola gleicht dies durch eine reiche Auswahl an Modellen mit integrierter Kommunikationslogik aus. 
 Für die 68HC11Fx Familie sind mehrere Entwicklungsumgebungen, und reichlich Beispielapplikationen erhältlich. Die betrachteten Microcontroller 
 wiesen jedoch höchstens einen interruptfähigen Pin auf, um Interrupts durch externe Geräte auszulösen. Desweiteren existiert kein Stromsparmodus.
 auch die Preise von bis zu 14 \geneuronarrow{} sprechen gegen den 68HC11x.
 
-Microchip ist in den USA für die PIC-Microcontroller bekannt. PIC sind schnelle RISC Microcontroller die sich gut für Kommunikationsanwendungen
+\item Microchip ist in den USA für die PIC-Microcontroller bekannt. PIC sind schnelle RISC Microcontroller die sich gut für Kommunikationsanwendungen
 eignen. Für die Läufer-Platine wurde die PIC16F87x-Familie unter die Lupe genommen. Auch hier ist eine große Anzahl an Quellen für die
 Programmierung sowie eine Auswahl an Entwicklungsumgebungen erhältlich. Der PIC16F87x ist mit 14 interruptfähigen Pins unter seinen
 Konkurrenten am besten ausgestattet. Die sehr dürftige Ausstattung mit Programmspeicher schränkt die Eignung für die Mechatrinikplatine jedoch
 wieder ein.
 
-Mit dem SX52 von Ubicom steht noch ein weiterer PIC-Microcontroller zur Auswahl. Mit acht interruptfähigen PIN's ist der SX52 nicht ganz so gut
+\item Mit dem SX52 von Ubicom steht noch ein weiterer PIC-Microcontroller zur Auswahl. Mit acht interruptfähigen PIN's ist der SX52 nicht ganz so gut
 ausgestattet wie der PIC16F87x, reicht aber für die vorgegebenen Zwecke aus. Das Mangel an Programmspeicher teilt der SX52 mit vier KiloByte
 nicht mit seinem Konkurrenten. Sein Preis ist mit ca. 7 \geneuronarrow{} besser als der des Motorolas und gleichauf mit dem PIC-Controller.
 Durch die PIC-Kompa\-tibilität stehen auch für den SX52 viele Resourcen offen. Mit bis zu 100 Mhz ist der SX52 der schnellste Microcontroller
@@ -102,6 +104,9 @@ seiner Klasse.
 Letztendlich ausschlaggebend für die Wahl des SX52, ist letztendlich die erhältliche Entwicklungsumgebung der Firma Parallax. Die Software
 ermöglicht eine schrittweise Verfolgung des Programmablaufs, und spiegelt dabei die Arbeitsspeicherbelegung.
 Nähers dazu im Kapitel \ref{Umgebung} Programierumgebung.
+
+\end{itemize}
+
 
 Ein tabellarischer Vergleich der Microcontroller findet sich nochmals in Tabelle \ref{cr_microcontroller}.
 
@@ -242,7 +247,7 @@ Diode} an den Microcontroller angeschlossen. Eine davon blau die andere grün.
       \hline
       \emph{Low Side Switch}		& TLE 6230 GP & Infineon & 3.79\\
       \hline
-      \emph{RS232}	                & Max202CWE & Dallas Semiconductor/MAXIM & 3,26 \\
+      \emph{RS232}	                & Max202CWE & Dallas Semiconductor & 3,26 \\
       \hline
       \emph{CAN-Controller}		& MCP2510 & Microchip & 4.25\\
       \hline
@@ -354,7 +359,8 @@ selten so gehandhabt. Folgende Ereignisse können den Kreislauf unterbrechen:
 
 \begin{description}
 \item[Rollover-Interrupt]
-Der \footnote{engl.roll over: überschlagen, vorne überkippen; engl. interrupt: die Unterbrechung}Rollover-Interrupt unterbricht das Programm, schreibt
+Der \footnote{engl.roll over: überschlagen, vorne überkippen; engl. interrupt: die Unterbrechung}Rollover-Interrupt unterbricht das
+Programm,\linebreak schreibt
 den aktuellen Inhalt des Programmzählers, sowie den Akkumulator und die Register \footnote{FSR: File Select Register, enthält den Zeiger auf die
 Aktuelle Registerbank}FSR und \footnote{}STATUS in ein eigens für die Interruptbehandlung vorgesehenes
 Register. Danach werden die Befehle ab der Adresse 000hex ausgeführt bis das Ende des Interrupts durch einen speziellen Rücksprungbefehl angezeigt wird (hier: RETIW
@@ -364,7 +370,7 @@ Während eine Interrupt-Routine ausgeführt wird, wird kein weiterer Interrupt erk
 \item[SLEEP-Befehl]
 Durch den SLEEP-Befehl wird die Clock ausgeschaltet und alle den Microcontroller betreffenden Systeme nur noch minimal versorgt. Das Programm hält an.
 \item[Multi-Input-Wakeup-Interrupt]
-Der Multi-Input-Wakeup-Interrupt wir durch ein Signal am Port B ausgelöst. Er bewirkt entweder das ,,aufwachen'' des Microcontrollers, wenn dieser im
+Der Multi-Input-Wakeup-Interrupt wird durch ein Signal am Port B ausgelöst. Er bewirkt entweder das ,,aufwachen'' des Microcontrollers, wenn dieser im
 SLEEP-Modus war, oder er startet die Interrupt-Routine.
 \item[Endlosschleife]
 Man kann das erreichen der höchste Speicherstelle auch durch eine eigene Endlosschleife verhindern, die während des Programmlaufes nicht verlassen
