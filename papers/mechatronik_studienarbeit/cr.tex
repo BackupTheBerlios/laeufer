@@ -1,31 +1,68 @@
+\section{Aufgabenstellung}
+
+Herzstück dieser Arbeit ist die Implementierung einer ,,intelligenten'' 
+Platine. Sie stellt die Schnittstelle zwischen dem Kommunikations-Framework,
+wie es in den vorangegangenen Kapiteln beschrieben wurde, und den etwaigen
+mechanischen und elektromechanischen Applikationen der Ingenieure des Projekts dar.
+Um die Inhalte dieser Arbeit zu erläutern gilt es den Begriff des 
+mechatronischen Systems zu erklären. 
+
+Als mechatronisches System wird 
+gemeinhin ein funktionell und räumlich integriertes mechanisch
+elektrisches System bezeichnet, in dem Sensoren Informationen aufnehmen,
+Prozessoren diese Informationen auswerten und Aktoren geziehlt genutzt werden,
+um z.B. Kräfte oder Bewegungen zu erzeugen, die auf das System und seine 
+Umgebung zurückwirken.
+
+Vor diesem diesem Hintergrund steht den Ingenieuren im Projekt mit der Platine
+ein Bausatz zur Entwicklung eines mechatronischen Systems zur Verfügung.
+Auf der Platine enthalten ist ein Prozessor, Sensoren und Aktoren sowie Anschlüsse
+für weitere Sensorik und Aktorik. Abbildung \ref{cr_mecha_system} stellt die Platine
+im Kontext eines mechatronischen Systems dar.
+Ziel ist es also ein Werkzeig zu erstellen mittels dem es Ingenieuren möglich 
+ist, schnell und einfach mechatronische Applikationen zu erstellen und in das 
+Gesamtsystem Läufer zu integrieren.
+
+\begin{figure}
+  \center
+\rotatebox{90}{
+  \includegraphics[width=500pt]{Mechatronik_sys.eps}}
+  \caption{Grundstruktur eines mechatronischen Systems im Läufer (nach \cite{Wallaschek})}
+  % Wallaschek 1995, VDI-Berichte 1215
+  \label{cr_mecha_system}
+\end{figure}
+
+
 \section{Anforderungen an die Peripherieelektronik}
-\subsection{Gesamtkonzept}
+% Allgemeine Erörterung der Gesamtanforderung
+
+
 Die Mechatronik im Projekt Läufer muß einer Reihe projektspezifischer
 Anforderungen standhalten. Was bedeuten also die eingangs
 geschilderten Zielsetzungen für die Peripherieelektronik?
 
 Da sich der genaue Funktionsumfang aller mechatronischen Komponenten
-für die Zukunft nicht abschätzen läßt, und neue Komponenten
-jederzeit einfach einzugliedern sein sollen muß das System leicht
-erweiterbar sein. Für die Zielgruppe zur Nutzung der Platinen muß das
-System mit vertretbarem Aufwand bedienbar sein. Für den nutzenden
-Ingenieur ist der Effekt und nicht der Weg interessant.  Die
+für die Zukunft nicht abschätzen läßt und neue Komponenten
+jederzeit einfach einzugliedern sein sollen, muß das System leicht
+erweiterbar sein. Für Maschinenbauingenieure muß das
+System mit vertretbarem Aufwand bedienbar sein. Für den Benutzer
+ist der Effekt und nicht der Weg interessant.  Die
 begrenzten Ressourcen eines autonomen Systems wie dem Läufer erfordern
 außerdem eine sparsame Nutzung von Energie.  Um die Fahrer nicht durch
 Fehlfunktionen oder Ausfall eines Gerätes zu gefährden muß das System
-betriebssicher sein. Das heißt sowohl in der physikalischen Auslegung
-als auch in der Implementierung müssen mögliche Extreme in der
-Nutzung des Fahrzeugs berücksichtigt werden. Dies beinhaltet auch
-eine gewisse Fehlertoleranz.  Nicht zuletzt muß die Lösung zum einen
-durch das vorhandene Know How im Umfeld des Projekt Läufer umsetzbar
-als auch finanzierbar sein.  Bei der Zusammenstellung der Platine muß
-außerdem die Verfügbarkeit der Bauelemente sichergestellt sein.  Wie
-in den restlichen Teilen des Läufers zollt der Designer auch hier
-seinen Tribut: die Platine sollte so wenig Raum wie möglich einnehmen
+betriebssicher sein. Noch vor der Inbetriebnahme gilt es die Hardware 
+vor Fehlbedienung durch den Ingenieure zu schützen. Das heißt sowohl 
+in der physikalischen Auslegung als auch in der Implementierung müssen
+mögliche Extreme in der Nutzung des Fahrzeugs berücksichtigt werden.
+Dies beinhaltet auch eine gewisse Fehlertoleranz. Bei der
+Zusammenstellung der Platine muß außerdem die Verfügbarkeit der
+Bauelemente sichergestellt sein. Wie in den restlichen Teilen des
+ Läufers zollt der Designer auch hier
+seinen Tribut: die Platine sollte so wenig Raum wie möglich einnehmen,
 um dem Design des Fahrzeugs größtmöglichen Freiraum zu gewähren.
 
 
-\subsection{Kosten}
+\subsection{Kosten}  % soll raus
 Die Platine enthält lediglich Standardbauelemente wie sie zum Teil
 auch in der Automobilindustrie verwendet werden. Die Kosten für die
 IC's belaufen sich auf ca 58,- Euro (eine genaue
@@ -37,14 +74,7 @@ Euro ohne Bestückungskosten. Das Layout erlaubt jedoch
 eine Teilbestückung die sich auf die für ein spezifisches
 Peripheriegerät notwendigen Bauelemente beschränkt. Ein weitere
 wichtiger Punkt bei der Kostenbestimmung war die Verwendbarkeit und das
-Zusammenspiel der Bauelemente in der gewünschten Zusammenstellung. Um
-gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen
-begleitete die Firma Cetron den gesamten Prozeß der
-Platinenentwicklung. Von der Idee, dem Prototypen, der Auswahl der
-Komponenten, des Mikrocontrollers, dem Layout der Platine in den zwei
-Revisionen bis hin zur Suche nach Sponsoren für 12 4-Layer Platinen
-sowie bei der Bestückung derselben stand die Firma Cetron mit Rat und
-Tat bei.
+Zusammenspiel der Bauelemente in der gewünschten Zusammenstellung.
 
 Die genauen Kosten der Platine hängen nicht unwesentlich von der Wahl
 der Komponentendistributoren ab. Preisunterschiede von bis zu\linebreak 400 \%
@@ -52,31 +82,30 @@ der Komponentendistributoren ab. Preisunterschiede von bis zu\linebreak 400 \%
 Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der
 Kostenbestimmung (und letztendlich des Einkaufs) gewesen.
 
-\subsection{Sicherheit}
+\subsection{Sicherheit}  % soll raus
 Sicherheit heißt in diesem Zusammenhang: Sicherheit vor Strom- und
-Spannungsspitzen zur Betriebszeit, Ausfallsicherheit zur Betriebszeit
-und Sicherheit der Komponenten vor Fehlbedienung durch den Entwickler.
+Spannungsspitzen zur Betriebszeit und Sicherheit der Komponenten
+vor Fehlbedienung durch den Entwickler.
 
-Komponenten mit Anschlussmöglichkeiten auf der Platine vertragen meist
-kurzfristige Strom und Spannungsspitzen und enthalten gegebenenfalls Zener-Dioden.
-Näheres dazu steht in der Beschreibung der einzelnen Komponenten in Kapitel \ref{cr_peripherie} Periepherie.
-Die Platien selbst enthält eine besonders dünne Leiterbahn, die, sollte der Entwickler doch einmal eine zu hohe Spannung anlegen, als
-Schmelzsicherung dient. So werden die teuren IC's vor Schaden bewahrt.
-
-Um von Ausfallsicherheit zur Betriebszeit auszugehen wäre ansich eine groß angelegte Testreihe im Läufer
-unter verschiedenen Testbedingungen von Nöten. Die bisherigen Versuche und Tests außerhalb des Läufers 
-waren auch erfolgreich. Ob es im Läufer dann noch ,,Überraschungen'' gibt läßt sich jetzt noch nicht sagen.
-Wie sich die mechatronischen Applikationen der Maschinenbauer im Fall einer Störung verhalten 
+Um von Ausfallsicherheit zur Betriebszeit auszugehen wäre eine groß angelegte Testreihe im Läufer
+mit allen fertigen mechatronischen Applikationen unter verschiedenen Testbedingungen von Nöten.
+Die bisherigen Versuche und Tests außerhalb des Läufers 
+waren erfolgreich.Wie sich die mechatronischen Applikationen der Maschinenbauer im Fall einer Störung verhalten 
 obliegt letztendlich dem jeweiligen Entwickler. Die Relevanz für die Fahrsicherheit kann letztlich erst von ihm abgeschätzt werden.
 Das unten erwähnte Modulmodell für die Software soll dabei unter anderem 
 die Fehleranfälligkeit der Software verringern.
 
+\subsection{Ausfallsicherheit zur Betriebszeit} % soll raus
+Komponenten mit Anschlussmöglichkeiten auf der Platine vertragen meist
+kurzfristige Strom und Spannungsspitzen und enthalten gegebenenfalls Zener-Dioden.
+Näheres dazu steht in der Beschreibung der einzelnen Komponenten in Kapitel \ref{cr_peripherie}.
+Die Platien selbst enthält eine besonders dünne Leiterbahn, die, sollte der Entwickler doch einmal eine zu hohe Spannung anlegen, als
+Schmelzsicherung dient. So werden die teuren IC's vor Schaden bewahrt.
 
-\subsection{Design}
+\subsection{Design} % soll raus
 Um sich in das Design des Läufers zu integrieren sind sowohl die
 Erweiterbarkeit als auch die simple Größe der Platine von
-Wichtigkeit.  Die Erweiterbarkeit ist bereits im Bereich Flexibilität
-beschrieben. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat
+Wichtigkeit. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat
 also etwa die Größe einer Scheckkarte (siehe Abbildung
 \ref{Platine-Karte}).
 
@@ -91,7 +120,17 @@ also etwa die Größe einer Scheckkarte (siehe Abbildung
 \newpage
 \section{Platinenlayout}
 %Kommentar zur interdiszipl. Erörterung der Anforderungen
-\subsection{Platine}
+
+% Überblick über die folgenden themen
+
+
+% \subsection{Anforderungen an die Platine}
+% integrationsdichte
+% Sicherheit (Schmelzsicherung)
+
+% \subsection{Realisierung}
+
+\subsection{Platine} % soll weg
 Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die
 erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der
 später erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side
@@ -184,7 +223,7 @@ gezogen worden: Infineon/Siemens (C515-Familie), Motorola
 \end{itemize}
 
 
-Ein tabellarischer Vergleich der Microcontroller findet sich nochmals
+Ein tabellarischer Vergleich der Mikrocontroller findet sich nochmals
 in Tabelle \ref{cr_microcontroller}.
 
 \subsubsection{Die erste Wahl im Detail}
@@ -200,12 +239,12 @@ einem Flashrom, sodaß zum Beispiel weiterentwickelte Versionen
 auch im nachhinein eingespielt werden können. Diese Möglichkeit
 erleichtert auch die Entwicklung insofern, als das Programme nicht erst
 in simulierter Umgebung getestet werden müssen, sondern sofort im
-Einsatzumfeld erprobt werden können ohne große Kosten zu verursachen.
+Einsatzumfeld erprobt werden können, ohne große Kosten zu verursachen.
 
-Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output
+Der SX52 hat fünf 8-Bit Ports, die sowohl als Input als auch als Output
 nutzbar sind. Es existiert ein Stromsparmodus (Sleep-Mode) der zur
 Laufzeit an- und durch externe Quellen wieder abschalbar ist. Der
-Mikrocontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit
+Mikrocontroller hat eine Interruptfunktion, die ebenfalls zur Laufzeit
 aktivier- und deaktivierbar ist. Einer der fünf Ports kann als
 Interrupt oder Weck-Port konfiguriert werden. Das heißt ein Signal an
 diesem Port löst einen Interrupt aus bzw. ,,weckt'' den
@@ -266,8 +305,8 @@ Platine beschrieben.
 
 In dieser Applikation wird das jeweilige Chip-Select über einen
   Multiplexer gesetzt. Diese Lösung spart nicht nur wertvolle Pins am
-  Port des Mikrocontroller, sie garantiert auch, das keine zwei oder
-  mehr Geräte auf den Datentransfer reagieren. Dies macht die
+  Port des Mikrocontroller, sie garantiert auch, das nur genau ein Gerät
+  auf den Datentransfer reagiert. Dies macht die
   Applikation also ein Stück sicherer.
 
 \item[Kommunikation] Neben dem SPI-Bus zur internen Kommunikation
@@ -302,7 +341,7 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
   6230 GP stehen über den SPI-Bus zwei Acht-Bit Schalter zur
   Verfügung. Vier der Acht Anschlüsse sind PWM\footnote{PWM: Puls Weit
   Modulation oder engl. Pulse Width Modulation}-bar (Mehr über die
-  Puls Weit Modulation in \ref{cr_puls}). Die notwendigen Signale für
+  Puls Weit Modulation in Kapitel \ref{cr_puls}). Die notwendigen Signale für
   die PWM gehen direkt vom Mikrocontroller aus (also ohne den Umweg
   über den SPI-Bus).  Der TLE hat einen Kurzschlußschutz integriert.
 
@@ -347,6 +386,9 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
   angeschlossen. Eine davon ist blau die andere grün.
 
 \end{description}
+
+%\subsection{Kosten der Peripherie}
+
 
 \begin{table}
   \caption{Zusammenfassung der verwendeten IC's}
@@ -418,7 +460,7 @@ mit Rücksicht auf die Assemblerumgebung weitestmöglich zu beachten:
 \item Innerhalb der Module sollte es keine weiten Verzweigungen durch
   Unterprogrammaufrufe geben, um dem Entwickler (und damit dem Nutzer
   der Module) möglichst viel Freiraum auf dem Unterprogramm-Stapel zu
-  gewähren.
+  gewähren. Der Unterprogrammstapel hält maximal fünf Einträge.
   
 \item Konstante Einstellungen die sich aus der Architektur der Platine
   ergeben sollten dem Entwickler durch ,,sprechende'' Konstantennamen
@@ -436,11 +478,11 @@ unnötigem Leistungsverbrauch oder ähnlichem vorzubeugen.
 
 Die Modularität des Systems bringt eine Vielzahl von
 Kommunikationsanforderungen mit sich. So müssen die Einzelnen Platinen
-in Kontakt mit der Steuereinheit treten, auf der Platine muß der
+in Kontakt mit der Steuereinheit treten. Auf der Platine muß der
 reibungslose Austausch zwischen den Programmmodulen sichergestellt
-sein ohne Inkonsistenzen hervorzurufen, auf Hardwareebene werden
-einzelne Komponenten über ein serielles Protokoll angesprochen (SPI)
-und nicht zuletzt muß der Microcontroller die zeitkritische serielle
+sein ohne Inkonsistenzen hervorzurufen. Auf Hardwareebene werden
+einzelne Komponenten über ein serielles Protokoll angesprochen (SPI).
+Und nicht zuletzt muß der Mikrocontroller die zeitkritische serielle
 Schnittstelle betreiben (sofern das Modul eingebunden ist).
 
 \subsection{Erweiterbarkeit}
@@ -450,7 +492,7 @@ Konvention folgen. So können auch neue Implementierungen diesem Muster
 folgen und der Entwickler hat eine geringe Einarbeitungszeit. Eine
 Schnittstelle im Sinne einer Hochsprache ist hier nicht von Nöten (und
 auch schwer realisierbar), da die geringe Stapeltiefe und der begrenzte
-Programmspeicher ohnehin eine geringe Verschachtelungstiefe der
+Programmspeicher ohnehin eine geringere Verschachtelungstiefe der
 Unterprogramme erzwingen.
 
 \newpage
@@ -463,7 +505,7 @@ Wie bereits oben beschrieben war einer der Gründe für die Wahl des
 SX52 seine gute Handhabbarkeit bei der Entwicklung. Dies hängt mit der
 erhältlichen Entwicklungsumgebung der Firma Parallax zusammen.  Die
 Entwicklungsumgebung besteht aus der SX-Software SX.exe und dem
-SX-Key \ref{cr_sx_key}.
+SX-Key (siehe Abbildung \ref{cr_sx_key}).
 
 Mit Hilfe des SX-Key spielt man die Software in den Programmspeicher
 des SX52 ein.  Er stellt außerdem, im entsprechenden Modus betrieben,
@@ -515,7 +557,7 @@ am oberen Rand zu sehen.
   \label{cr_sx_exe}
 \end{figure}
 
-\subsection{Funktionsweise eins SX52 Assemblerprogramms}
+\subsection{Funktionsweise eines SX52 Assemblerprogramms}
 Im folgenden wird die Funktionsweise eines SX52 Assemblerprogramms
 grob umrissen, um eine Verständnis der folgenden Erklärungen zu
 ermöglichen. 
@@ -596,7 +638,7 @@ nutzt den BANK-Befehl gefolgt von einer drei-Bit Nummer, das vierte
 Bit im FSR wird dabei immer auf Null gesetzt. Um jetzt trotzdem die
 ungeraden Registerbänke adressieren zu können muß der Programmierer
 das entsprechende Bit im FSR-Register setzten. Diese umständliche
-handhabe ist auf die Kompatibilität mit dem SX32 zurückzuführen, der
+Handhabe ist auf die Kompatibilität mit dem SX32 zurückzuführen, der
 nur acht Registerbänke zur Verfügung stellt.
 
 \subsubsection{Unterprogrammaufrufe}\label{cr_unterprog}
