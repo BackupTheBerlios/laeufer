@@ -37,6 +37,15 @@ WATCH	sendbit,1,UBIN
 WATCH	sending,1,UBIN
 
 
+SET_BANK MACRO	1
+	BANK	\1
+	IF	\1 > $7F
+		SETB	FSR.7
+	ELSE
+		CLRB	FSR.7
+	ENDIF
+ENDM	
+
 
 MODE_SELECT_TRIS        EQU     $1f
 MODE_SELECT_PLP         EQU     $1e
@@ -214,9 +223,9 @@ GLO_XCH_BANK	= $
 ; Daten-Segment
 ;--------------------------------------
 
-DATA_SEG_serielle		MACRO
+DATA_SEG_SERIAL		MACRO
 
-serielle_BANK 	=	$
+SERIAL_BANK 	=	$
 
 bitcounter	    DS		1
 StoredByte	    DS		1
@@ -251,14 +260,9 @@ TEST_BIT_AUSGANG	EQU	RD.7 ; nur zum testen .....
 ;Initsegment
 ;--------------------------------------
 
-INIT_SEG_serielle	MACRO
-BANK	serielle_BANK
-IF	serielle_BANK > $7F
-	SETB	FSR.7
-	ELSE
-	CLRB	FSR.7
-	ENDIF
-
+INIT_SEG_SERIAL		MACRO
+	SET_BANK SERIAL_BANK
+	
 ;BREAK
 MOV	bitcounter, #8
 CLR	StoredByte
@@ -284,13 +288,7 @@ SETB	CTS	; Ab jetzt kann empfangen werden
 INTER_SEG_serial	MACRO
 	
 	;BREAK
-	BANK	serielle_BANK
-	
-	IF	serielle_BANK > $7F
-	SETB	FSR.7
-	ELSE
-	CLRB	FSR.7
-	ENDIF
+	SET_BANK SERIAL_BANK
 
 	MOV	Port_reg, RB	;portregister sichern
 
@@ -376,12 +374,7 @@ absend
 	MOV	FSR,W		; die errechnete adresse ins FSR
 	MOV	IND, STORE_FOR_IND ; und das gelesenen Byte per indireckte Adressierung wegschreiben
 	INC	UART_XCH_STATUS	; +1 damit kein altes Word überschrieben wird
-	BANK	serielle_BANK	; wieder auf die serielle Bank wechseln
-	IF	serielle_BANK > $7F
-		SETB	FSR.7
-		ELSE
-		CLRB	FSR.7
-		ENDIF
+	SET_BANK SERIAL_BANK	; wieder auf die serielle Bank wechseln
 
 CLRB 	LEDblue
 	MOV	STOPBIT_COUNTER, #4
@@ -417,19 +410,13 @@ endint
 ;Code-Segment
 ;--------------------------------------
 
-CODE_SEG_serielle	MACRO
+SERIAL_CODE_SEG	MACRO
 
 _sendbyte
 
 	SETB	TEST_BIT_AUSGANG	; zum testen geht das jetzt an....
 
-	BANK	serielle_BANK
-	IF	serielle_BANK > $7F
-	SETB	FSR.7
-	ELSE
-	CLRB	FSR.7
-	ENDIF
-
+	SET_BANK SERIAL_BANK
 	; ich gehe einfach davon aus das RTS an ist
 
 	JB	sending, occupied 	; wenn gerade mit senden beschäftigt, dann gehe raus
@@ -453,14 +440,9 @@ _sendbyte
 ;	liefert in OUTPUT1 eine '0' wenn wir gerade mit senden beschäftigt sind
 ;	sonst eine 1
 	
-_sendstatus
+_sendbyte_status
 
-	BANK	serielle_BANK
-	IF	serielle_BANK > $7F
-	SETB	FSR.7
-	ELSE
-	CLRB	FSR.7
-	ENDIF
+	SET_BANK SERIAL_BANK
 	
 	CLR	RETVAL
 	SB	sending
@@ -473,14 +455,14 @@ _sendstatus
 ; Call-Segment
 ;--------------------------------------
 
-CALL_SEG_serielle	MACRO
+SERIAL_CALL_SEG	MACRO
 
-UART_sendbyte
+SERIAL_sendbyte
 	JMP	_sendbyte
 	
 	
-UART_sendstatus
-	JMP	_sendstatus
+SERIAL_sendbyte_status
+	JMP	_sendbyte_status
 
 			ENDM
 
@@ -534,19 +516,20 @@ DATA_SEG_SERIAL_READ
                          org $70
                          
                          
-DATA_SEG_serielle
+DATA_SEG_SERIAL
 
 
 ;-------------------------
 ; --- Bank 4 Variablen ---
 ;-------------------------
                         ; org $90
-                        
+DATA_SEG_SERIAL_WRITE	
                         
 ;-------------------------
 ; --- Bank 5 Variablen ---
 ;-------------------------
                         ; org $B0
+DATA_SEG_GLOBAL_XCHANGE
                         
                         
 ;-------------------------
@@ -588,9 +571,9 @@ start		JMP		@main
 
 	ORG $200
 
-	CALL_SEG_serielle
+	SERIAL_CALL_SEG
 
-	CODE_SEG_serielle
+	SERIAL_CODE_SEG
 
 
 ;--------------------------------------
@@ -665,7 +648,7 @@ main
 		; interrupt aktivieren
                 MOV !OPTION, #OPTION_ACCRTCC_INT  ;interrupt wieder anschalten
 
-		INIT_SEG_serielle
+		SERIAL_INIT_SEG
 
 ;--------------------------------------
 ;--------------------------------------
@@ -678,15 +661,8 @@ main
 
  mainloop
 		; wenn 0 dann ist das Byte nicht lesbar
-	
-		BANK	SERIAL_READ_BANK
-	IF	SERIAL_READ_BANK > $7F
-		SETB	FSR.7
-	ELSE
-		CLRB	FSR.7
-	ENDIF
-	
-	
+
+	SET_BANK SERIAL_READ_BANK	
 
 	;TEST	UART_XCH_STATUS
 	;JZ	nothinToDo
@@ -711,7 +687,7 @@ main
 
 	MOV	PARAM1, SER01
 	
-	CALL	@UART_sendbyte
+	CALL	@SERIAL_sendbyte
 	DEC	UART_XCH_STATUS
 	
 	nothinToDo
