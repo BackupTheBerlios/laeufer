@@ -1,8 +1,37 @@
+
 \begin{slide}{Rückweg der Nachricht}
-
+  \begin{itemize}
+  \item Die Nachricht kommt als \texttt{Message} beim
+    \texttt{message\_dispatcher} an.
+  \item Überprüfung der Nachricht (ID, Befehl)
+  \item Übergabe an Treiber über \texttt{receive()}
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Kommunikation mit der GUI}
 
-\end{slide}
+% ============================================================
 
+
+\overlays{3}{%
+  \begin{slide}{Kommunikation mit der GUI}
+    \UntilSlide{2}{
+      Verwendung von Signals und Slots aus QT
+      \begin{itemize}
+      \item Treiber definiert seine Signale.
+      \item GUI verbindet Signale mit Slots.
+      \item Also GUI-Elementen, Methoden, anderen Treibern etc.
+      \item $\to$ Fahrzeuglogik wird durch Routing der Signale
+        implementiert.
+      \end{itemize}
+      \OnlySlide{2} Drawback: Festlegung auf QT und Präprozessor.
+    }
+    \OnlySlide{2}{
+      Hier: 
+      \begin{itemize}
+      \item Treiber wirft Signal \texttt{birne\_defekt}
+      \item GUI verbindet dies mit Warnelement auf Display
+      \end{itemize}
+    }
+  \end{slide}
+  
+}
