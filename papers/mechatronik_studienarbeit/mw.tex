@@ -877,7 +877,7 @@ unabhängig zu machen, es aber trotzdem zu ermöglichen, deren Arbeit am
 Ende in einem Gesamtsystem zusammen zu führen.
 
 
-\subsection{Die Kommunikation im Läufer aus PDA Sicht}\label{mw_com}
+\subsection{High-Level Sicht auf die Kommunikation}\label{mw_com}
 Um die Entwickler mechatronischer Komponenten für den Läufer
 voneinander zu trennen, ist eine Kommunikationsstruktur notwendig, die
 dem durch die Bereitstellung virtueller privater Verbindungen zwischen
@@ -891,21 +891,20 @@ eingegangen werden.
 Die Grundidee der Kommuníkation im Läufer ist die der
 objektorientierten Programmierung (OOP).  Wir verstehen das physische
 Gerät und auch seinen Treiber als \emph{Objekte}, die sich gegenseitig
-\emph{Nachrichten} schicken.  Die Objekte selber haben einen Status,
+\emph{Nachrichten} schicken.  Diese Nachrichten sind im Läufer
+allerdings nicht so umfangreich selbst bestimmbar wie z.B. in einer
+objektorientierten Programmiersprache, wo sie durch Methoden
+verschickt werden können.  Vielmehr werden im Läufer wirklich
+Nachrichten\footnote{Konkret: Instanzen der Klasse {\tt Message}}.
+
+Die Objekte, also Treiber und physisches Gerät haben einen Status,
 sind also Statusmaschinen.  Ein physisches Gerät und sein Treiber
 stellen nun gekoppelte oder kommunizierende Statusmaschinen dar.  Wenn
 sich der Status des einen \emph{signifikant} ändert, teilt es diesen
-Statusübergang dem jeweils anderen mit.  \emph{Signifikant} meint in
-diesem Zusammenhang, dass nur solche Statusübergänge dem anderen
-mitgeteilt werden, die für diesen auch von Bedeutung sind.  
-
-Als Beispiel für die Klassifikation von Übergängen siehe Bild
-\ref{mw_blinker_zustaende}.  Dort wird ein einfaches Übergangsdiagramm
-für einen Blinker dargestellt.  Die fett gezeichneten Übergänge werden
-dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Wenn
-nun das Gerät eine Fehlfunktion feststellt, geht es in den Zustand
-$Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im PDA
-davon unterrichtet werden muss.  Nicht signifikant sind die übergänge 
+Statusübergang dem jeweils anderen über das Versenden einer Nachricht
+mit.  \emph{Signifikant} meint in diesem Zusammenhang, dass nur solche
+Statusübergänge dem anderen mitgeteilt werden, die für diesen auch von
+Bedeutung sind.
 
 
 \begin{figure}
@@ -915,6 +914,22 @@ davon unterrichtet werden muss.  Nicht signifikant sind die übergänge
   bedeuten Übergänge, die vom Treiber aus ausgelöst wurden.}
   \label{mw_blinker_zustaende}
 \end{figure}
+
+Als Beispiel für die Klassifikation von Übergängen siehe Bild
+\ref{mw_blinker_zustaende}.  Dort wird ein einfaches Übergangsdiagramm
+für einen Blinker dargestellt.  Die fett gezeichneten Übergänge werden
+dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Wenn
+nun das Gerät eine Fehlfunktion feststellt, geht es in den Zustand
+$Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im PDA
+davon unterrichtet werden muss.  Nicht signifikant sind die übergänge
+zwischen Z1A und Z1B, da diese den inneren Zustand des physischen
+Gerätes wiederspiegeln.  Diese mit dem Treiber auszutauschen ist nicht
+nur unnötig, sondern auch gefährlich.  Wenn nämlich diese inneren
+Zustände vom Bus abhängen, ist ein sicherer Betrieb des Fahrzeugs ohne
+Bus nicht mehr gewährleistet.  Aus diesem Grund gilt für das Projekt
+der Grundsatz: \emph{Kein sicherheitsrelevanter Regelkreis auf dem
+  Bus!}
+
 
 
 
