@@ -640,16 +640,16 @@ Um eines der Geräte über den SPI-Bus zu adressieren muss das betreffende Gerät p
 Wie in \ref{cr_SPI-Bus} beschrieben erfolgt die Aktivierung der einzelnen Geräte über einen Multiplexer der über die Pins 
 drei bis fünf am Port D an den SX52 angeschlossen ist.
 Die folgenden Konstanten repräsentieren die Pinbelegungen des Port D für die einzelnen Geräte:
-\begin{verbatin}
-SPI_TLE1		EQU \%0000_0000 ; Low-Side-Switch
-SPI_TLE2		EQU \%0000_1000 ; Low-Side-Switch
-SPI_ADC			EQU \%0001_0000 ; Analog-Digital-Wandler
-SPI_DAC			EQU \%0001_1000 ; Digital-Analog-Wandler
-SPI_CAN			EQU \%0010_0000 ; CAN-Controller
-SPI_RESET		EQU \%0010_1000 ; RESET aller RESET-fähigen Geräte
-SPI_NOTCON		EQU \%0011_0000 ; zu keinem Gerät verbunden
+\begin{verbatim}
+SPI\_TLE1		EQU \%0000_0000 ; Low-Side-Switch
+SPI\_TLE2		EQU \%0000_1000 ; Low-Side-Switch
+SPI\_ADC			EQU \%0001_0000 ; Analog-Digital-Wandler
+SPI\_DAC			EQU \%0001_1000 ; Digital-Analog-Wandler
+SPI\_CAN			EQU \%0010_0000 ; CAN-Controller
+SPI\_RESET		EQU \%0010_1000 ; RESET aller RESET-fähigen Geräte
+SPI\_NOTCON		EQU \%0011_0000 ; zu keinem Gerät verbunden
 \end{verbatim}
-Das Bitmuster SPI_NOTCON kann genutzt werden um mit Sicherheit kein Gerät anzuwählen, so das man bei der Programmierung nicht auf die
+Das Bitmuster SPI\_NOTCON kann genutzt werden um mit Sicherheit kein Gerät anzuwählen, so das man bei der Programmierung nicht auf die
 Pinbelegungen auf Port D achten zu müssen.
 Wenn das Gerät ausgewählt ist, erfolgt Gerätespeziefisch die Übertragung verschiedener Bitmuster.
 Im Detail werden die geräte wie folgt behandelt:
