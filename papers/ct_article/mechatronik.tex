@@ -1,0 +1,73 @@
+% Auskommentiert, weils in nem Artikel blöd kommt
+%\section*{Mechatronik im Läufer}
+\subsection*{Mechatronische Komponenten im Läufer}
+
+Mechatronische Systeme am Läufer sind der leistungsverzweigte
+Hybridantrieb, das Energiespeichersystem, die intelligente Beleuchtung
+sowie weitere funktionsrelevante Systeme.  Aber das System ist auch
+für weitere Komponenten offen, die dann sehr einfach in die bestehende
+Infrastruktur integriert werden können.  Im Projekt diskutiert wurden
+die Erweiterung um ein GPS oder ein eigenes Display für den Beifahrer.
+
+%MW: Der Folgende Satz ist zu lang. Ausserdem ``sollte es sein''
+% Ziel der Mechatronik im Läufer sollte es sein, beliebige Komponenten
+% in das System integrieren zu können, ohne größere Änderungen, vor
+% allem baulicher Art, vornehmen zu müssen, sowie eine Schnittstelle für
+% den Fahrer zur Verfügung zu stellen.  Konkret galt es, eine ausfahrbare
+% Stütze und ein Lichtsystem mit Blinkern, Warn- und Abblendlicht zu
+% integrieren.  Aber auch weitere Komponenten, wie ein GPS oder ein
+% zweites Display für den hinteren Fahrer sind denkbar.
+%MW: Der Folgende Satz ist zu lang. Ausserdem ``sollte es sein''
+
+Für die Elektronik dieser mechatronischen Komponenten wurde in enger
+Kooperation mit der Firma ce.tron\cite{cetron} eine Platine mit
+vielfältigen Anschlussmöglichkeiten entwickelt. Zu diesen
+Möglichkeiten gehören beispielsweise Anschlüsse für Motoren und
+Sensorik. Die Steuerung der Anschlüsse erfolgt durch einen
+PIC-kompatiblen Microcontroller.  Die mittels dieser Platine
+gesteuerten mechatronischen Geräte kommunizieren dann über einen
+CANBus\cite{canspec}\footnote{Controller Area Network} mit der
+zentralen Steuereinheit, also im Falle des Läufers dem Linux-PDA.
+
+\subsection*{Scheckkarten mit Funktion}
+
+%MW: zu langer Satz
+%Auf der Grösse einer Scheckkarte sind auf der Platine ein CANBus, ein
+%Anschluß für die serielle Schnittstelle, ein 12 Bit
+%Analog-Digital-Wandler, zwei 12 Bit Digital-Analog-Wandler, ein 8-pin Digitaleingang, zwei
+%8-Pin\footnote{pin: engl. Kontakt} Digitalein- oder Ausgänge sowie
+%zwei bis zu 36Volt belastbare Ausgänge für Elektromotoren oder Servos
+%untergebracht.  
+%MW: zu langer Satz
+%Der Microcontroller bekommt alle Werte über fünf 8-Bit
+%Ports\footnote{port: engl. Anschluß} zur Verfügung gestellt und kann
+%über selbige auch die Ausgänge steuern.
+
+Soll nun eine neue Komponente in das System integriert werden, so
+enthält die Platine bereits viele fertig implementierte Funktionen um
+Eingänge abzugreifen, auszuwerten und an den PDA weiterzuschicken.
+Das Rad muß also nicht jedes mal neu erfunden werden.  Mindestens die
+Kommunikation mit anderen wird mit bereits auf der Platine
+implementierten Funktionen abgewickelt. Der Entwickler muß dazu nur
+die von ihm benötigten unter den vorhandenen Routinen aufrufen.
+
+Auf dieser untersten Ebene der Mechatronik sollen jedoch nur die
+nötigsten Entscheidungen getroffen werden.  Das Zusammenspiel der
+Komponenten wir über den PDA kontolliert und ausgewertet.
+%MW Hier ist ein reales Beispiel angebracht
+% So würde
+% z.B. ein Scheibenwischer zwar kontrollieren, ob er als nächstes nach
+% links oder recht wischen muss.  Ob er jedoch überhaupt wischen soll,
+% wird ihm über den CANBus vom PDA gesagt.
+%MW Hier ist ein reales Beispiel angebracht
+Ein Beispiel ist die Platine mit deren Hilfe die Fahrzeugstütze des
+Läufers implementiert ist.  Sie schaltet den Motor zum Stütze
+Ausfahren ab, wenn die Sensorik durch Beobachten von Stromspitzen am
+Motor einen Widerstand registriert.  Ob die Stütze jedoch überhaupt
+ausgefahren werden sollwird im PDA entschieden und als Befehl über den
+CANbus an diese Platine gesendet.
+
+%%% Local Variables:
+%%% mode: latex 
+%%% TeX-master: "master"
+%%% End:

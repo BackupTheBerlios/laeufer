@@ -1,0 +1,52 @@
+\documentclass[12pt, a4paper, twocolumn]{article}
+\usepackage{german}           % Deutsches Layout
+\usepackage[latin1]{inputenc} % Deutsche Sonderzeichen
+%\usepackage{graphics}         % Grafiken an sich
+%\usepackage{epsfig}           % EPS Bilder einbinden
+\usepackage{hyperref}         % Links in PDF
+\usepackage{palatino}         % Postscript Font
+%\bibliographystyle{alphadin}
+\bibliographystyle{alphadin}
+%\bibliographystyle{abbrv}    % Alphadin stellt keine URLs dar
+\author{Christoph Reichenbach, Christian Rüdiger, Markus Weimer}
+\title{Strampelnder Tux}
+
+\pagestyle{headings}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+  \emph{Embedded Systems auf Linux-Basis sind aktuell eines der
+    Boom-Gebiete des Open Source Systems.  Linux findet sich z.B. in
+    der Steuerung von Industrieanlagen, auf kleinst-Webservern oder
+    auch in jüngster Zeit auf PDAs.  Eben diese Geräte, die
+    Persönlichen Digitalen Assistenten, finden seit einiger Zeit eine
+    immer grössere Verbreitung.  Im Rahmen des Projekts Läufer wurden
+    an der TU Darmstadt diese beiden Bereiche kleiner, eingebetteter
+    Systeme zusammengeführt: Die Steuerung eines innovativen Fahrzeugs
+    erfolgt durch einen Linux-PDA.}
+
+\end{abstract}
+
+% Inhaltsverzeichnis
+%\tableofcontents
+
+%Einleitung(mw)
+\input{laeufer}
+
+%Christian
+\input{mechatronik}
+
+%Markus
+\input{pda}
+
+% Jamesons Kaptitel
+\input{anbindung}
+
+% Markus
+\input{package}
+
+% Zugefuegt --J
+\bibliography{master}
+
+\end{document}

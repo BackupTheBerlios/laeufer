@@ -1,0 +1,109 @@
+%\section{Die Verbindung zwischen PDA und Mechatronik}
+
+All dies sind interessante Experimente für sich-- die Platine und ihre
+Programmierung wie der PDA als Bedienelement-- doch damit das bunte
+Bild der Bedienelemente nicht blosse Façade bleibt und die Mechatronik
+vom Willen des Fahrers erfahren kann, ist eine Kommunikationsschicht
+nötig.
+
+%\subsection{Kommunikation}
+
+Für das Projekt Läufer war von vorneherein die Entscheidung für ein
+verkabeltes System gefallen.  Auf Protokollseite wird hierbei auf CAN
+(Controller Area Network, siehe \cite{canspec}) gesetzt, ein
+verhältnismäßig einfaches und verbreitetes Kommunikationsprotokoll,
+das unter anderem von BMW und Mercedes zur Datenübertragung innerhalb
+von Fahrzeugen eingesetzt wird.
+
+% IMG: CAN-Protokollframe
+% Subtitel: Ein CAN-Frame, die atomare Kommunikationseinheit auf dem Bus
+
+Ein unmittelbarer Vorteil der Wahl eines bereits verbreiteten
+Protokolls ist das Vorhandensein existierender
+Hardware-Implementierungen, von denen eine [-- FIXME: der sowieso-Chip
+--] hier die Aufgabe eines Kommunikationsteilnehmers wahrimmt.
+
+
+Das CAN-Protokoll gewährleistet Korrektheit der übertragenen Daten,
+erzwingt Arbitrierung der auf dem Bus gesandten Kommunikation und
+erlaubt theoretisch 2048 logische und eine beliebige Anzahl
+physikalischer Kommunikationsteilnehmer.
+
+%\subsubsection{Ergänzungsprotokolle}
+
+Zwei weitere Probleme jedoch löst CAN nicht: Übertragungssicherheit,
+also die Gewährleistung, daß der Sender dem Erfolgen einer Übertragung
+erfährt, ob diese beim Empfänger ankam, und die Überprüfung des
+Vorhandenseins des vorgesehenen Bus-Masters, ein insbesondere durch
+die problemlose Entfernbarkeit des PDAs relevantes Problem.
+
+
+Die Lösungen erfolgten auf höherer Protokollebene, die in Form des
+eigens entworfenen LLO-Protokolles (Läufer Layer One) entstand. Zwar
+existiert mit CAN/Open (siehe \cite{canopen}) bereits ein etabliertes
+und umfangreiches Standardprotokoll zur Kommunikation auf dem CAN-Bus,
+das jedoch für eine Implementierung mit der gewählten Hardware und in
+dem gegebenen Rahmen zu umfangreich gewesen wäre.
+
+\subsection*{Die LLO- und LLZ-Protokolle}
+
+LLO setzt direkt auf dem CAN-Protokoll auf und kodiert seine
+Operationen in Teilen des CAN-Adressfeldes, so daß sich die Anzahl der
+adressierbaren Geräte auf 32 vermindert. Zwei dieser Adressen sind
+wiederum reserviert, eine für den Bus-Master, eine für Broadcasts. Die
+Notwendigkeiten des Läufers fordern zur Zeit keinen größeren
+Adressraum\footnote{Durch geeignete Versionnierung wurde jedoch
+  spätere Erweiterbarkeit sichergestellt}.  Mittels eines regelmäßigen
+Keep-Alive-Signals stellt LLO sicher, daß die Sklaven im Bus einen
+Ausfall des Bus-Masters bemerken; die andere noch fehlende
+Anforderung, die Korrektheit von Übertragungen, wird allerdings durch
+ein zweites Protokoll erfüllt: LLZ (Läufer Layer Zero), konrastierend
+zu den üblichen Konventionen benannt, liefert dies und auch eine
+allgemeine Zustandsverwaltung der Busteilnehmer.
+
+\subsubsection*{Ausgewählte Eingeweide}
+%---- Ausgewaehlte Protokoll-Details
+
+% Zustaende, sicherer Basiszustand
+% Keep-Alive
+Dabei werden vom Protokoll einige Zustände gefordert, insbesondere ein
+stabiler Einzelbetriebszustand, in dem das angesteuerte Gerät
+eingehende Nachrichten ignoriert. Dieser wird eingenommen, wenn, zum
+Beispiel durch mehrfaches Ausbleiben eines Keep-Alive-Signals vom
+Busmaster, das Gerät davon ausgehen muß, daß es nicht mehr unter der
+Aufsicht des PDAs steht und eine Fehlfunktion vorliegt. Wie genau
+dieser sichere Betriebszustand tatsächlich aussieht, hängt vom
+Gerätetyp ab; der Motor beispielsweise nimmt in diesem Fall die
+Drehzahl langsam zurück, eine vorhandene Warnblink-Anlage würde sich
+automatisch aktivieren.
+
+% Uebertragungssicherheit (Sequenzzaehler)
+Zur Sicherstellung der korrekten Übertragung einer Botschaft werden
+(auf LLO-Ebene) vierbittige Sequenzzähler verwendet, die sich nach
+jeder erfolgreichen Botschaft um eins inkreminieren. Da die Inhalte
+der Zähler in LLO-Botschaften einkodiert werden, kann der Empfänger
+bei Erhalt einer Nachricht seine Synchronität zum Bus-Master mit einem
+hohen Grad an Sicherheit überprüfen.
+
+\subsection*{Aus dem Tagebuch einer Nachricht}
+%---- Weg einer Nachricht, mit Diagramm(en)
+
+% Die Nachricht und ihre Semantik
+%\begin{code}
+%\end{code}
+
+
+% Verpackung Highlevel-Protokoll
+% Verpackung Lowlevel-Protokoll
+% LL: An der Bushaltestelle
+% LL: Der erste faehrt vorbei: Keepalive
+% LL: Alles einsteigen, die Reise geht los
+% LL: Gestrandet, aber keine Nausicaä: Paket verloren
+% LL: Unser Nachfolger kommt
+% LL: Vermisstenmeldung: Der war doch direkt vor euch?
+% LL: Suchtrupp, oder eher: Neuversandt eines Klons
+% LL: Registrierungsnummer stimmt-- Welcome at the US Army Headquarters! Would you like to play a game?
+% LL: Quittung fuer uns
+% LL: Jacke ausziehen
+% HL: Hose runter- der volle Monty!
+% Wir haben unsre Semantik, und keiner kann zusehen, weil der Chip so klein und schwarz ist! Wie ein Zensierkaestchen... Hmm...

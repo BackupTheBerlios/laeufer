@@ -1,0 +1,93 @@
+%\section*{PDA}
+
+%Überleitung von Christian
+All diese Komponenten des Läufers möchten die Fahrer nun zentral und
+vor allem intuitiv steuern, um z.B. die Geschwindigkeit abhängig vom
+eigenen Erschöpfungsgrad und dem der Akkus einzustellen.  Aber nicht
+nur dies, es müssen auch Fahrzeugdaten aufbereitet werden.  Diese
+Informationen werden aus den Fahrzeugkomponenten via CANBus gewonnen,
+und für den Fahrer in der Situation angemessen präsentiert.  Ein
+einfaches Beispiel für solche Fahrdaten ist die aktuelle
+Geschwindigkeit, die aus dem Antriebsstrang gewonnen wird.  Die
+Anforderungen an das Fahrerinformationssystem des Läufers sind also:
+
+
+\begin{description}
+\item[Kommunikation mit dem CANBus] Um die Informationen von den
+  verschiedenen Geräten zu erhalten und diesen Befehle zu schicken.
+\item[Rechenleistung] Um die Daten zu verarbeiten und die Berechnung
+  komplexer Zusammenhänge nicht in Assembler auf den Platinen
+  durchführen zu müssen.
+\item[Display] Um die Informationen an den Fahrer weiterzugeben.
+  Diese Informationen sind z.B. bekannte Größen wie die aktuelle
+  Geschwindigkeit, aber auch Läufer-Spezifika wie der Ladestand der
+  Batterien.
+\end{description}
+
+Über Rechenleistung und Display verfügen heutige PDAs in mehr als
+ausreichendem Masse. Aus diesem Grund lag die Entscheidung nahe, einen
+solchen als ,,Bordcomputer'' einzusetzen.  Nachdem erste Versuche mit
+einem Palm IIIx sehr ermutigend waren, wurde das Team in der Ansicht
+bestätigt, diesen Weg weiter zu verfolgen. Dies geschah entgegen der
+verbreiteten Meinung, Consumer Elektronik habe im Embedded-Bereich
+nichts verloren.
+
+% ``Linux ist toll'' ­ Teil
+Im Laufe der Entwicklung kam allerdings im Team der Wunsch nach einer
+flexibleren Lösung als PalmOS auf.  Da PalmOS, das Betriebssystem der
+Palm-PDAs, in seinen aktuellen Versionen nicht über Multitasking
+verfügt, hätte jede Form von Erweiterung des Läufers um neue
+Komponenten Änderungen am Fahrprogramm erfordert.  Schließlich kann
+man ohne Multitasking nicht einfach eine weitere Software
+installieren, die ebenfalls während der Fahrt zur Ausführung kommen
+soll.  Eine Abänderung der sowieso schon laufenden Fahrsoftware sollte
+aber aus Sicherheitsgründen vermieden werden.  Da das Projekt aber
+seiner Struktur nach offen für neue Entwicklungen bleiben will, kam
+ein ausschließen zukünftig hinzukommender Funktionalität nicht in
+Frage.  So kam die Forderung nach einem Multitaskingfähigen PDA auf.
+Zur Wahl standen die üblichen Verdächtigen: Also WindowsCE/PocketPC
+und seit neuestem auch Linux.
+
+Das Mechatronik-Team in Darmstadt entschied sich für Linux, da es im
+Bereich der Programmierung schon über mehr und tiefergehende
+Erfahrungen mit Linux als mit WindowsCE verfügte.  Ein weiterer
+Vorteil von Linux auf dem PDA ist, daß die darauf laufenden
+Anwendungen in der Regel Sourcecode-kompatibel zu Linux-PCs bleiben.
+Man kann also eine Anwendung am PC entwickeln und testen, um sie dann
+später durch einfaches Neuübersetzen in eine PDA-Anwendung zu
+verwandeln.  Dies ist ein nicht zu unterschätzender Vorteil, gerade
+vor dem Hintergrund der verteilten Produktentwicklung im Projekt.  Bei
+dieser werden Teile der Mechatronik an der TU München entwickelt, wo
+bei dieser Auslegung der Mechatronik kein PDA für die Entwicklung
+nötig ist.
+
+Diese Methode kommt insbesondere auch ohne Emulation des PDA auf dem
+PC aus.  Dies stellt sicher, daß die Anwendung auf dem PC eine genauso
+direkte Verbindung zu den Schnittstellen hat wie später auf dem PDA,
+ohne daß dem eine eventuelle Emulation des PDA eine weitere Hürde in
+den Weg stellt.
+
+Im Projekt wurde zunächst ein mittels der Linux-Distribution Familiar
+und der graphischen Oberfläche OPIE \cite{opie} auf Linux umgestellter
+Compaq IPaq H3660 verwendet.  \emph{SHARP!?!}
+
+Programmiert werden beide PDAs in C++ unter Nutzung der
+Klassenbibliothek QT des norwegischen Herstellers Trolltech.  Diese
+Bibliothek liegt z.B. auch dem erfolgreichen UNIX-Desktop KDE zu
+Grunde und ermöglicht es, Software für Windows, *ix, MacOS und nun
+auch Linux-PDAs zu entwickeln.  Die dabei enstehende Software ist bei
+gutem Programmierstil sogar durch einfaches Neuübersetzen von einer
+auf die andere Plattform portabel.  So wurde z.B. im Projekt Läufer
+Software für den PDA auf PCs und Workstations entwickelt, bevor der
+erste PDA zur Verfügung stand.  Bei der Gestaltung der Oberfläche des
+Programms muß man dann allerdings die Einschränkungen des PDAs
+hinsichtlich Texteingabe und Display-Auflösung berücksichtigen.
+
+%Überleitung Jameson
+%Im Läufer mußte dieser PDA an den sogenannten CANBus angebunden werden.
+
+
+%%% Local Variables:
+%%% mode: latex 
+%%% TeX-master: "master"
+%%% End:
