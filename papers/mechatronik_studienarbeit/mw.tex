@@ -23,15 +23,14 @@ Die einzelnen Komponenten sind:
   \label{mw_seite}
 \end{figure}
 
-Für die Zukunft sind weitere Komponenten möglich und auch eingeplant.
-Konkret angedacht wurde z.B. eine Anbindung eines GPS\footnote{Global
-Positioning System}-Systems über den CAN\footnote{Controller Area
-Network, vgl. Kapitel \ref{jameson_kapitel}}-Bus.  Die mechatronischen
-Komponenten des Läufers verfügen über etliche Parameter, die der
-Fahrer beeinflussen möchte.  Als Beispiel sei hier der Antriebsstrang
-genannt.  Es soll dem Fahrer z.B. ermöglicht werden, bei vollen
-Batterien und kurzer Strecke alleine elektrisch zu fahren, und die
-Pedale ohne Widerstand zu benutzen.
+Für die Zukunft sind weitere Komponenten möglich und auch eingeplant.  Konkret
+angedacht wurde z.B. eine Anbindung eines GPS\footnote{Global Positioning
+  System}-Systems über den CAN\footnote{Controller Area Network, vgl. Kapitel
+  \ref{jameson_kapitel}}-Bus.  Die mechatronischen Komponenten des Läufers
+verfügen über etliche Parameter, die der Fahrer beeinflussen möchte.  Als
+Beispiel sei hier der Antriebsstrang genannt.  Es soll dem Fahrer z.B.
+ermöglicht werden, bei vollen Batterien und kurzer Strecke alleine elektrisch
+zu fahren, und die Pedale ohne Widerstand zu benutzen.
 
 Außerdem gibt es Informationen über den aktuellen Zustand des
 Fahrzeuges, die an den Fahrer weitergeleitet werden müssen.  Dies sind
@@ -831,88 +830,104 @@ anderer auf QT aufsetzender Softwarepakete wie z.B. KDE.
 
 
 
+%=======================================================================
 \newpage
 \section{Treiberprogrammier-Schnittstelle}
 Neben der im Kapitel \ref{cr_kapitel} beschriebenen
 Programmierumgebung auf den Platinen benötigt der Entwickler
 mechatronischer Komponenten auch eine einfache Möglichkeit, um vom PDA
-aus auf die in Kapitel \ref{jameson_kapitel} datailiert beschriebenen
-Kommunikationswege im Läufer zugreifen zu können. Genau diese
-Möglichkeit soll ihm die Treiberprogrammier-Schnittstelle\footnote{Im
-  folgenden DPI für \emph{Driver Programming Interface abgekürzt}}
+aus einfach auf die in Kapitel \ref{jameson_kapitel} datailiert
+beschriebenen Kommunikationswege im Läufer zugreifen zu können.  Genau
+diese Möglichkeit soll ihm die
+Treiberprogrammier-Schnittstelle\footnote{Im folgenden DPI für
+\emph{Driver Programming Interface} in Anlehnung an API abgekürzt}
 bieten.
 
-Wie aus Abbildung \ref{mw_schnittstellen} hervorgeht, hat das DPI aber
-eine zweite wichtige Aufgabe: Koordination der Kommunikation zwischen
-GUI\footnote{GUI = Graphical User Interface} und dem Treiber für das
-Gerät.  Dies ergibt sich unmittelbar aus der Natur des Projektes: Es
-ist nicht abzusehen, welche mechatronischen Komponenten im
-,,fertigen'' Läufer zu finden sein werden.  Folglich kann die
-Erstellung der GUI nicht Teil dieser Arbeit sein, die sich ja nicht
-über das Ende des Projektes Läufer hinnaus ausdehnt.  In Folge dessen
-muss die Entwicklung der GUI ausserhalb diser Arbeit beim Design des
-DPI Berücksichtigung finden.
+\begin{figure}[h]
+  \center \includegraphics[width=7.0cm]{mw/bilder/schnittstellen.eps}
+  \caption{Die durch das DPI abzudeckenden Schnittstellen (schraffiert)}
+  \label{mw_schnittstellen}
+\end{figure}
+
+Abbildung \ref{mw_schnittstellen} zeigt die grobe Architektur des
+DPI.  Alle schraffiert dargestellten Bereiche werden durch das DPI
+abgedeckt.  Der Entwickler einer mechatronischen Komponenente
+programmiert zu seinem Gerät lediglich einen \emph{Treiber}, der die
+durch das DPI implementierten Kommunikationsmöglichkeiten nutzt.
+Dadurch wird der Entwickler davon befreit, sich mit den internen
+Strukturen des DPI auseinanderzusetzen.
+
+Wie aus Abbildung \ref{mw_schnittstellen} ebanfalls hervorgeht, hat
+das DPI aber eine zweite wichtige Aufgabe: Koordination der
+Kommunikation zwischen GUI\footnote{GUI = Graphical User Interface}
+und dem Treiber für das Gerät.  Diese Aufgabe des DPI ergibt sich
+unmittelbar aus der Natur des Projektes: Es ist nicht abzusehen,
+welche mechatronischen Komponenten im ,,fertigen'' Läufer zu finden
+sein werden.  Folglich kann die Erstellung der GUI nicht Teil dieser
+Arbeit sein, die sich ja nicht bis zum Ende des Projektes Läufer
+hinnaus ausdehnt.  In Folge dessen muss die Entwicklung der GUI
+ausserhalb diser Arbeit beim Design des DPI Berücksichtigung finden.
 
 Auf diese beiden Aufgabenfelder des DPI Treiber - CAN-Bus sowie
 Treiber - GUI soll im folgenden detailiert eingegangen werden.  Dem
 voran stehen einige Anforderungen, die sich aus den schon weiter oben
-in Kapitel \ref{aufgabe_kapitel} beschriebenen Anforderungen an das
-Gesamtsystem herleiten.
-
-\begin{figure}
-  \center \includegraphics[width=7.0cm]{mw/bilder/schnittstellen.eps}
-  \caption{Die abzudeckenden Schnittstellen (schraffiert)}
-  \label{mw_schnittstellen}
-\end{figure}
-
+in Kapitel \ref{aufgabe_kapitel} auf Seite \pageref{aufgabe_kapitel}ff
+beschriebenen Anforderungen an das Gesamtsystem herleiten.
 
 \subsection{Anforderungen}
 Bei der Entwicklung des DPI müssen die für das Projekt spezifischen
-Randbedingungen Beachtung finden: Zu den Randbedingungen zählt, daß
-mehrere Entwickler parallel und wahrscheinlich ohne Kenntnis
-voneinander an Komponenten für den Läufer arbeiten bzw. arbeiten
-werden. Außerdem war zu Beginn der vorliegenden Arbeit noch nicht
-vollständig sicher, über welche mechatronischen Systeme der Läufer mal
-verfügen wird.  Trotz des unsicheren Umfeldes müssen die gesamten
-Software- und Hardware-Komponenten am Ende der Entwicklung an einer
-Stelle zentral zusammengeführt und kontrolliert werden können.
+Randbedingungen Beachtung finden: Zu diesen Randbedingungen zählt
+insbesondere , daß mehrere Entwickler parallel und wahrscheinlich ohne
+Kenntnis voneinander an Komponenten für den Läufer arbeiten bzw.
+arbeiten werden. Außerdem war zu Beginn der vorliegenden Arbeit noch
+nicht vollständig sicher, über welche mechatronischen Systeme der
+Läufer mal verfügen wird.  Trotz des unsicheren Umfeldes müssen die
+gesamten Software- und Hardware-Komponenten am Ende der Entwicklung an
+einer Stelle zentral zusammengeführt und kontrolliert werden können.
 
-Es ist also notwendig, die Entwickler so gut es möglich ist voneinander
-unabhängig zu machen, es aber trotzdem zu ermöglichen, deren Arbeit am
-Ende in einem Gesamtsystem zusammen zu führen.
+Es ist folglich notwendig, die Entwickler so gut es möglich ist
+voneinander unabhängig zu machen, trotzdem aber nicht zu verhindern,
+deren Arbeit am Ende in einem Gesamtsystem zusammen zu führen.
+
+Im Projektumfeld kann man sich nie sicher sein, daß die derzeit
+verwendete Software und Hardware auch konstant bleibt.  Aus diesem
+Grund sollte das DPI möglichst wenige Annahmen über die Plattform, auf
+der es läuft, treffen.
 
 
 \subsection{High-Level Sicht auf die Kommunikation}\label{mw_com}
+Hier soll nun im folgenden auf die Anwender- bzw. Entwicklersicht auf
+die Kommunikation vom PDA aus eingegangen werden soweit dies für die
+Erläuterung des DPI hilfreich ist.  Für die näheren Details der
+Kommunikationsprotokolle im Läufer sei auf Kapitel
+\ref{jameson_kapitel} verwiesen.
+
 Um die Entwickler mechatronischer Komponenten für den Läufer
 voneinander zu trennen, ist eine Kommunikationsstruktur notwendig, die
 dem durch die Bereitstellung virtueller privater Verbindungen zwischen
-PDA Software und Platine Rechnung trägt.  Somit wurde ein
-Designmerkmal des CANBus' dieser Anforderung geopfert.  Für die
-näheren Details der Kommunikationsprotokolle im Läufer sei auf Kapitel
-\ref{jameson_kapitel} verwiesen.  Hier soll nun im folgenden auf die
-Anwender- bzw. Entwicklersicht auf die Kommunikation vom PDA aus
-eingegangen werden.
+PDA Software und Platine Rechnung trägt.
 
-Die Grundidee der Kommuníkation im Läufer ist die der
+Die Grundidee hinter der Kommunikation im Läufer ist die der
 objektorientierten Programmierung (OOP).  Wir verstehen das physische
 Gerät und auch seinen Treiber als \emph{Objekte}, die sich gegenseitig
 \emph{Nachrichten} schicken.  Diese Nachrichten sind im Läufer
 allerdings nicht so umfangreich selbst bestimmbar wie z.B. in einer
 objektorientierten Programmiersprache, wo sie durch Methoden
-modelliert werden können.  Vielmehr werden im Läufer wirklich
-Nachrichten\footnote{Konkret: Instanzen der Klasse {\tt Message}}.
+modelliert werden können.  Vielmehr werden im Läufer wirklich und
+letztlich sogar physisch Nachrichten\footnote{Konkret: Instanzen der
+  Klasse {\tt Message}} versendet.
 
 Die Objekte, also Treiber und physisches Gerät haben einen Status,
 sind also Statusmaschinen.  Ein physisches Gerät und sein Treiber
-stellen nun gekoppelte oder kommunizierende Statusmaschinen dar.  Wenn
+stellen nun gekoppelte bzw. kommunizierende Statusmaschinen dar.  Wenn
 sich der Status des einen \emph{signifikant} ändert, teilt es diesen
 Statusübergang dem jeweils anderen über das Versenden einer Nachricht
 mit.  \emph{Signifikant} meint in diesem Zusammenhang, dass nur solche
 Statusübergänge dem anderen mitgeteilt werden, die für diesen auch von
-Bedeutung sind.
+Bedeutung sind.  Dieser Zusammenhang soll nun anhand eines Beispiels
+erläutert werden:
 
-
-\begin{figure}
+\begin{figure}[h]
   \center
   \includegraphics[width=14cm]{mw/bilder/zustaende.eps}
   \caption{Übergangsdiagramm eines modellhaften Blinkers. Fette Linien
@@ -923,22 +938,26 @@ Bedeutung sind.
 Als Beispiel für die Klassifikation von Übergängen siehe Bild
 \ref{mw_blinker_zustaende}.  Dort wird ein einfaches Übergangsdiagramm
 für einen Blinker dargestellt.  Die fett gezeichneten Übergänge werden
-dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Wenn
-nun das Gerät eine Fehlfunktion feststellt, geht es in den Zustand
-$Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im PDA
-davon unterrichtet werden muss.  Nicht signifikant sind die Übergänge
-zwischen $Z1A$ und $Z1B$, da diese den inneren Zustand des physischen
-Gerätes wiederspiegeln.  Diese mit dem Treiber auszutauschen ist nicht
-nur unnötig, sondern auch gefährlich.  Wenn nämlich diese inneren
-Zustände vom Bus abhängen, ist ein sicherer Betrieb des Fahrzeugs ohne
-Bus nicht mehr gewährleistet.  Aus diesem Grund gilt für das Projekt
-der Grundsatz: \emph{Kein sicherheitsrelevanter Regelkreis auf dem
-  Bus!}
+dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Alle
+anderen Übergänge sind intern, werden also vom Gerät selber initiiert.
+
+Wenn nun das Gerät z.B. eine Fehlfunktion feststellt, geht es in den
+Zustand $Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im
+PDA davon unterrichtet werden muss.  Nicht signifikant sind die
+Übergänge zwischen $Z1A$ und $Z1B$, da diese den inneren Zustand des
+physischen Gerätes wiederspiegeln.  Diese mit dem Treiber
+auszutauschen ist nicht nur unnötig, sondern auch gefährlich.  Wenn
+nämlich diese inneren Zustände vom Bus abhängen, ist ein sicherer
+Betrieb des Fahrzeugs ohne Bus nicht mehr gewährleistet.  Im Falle
+eines Blinkers schenit dies nicht kritisch zu sein, aber das
+mechatronische System des Läufers wird auch z.B. den Antrieb
+enthalten.  Aus diesem Grund gilt für das Projekt der Grundsatz:
+\emph{Kein sicherheitsrelevanter Regelkreis auf dem Bus!}
 
 
-
-
-Grundbausteine der Kommunikation im Läufer sind so genannte
+Wie werden aber nun diese Übergänge zwischen den beiden
+Statusmaschinen ausgetauscht?  Grundbausteine der Kommunikation im
+Läufer sind wie weiter oben angemerkt so genannte
 Nachrichten\footnote{im folgenden auch: Message}, die von einem
 Bus\-teil\-nehmer zum anderen gesendet werden.  Jeder Busteilnehmer
 erhält dazu eine im System eindeutige Nummer, die sogenannte
@@ -949,22 +968,38 @@ hergestellt.  Die Kommunikationsstruktur des Läufers macht das Routing
 der Nachrichten über den CANBus für den Entwickler transparent, d.h.
 er muß sich lediglich darum kümmern, daß sich sein Gerät und der
 dazugehörige Treiber unter der selben ID beim System anmelden.
+Prinzipiell ist es für den Entwickler auf dem PDA sogar unerheblich,
+ob überhaupt ein CAN-Bus verwendet wird.  Man könnte sich z.B. einen
+,,Treiber'' für die Anzeige des PDA vorstellen, bei dem dann gar kein
+physikalischer Bus mehr zum Einsatz kommt.
 
 Die eigentliche Kommunikation erfolgt dann wie schon gesagt in Form
 von Nachrichten, die zwischen dem Treiber und dem zu ihm gehörenden
 Gerät ausgetauscht werden.  Bei den Nachrichten handelt es sich immer
-um einen Befehl (8Bit) mit optionalen Parametern (15Bytes).  Dadurch
-kann sich jeder Entwickler für sein Gerät einen eigenen Satz an
-Befehlen definieren, ohne daß der Befehlsatz jedes Gerätes den anderen
-Teilnehmern im System bekannt sein muß.  Details zur Kommunikation
-finden sich in Kapitel \ref{jameson_kapitel}.
+um einen Befehl (8Bit) mit optionalen Parametern (15Bytes).  Dieses
+Paradigma ähnelt wieder der OOP, ist allerdings eingeschränkter: Jedes
+Gerät kann lediglich maximal 256 externe Statusübergänge
+entgegennehmen.  Durch gespräche mit den anderen Projektteilnehmern
+wurde jedoch sichergestellt, daß diese Zahl ausreichend dimensioniert
+ist.  
+
+Dieser Aufbau ermöglicht es jedem Entwickler, für sein Gerät einen
+eigenen Satz an Befehlen zu definieren, ohne daß der Befehlsatz jedes
+Gerätes den anderen Teilnehmern im System bekannt sein muß.  Die
+Forderung nach Unabhängigkeit der Entwickler voneinander wird durch
+dieses Design erfüllt.
+
+Details zur physikalischen Kommunikation und der Verarbeitung der
+Nachrichten auf den Microcontrollern finden sich in Kapitel
+\ref{jameson_kapitel}.
 
 
 
 \subsection{Implementierung}\label{mw_klasse}
-Ziel der Entwicklung des DPI ist es, die Entwicklung
-darauf aufsetzender Komponenten so einfach wie möglich zu machen, da
-die Entwickler, die die Komponenten entwickeln werden, sich neben der
+\subsubsection{Überblick}
+Ziel der Entwicklung des DPI ist es, die Entwicklung darauf
+aufsetzender Komponenten so einfach wie möglich zu machen, da die
+Entwickler, die die Komponenten entwickeln werden, sich neben der
 Programmierung auch noch anderen Teilen ihrer Komponente widmen
 müssen.  Die auf der entwickelten Bibliothek aufsetzenden Module sind
 genauer:
@@ -983,7 +1018,6 @@ genauer:
   aus den einzelnen Klassen laufen.  Dazu muß es für den Entwickler
   der GUI einfach sein, auf die Methoden der Treiber zuzugreifen und
   deren Statusmeldungen zu erhalten.
-
 \end{description}
 
 Die genannten Module sind nicht Teil der vorliegenden Studienarbeit,
@@ -995,13 +1029,41 @@ erstellt werden, wenn alle Fahrzeugkomponenten feststehen, da in ihr
 auch die Fahrzeuglogik festgehalten wird. Um die Fahrzeuglogik zu
 implementieren, bedarf es genauerer Kenntnisse der Fahrdynamik des
 Läufers als die Autoren haben können, schon aufgrund ihrer
-Fachrichtung.
+Fachrichtung.  Ziel dieser Arbeit ist es, die Kommunikation im Läufer
+für die spätere Verwendung zugänglich zu machen.
 
 Aufgabe ist es also, zwei Schnittstellen zu definieren. Im einzelnen
 sind es die Anbindung der GUI an die Treiber sowie die Kommunikation
-zwischen Treiber und CANBus.
+zwischen Treiber und CANBus.  Der Beschreibung dieser beiden
+Schnittstellen sei jedoch ein kurzer Einschub über die Wahl der
+Programmiersprache vorangestellt:
 
-\subsection{Anbindung der GUI an die Treiber}
+\subsubsection{Verwendete Programmiersprache}
+Die Wahl der verwendeten Programmiersprache ergibt sich zum einen aus
+der derzeit verwendeten Plattform und zum anderen aus dem weiter oben
+beschriebenen grundsätzlicheren Designüberlegungen.  Aus diesen ergibt
+sich unmittelbar die Verwendung einer Sprache, die den
+Objektorientierten Entwurf unterstützt, da dann die Kommunikation im
+Läufer auf natürliche Weise implementiert werden kann.  Auf dem
+Linux-PDA sind einige Sprachen verfügbar, die diesen Entwurf
+unterstützen.  Aufgrund des Vorwissens der Beteiligten kamen Java und
+C++ in Frage.  Da die gesamte GUI jedoch wahrscheinlich auf QT
+aufsetzen wird, und QT selbst in C++ geschrieben ist, haben wir uns
+für C++ entschieden.
+
+Das weiter oben beschriebene Grundkonzept sowie die folgenden
+Implemenierungsdetails nutzen jedoch bewusst keine Sprachmittel, die
+C++ kennt und Java nicht.  Es soll damit der Weg offengehalten werden,
+die Kommunikationsstruktur im Läufer einfach auf andere Systeme zu
+übertragen.  So wäre es z.B. mittelfristig denkbar, den PDA durch ein
+Java-Fähiges Handy zu ersetzen.  Und genau diese interessanten
+Weiterentwicklungsmöglichkeiten sollen nicht verbaut werden.  Eine
+Ausnahme von dieser Regel stellt die Anbindung der GUI an die Treiber
+dar, da der Bereich GUI auf mobilen Endgeräten auf absehbare Zeit wohl
+nicht portabel in den Griff zu bekommen ist.
+
+
+\subsubsection{Anbindung der GUI an die Treiber}
 Die GUI muß Befehle an die Treiber geben können.  Das läßt sich recht
 einfach dadurch erreichen, daß die Treiber als lokale Variablen in der
 GUI Vorliegen.  Die GUI wird also zum Hauptbestandteil des
@@ -1060,7 +1122,7 @@ Verschiedene Wege gehen:
 \begin{verbatim}
 class Foo : public QObject
  {
-  Q\_OBJECT
+  Q_OBJECT
   public:
     Foo();
     int  value() const { return val; }
@@ -1097,7 +1159,8 @@ void Foo::setValue( int v )
 
 \begin{verbatim}
 Foo a, b;
-connect(&a, SIGNAL(valueChanged(int)), &b, SLOT(setValue(int)));
+connect(&a, SIGNAL(valueChanged(int)), &b,
+        SLOT(setValue(int)));
 b.setValue( 110 );
 a.setValue( 88 );
 b.value();          // gibt 88 zurück
@@ -1130,15 +1193,14 @@ b.value();          // gibt 88 zurück
   beschriebenen Lösung ist die Abhängigkeit von QT, was bei der
   Nutzung von QT als GUI für den PDA aber kein großes Hindernis
   darstellt.
-
 \end{description}
 
-\subsection{Zugriff der Treiber auf den CANBus}
+\subsubsection{Zugriff der Treiber auf den CANBus}
 Für den Zugriff auf den CANBus kann man ebenfalls die sehr mächtigen
 Strukturen von QTOPIA nutzen.  In einem solchen Fall sendet das
 Framework ein Signal, daß eine neue Nachricht vorliegt.  Über einen
-Verteilermechanismus würde die Nachricht dann als Signal an einen
-Slot des entsprechenden Treibers gesendet.
+Verteilermechanismus wird die Nachricht dann als Signal an einen Slot
+des entsprechenden Treibers gesendet.
 
 Im Läufer wird ein solcher Ansatz allerdings nicht verfolgt.  Statt dessen
 erben alle Treiber von einer gemeinsamen Basisklasse, die die
@@ -1159,42 +1221,87 @@ Die genaue Kenntnis der anzubietenden Funktionen nicht zu nutzen würde
 unnötige Komplexität im Programm hervorrufen und die Bibliothek nur
 unnötig vergrößern.
 
-\subsection{Implementierungsdetails}
-%Abbildung \ref{mw_uml} zeigt ein UML der entstandenen Bibliothek.
+
+\subsubsection{Weg einer Nachricht}
+Um die Funktionsweise fassbar zu machen, soll hier ein kleiner
+Überblick über den Weg einer Nachricht durch das System gegeben
+werden. Betrachtet wird hier natürlich nur der Weg im PDA, wohingegen
+in Kapitel \ref{jameson_kapitel} ab Seite \pageref{jameson_kapitel}
+auf die Details des Protokolls eingegangen wird.
+
+\begin{description}
+\item[Vom Benutzer zum Gerät:] Nachdem der Benutzer am PDA eine
+  physische oder virtuelle Taste betätigt hat, ruft die GUI die
+  entsprechende Funktion des passenden Treibers auf.  Dieser
+  entscheidet dann, ob es sich um eine signifikante Statusänderung
+  handelt. Falls nein, ändert er lediglich seinen internen Status
+  bzw. tut nichts.
+  
+  Falls es sich jedoch um eine signifikante Statusänderung handelt,
+  erstellt der Treiber eine neue Instanz der Klasse Message, die er
+  mit den passenden Werten für Befehl und Parameter füllt.  Das
+  Message-Objekt schickt er dann mittels der geerbten Funktion send()
+  auf die Reise zum Gerät.  An dieser Stelle ist für den
+  Treiberentwickler die Arbeit getan und das DPI übernimmt die
+  restliche Arbeit:
+
+  Zunächst wird überprüft, ob die Nachricht überhaupt den richtigen
+  Absender trägt. Falls ja, wird die Nachricht gesperrt, d.h. es ist
+  nicht mehr möglich, Änderungen daran vorzunehmen.  Dies hat
+  Optimierungsgründe, da diese Nachricht dann in den weiter unten
+  liegenden Schichten in einer Queue gespeichert wird und dort
+  evtl. einige Zeit verbleibt.  Da der Absender ja noch einen Pointer
+  darauf hat, könnte es dadurch zu unangenehmen Problemen kommen.
+
+  Von dort wird die Nachricht an den MessageDispatcher weitergereicht,
+  der sie lediglich an den Busmanager übergibt. Dieser stellt dann die
+  Schnittstelle zum physikalischen Netzwerk dar.
+
+\item[Vom Gerät bis zum Treiber:] Tritt auf Seiten des Gerätes ein
+  signifikanter Statusübergang ein, sendet es mit den in Kapitel
+  \ref{jameson_kapitel} beschriebenen Mitteln eine Nachricht an den
+  Treiber. Diese Nachricht wird auf der Ebene des BusManager in ein
+  Message-Objekt mit passenden Einträgen verwandelt und an den
+  MessageDispatcher übergeben.  Dieser prüft einige Annahmen und
+  stellt die Nachricht dem passenden Treiber mittels dessen
+  receive-Funktion zu.  Ab diesem Zeitpunkt übernimmt der Treiber
+  wieder die Regie und reagiert auf die Nachricht.
+\end{description}
+
+
+\subsubsection{Details}
 Auf Details zur Implementierung soll an dieser Stelle unter Hinweis
 auf die im Anhang vorhandene API\footnote{API: Application Programming
   Interface}-Referenz verzichtet werden.
 
-%UPDATEN
-%\begin{figure}
-%  \center \includegraphics[width=15.0cm]{mw/bilder/uml.eps}
-%  \caption{UML der Klassenbibliothek}
-%  \label{mw_uml}
-%\end{figure}
 
 
-%------------------------------------------------------------
+%=======================================================================
 \newpage
-\section{Entstandene Software: DebugTreiber}
-
-\subsection{Zweck des Tools}
+\section{Entwickler-Tool: DebugTreiber}
 Im Rahmen der Gespräche mit den ebenfalls am Projekt Läufer
 beteiligten Maschinenbau-Studenten kam immer mehr zum Vorschein, daß
 für die Entwicklung der mechatronischen Teile noch zusätzliche
-Werkzeuge benötigt werden.  So ist es für eine zügige Entwicklung von
-Komponenten nicht vertretbar, die Hardware parallel zum Treiber
-entwickeln zu müssen.
+Werkzeuge benötigt werden.  Diese sind nicht unbedingt durch die
+Aufgabenstellung abgedeckt, wurden aber im Laufe des Projektes
+nachgefragt.  Neben einigen kleineren Werkzeugen wie z.B. einem
+Farbmischer, der es dem Designer erleichtert, das Farbschema für die
+PDA-GUI zu erstellen ist dies vor allem der so genannte DebugTreiber:
+
+\subsection{Zweck des Tools}
+So ist es für eine zügige Entwicklung von Komponenten nicht
+vertretbar, die Hardware parallel zum Treiber entwickeln zu müssen.
 
 Ein Entwickler z.B. eines Blinkers sollte die Möglichkeit erhalten,
 seine Hardware zu testen, ohne tatsächlich schon den Treiber dazu
 entwickelt zu haben. Der Entwickler weiß, welche ID\footnote{Diese
-jeder Komponente eindeutig zugeordnete Nummer muß allerdings für jedes
-mechatronische Gesamtsystem zentral vergeben werden, da ein globaler
-Addressraum, wie ihn z.B. Ethernet bietet, nicht zur verfügung
-steht.}sein Gerät hat und welche Operationen es versteht.  Folglich
-kann er die korrekte Funktionsweise durch manuelle Eingaben und
-Beobachten der Reaktion seines Gerätes überprüfen. Beobachten kann er
-entweder Änderungen am Gerät selber (z.B.: Lampe blinkt) oder aber
+  jeder Komponente eindeutig zugeordnete Nummer muß allerdings für
+  jedes mechatronische Gesamtsystem zentral vergeben werden, da ein
+  globaler Addressraum, wie ihn z.B. Ethernet bietet, nicht zur
+  verfügung steht.}sein Gerät hat und welche Operationen es versteht.
+Folglich kann er die korrekte Funktionsweise durch manuelle Eingaben
+und Beobachten der Reaktion seines Gerätes überprüfen. Beobachten kann
+er entweder Änderungen am Gerät selber (z.B.: Lampe blinkt) oder aber
 Rückmeldungen des Gerätes über den CAN-Bus.  Um den
 Hardware-Entwicklern die Arbeit zu erleichtern, ermöglicht der
 DebugTreiber nun genau das: Manuelles Senden und Empfangen von
