@@ -33,14 +33,13 @@
 
 \overlays{2}{
   \begin{slide}{DPI aus Entwicklersicht}
-    \untilSlide*{1}{
+    \onlySlide*{1}{
       \begin{center}
         Informal: Kommunizierende Automaten\\
         \includegraphics[width=9cm, angle=-90]{zustaende.eps}
-
       \end{center}
     }
-    \fromSlide{2}{
+    \onlySlide*{2}{
       Vaterklasse \texttt{Driver} für alle Treiber
       \begin{itemize}
       \item GUI ruft \texttt{Blinken()} des Treibers auf.
@@ -48,6 +47,7 @@
       \item \texttt{receive(Message)}: Empfang von Nachrichten.
       \end{itemize}
     }
+
   \end{slide}
 }
 
@@ -55,12 +55,12 @@
 % ============================================================
 
 
-  \begin{slide}{Weg der Nachricht durch das DPI}
-    \begin{itemize}
-    \item \texttt{Driver.send()} überprüft die Nachricht
-    \item \texttt{message\_dispatcher.send()} sendet auf passendem
-      \texttt{bus\_manager} heraus $\to$ Indirektion
-    \item \texttt{bus\_manager.send()} sendet auf passendem
-      \texttt{bus} heraus $\to$ Indirektion
-    \end{itemize}
-  \end{slide}
+\begin{slide}{Weg der Nachricht durch das DPI}
+  \begin{itemize}
+  \item \texttt{Driver.send()} überprüft die Nachricht
+  \item \texttt{message\_dispatcher.send()} sendet mit richtigem
+    \texttt{bus\_manager} heraus 
+  \item \texttt{bus\_manager.send()} sendet auf passendem \texttt{bus}
+  \end{itemize}
+  $\to$ Zweifache Indirektion: Mehrere logische und physische Busse.
+\end{slide}
