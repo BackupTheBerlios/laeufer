@@ -30,10 +30,14 @@ versorgen
 \subsection{Kosten}
 Die Platine enthält lediglich Standardbauelemente wie sie auch in der Automobilindustrie verwendet werden. Die Kosten einer komplett bestückten Platine
 belaufen sich auf etwa 150,- \geneuronarrow{}. das Layout erlaubt jedoch eine Teilbestückung die sich auf die für ein spezifisches Peripheriegerät notwendigen
-Bauelemente beschränkt. Ein weitere wichtger Punkt bei der Kostenbestimmung war die verwndbarkeit und das zusammenspiel der Bauelemente in der
-gewünschten Zusammenstellung. Um gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen begleitet die Firma Cetron gesammten Prozess der
+Bauelemente beschränkt. Ein weitere wichtger Punkt bei der Kostenbestimmung war die Verwendbarkeit und das Zusammenspiel der Bauelemente in der
+gewünschten Zusammenstellung. Um gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen begleitete die Firma Cetron den gesammten Prozess der
 Platinenentwicklung. Von der Idee, dem Prototypen, der Auswahl der Komponenten, des Microcontrollers, dem Layout der Platine in zwei Revisionen bis 
 hin zur Suche nach Sponsoren für 12 4-Layer Platinen sowie bei der Bestückung derselben stand die Firma Cetron mit Rat und Tat bei.
+
+Die genauen Kosten der Platine hängt nicht unwesentlich von der Wahl der Komponentendistributoren ab. Preisunterschiede von bis zu 400 \% (z.B. bei
+blauen LEDs) sind keine
+Seltenheit. Eine sorgfältiger Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der Kostenbestimmung.
 \subsection{Sicherheit}
 Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor falscher Bedienung durch einen Entwickler wurde bei der Auswahl der Komponenten als
 auch beim Layout auf Robustheit Wert gelegt. Die Platine sowie die Bauelemente enthalten eine Reihe von Schutzmechanismen wie Zener-dioden oder eine
@@ -42,8 +46,15 @@ Der zweite wichtige Sicherheitsaspekt liegt in der Funktion eines etwaigen Gerät
 Zustand zu implementieren. Eine entsprechende Nachricht auf Protokollseite existiert bereits.
 \subsection{Design}
 Um sich in das Design des Läufers zu integrieren sind sowohl die Erweiterbarkeit als auch die simple Grösse der Platine von Wichtigkeit.
-Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe der Platine beträgt  x * y cm hat also etw die Grösse einer Checkkarte.
- Abbildung!!!!! Platine Magnetkarte !!!!!!!!
+Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat also etwa die Grösse einer Checkkarte.
+
+\begin{figure}
+  \center
+  \includegraphics[width=277pt]{Platine_C-Karte.eps}
+  \caption{Grössenvergleich Platine Cheque Karte}
+  \label{Platine-Karte}
+\end{figure}
+
 
 \newpage
 \section{Wahl der Komponenten}
@@ -52,19 +63,30 @@ Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe d
 Die Wahl des Microcontrollers beruht auf der Empfehlung der Firma Cetron. Im folgenden werden im groben die Eigenschaften beschrieben. Weitere Details
 stehen im Teil \ref{Konzeption} Konzeption der Implementierung.
 
-Die Wahl des Microcontrollers fiel auf den SX52. Dieser Microcontroller der Firma Ubicom hat 16 sogenannte Codepages Flashrom a 512 12-Bit Worten für den 
+Die Wahl des Microcontrollers fiel auf den SX52. Dieser Microcontroller der Firma Ubicom hat 16 Seiten Programmspeicher a 512 12-Bit Worten für den 
 Programmcode und 16 $\times$ 16 8-Bit Registerbänke sowie eine Spezialbank zur Konfiguration. Das heißt es stehen 8 Kilobyte (1 Byte = 12 Bit) für
-Programmcode und $2^{8}$ 8-Bit Register zu Laufzeit zur Verfügung.
-Der SX52 hat 5 8-Bit Ports die sowohl als Input als auch als Output nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur Laufzeit an- und ausschltbar
-ist. Der Microcontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit aktivier und deaktivierbar ist. Einer der 5 Ports kann als
-Interrupt oder Weck-port konfiguriert werden.
+Programmcode und $2^{8}$ 8-Bit Register zu Laufzeit zur Verfügung. Für Unterprogrammaufrufe steht ein Stapel mit einer Tiefe von acht Einträgen zur
+verfügung. Der Programmspeicher entspricht physikalisch einem Flashrom, sodaß das zum Beispiel weiterentwickelte Versionen auch im nachhinein
+eingespielt werden können. Diese Möglichkeit erleichtert auch die Entwicklung insofern als das Programme nicht erst in simulierter Umgebung getestet
+werden muss, sondern sofort im Einsatzumfeld erprobt werden kann ohne große Kosten zu verursachen.
+
+Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur Laufzeit an- und ausschltbar
+ist. Der Microcontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit aktivier und deaktivierbar ist. Einer der fünf Ports kann als
+Interrupt oder Weck-port konfiguriert werden. Das heißt ein Signal an diesem Port löst einen Interrupt aus bzw. ,,weckt'' den Mocrocontroller aus dem
+Stromsparmodus. 
+
 Ein Besonderheit des SX ist ein komerziell erhältliches Programmierpaket, mithilfe dessen ein Programm schrittweise ausgeführt und sowohl auf
-Bildschirm als auch am Microcontroller verfolgbar ist.
-Dies macht die Programmierarbeit deutlich einfacher. Mit einer Taktfrequenz von 50 MHz ist der SX auch für eine 115 Baud übertragung an der seriellen
-Schnittstelle schnell genug.
+Bildschirm als auch am Microcontroller verfolgbar ist. Nähers dazu im Kapitel \ref{Umgebung} Programierumgebung.
+Dies macht die Programmierarbeit deutlich einfacher.
+
+Die Assemblersprache die der mitgelieferte Interpreter akzeptiert ist PIC-kompatiebel, so das im Internet Lösungen zu häufigen Problemen auzufinden
+sind.
+
+Mit einer Taktfrequenz von 50 MHz ist der SX auch für eine 115 Baud übertragung an der seriellen Schnittstelle schnell genug.
+Weitere für die Programmierung relevante Merkmale werden im Kapitel \ref{Implementierung} Implementierung besprochen.
 \subsection{Peripherie}
 Um eine flexible Nutzung der Platine zu sichern gilt es eine Vielzahl von Anschlußmöglichkeiten zur Verfügung zu stellen. Im folgenden werden die
-genutzen Bauelemente und Funktionalität der Platine beschrieben.
+genutzen Bauelemente und Funktionalitäten der Platine beschrieben.
 \begin{description}
 \item[Serial Peripheral Interface (SPI)]
 Die große Anzahl an Bauelementen macht eine sparsame Nutzung der I/O-Ports am Microprozessor nötig.
@@ -87,71 +109,340 @@ müssen.
 
 \item[Analog-Digital-Wandler]
 Der LTC 1594 von Linear Tchnologie enthält einen 4-Kanal Multiplexer über den einer von vier Eingängen an den Analog-Digital-Wandler geführt werden
-können. Zur Konfigurations werden anfangs vier Bit übertragen die zum einen als Aktivierung und zum anderen für die Auswahl des Multiplexereingangs.
+können. Der LTC 1594 ist ebenfalls über den SPI-Bus erreichbar. Zur Konfigurations werden anfangs vier Bit übertragen die zum einen als Aktivierung und zum anderen für die Auswahl des Multiplexereingangs.
 Wenn ein Eingang ausgewählt ist, dann codiert der Analog-Digital-Wandler die anliegende Spannung bis maximal 12 Volt in 12 Bit. Die Abtastrate beträgt
 16,8 kHz.
 
-Über Jumper lässt sich eine Rückkopplung der Brückenausgänge mit den Eingängen des Anlog-Digital-Wandlers herstellen. Das heißt es existiert eine
-direkte Möglichkeit zu Messung der ... ->->-> WAS eigentlich ??????
+Über Jumper lässt sich eine Rückkopplung der Brückenausgänge mit den Eingängen des Anlog-Digital-Wandlers herstellen.
+Der Strom an der Brücke wird über einen Widerstand geführt, die abfallende Spannung mit einem Operationsverstärker verstärkt und dann im
+Analog-Digital-Wandler gemessen.
+Das heißt es existiert eine direkte Möglichkeit zu Messung der Leistungsaufnahme der an der Brücke angeschlossenen Geräte (z.B. Motoren).
 
 \item[Low-Side-Switch]
 
-Siemens Smart Octal Low Side Switch TLE 6230 GP Short Circuit Protection 8 bit 4bit PWM
+Mit dem Siemens Smart Octal Low Side Switch TLE 6230 GP stehen über den SPI-Bus zwei Acht-Bit Schalter zur Verfügung.
+Die Ansteuerung erfolgt über 2 $\times$ Acht-Bit Wörter, wobei das erste Wort der Konfiguration das zweite der Freischaltung dient.
+Vier der Acht Anschlüsse sind PWM\footnote{PWM Puls Weit Modulation oder engl. Pulse Width Modulation}-bar. Die notwendigen Signale dazu gehen direkt
+vom Microcontroller aus (also ohne den Umweg über den SPI-Bus).
+Die Bausteine haben einen Kurzschlußschutz integriert.
 
-TLE1+2
-\item[Digitale Ein- und Ausgänge]
+\item[Digitale Eingänge]
+Mit dem ULN2004A gibt es über 7 Anschlüsse einen direkten Zugang zum Microcontroller. 
+Der sieben Darlington Schlatungen enthaltende Baustein von STMicroelectronics Akzeptiert eine Eingangsspannung von fünf bis zu acht Volt je nach
+Eingangsstrom.
+Drei der Eingänge werden an den interruptfähigen Port des Microcontrollers durchgeschaltet. Dadurch ergibt sich eine weitere Möglichkeit die Platine
+von ausserhalb zu ,,wecken''.
 
-Digitale Ein- und Ausgänge
 \item[Brücken]
-2 x Infineon TLE 5206-2 5 Ampere H-Bridge for DC Motors up to 40 V 6 A peak
+Für verbrauchsstarke Gleichstromgeräte sind zwei H-Brücken Der Firma Infineon auf der Platine enthalten. Der TLE 5206-2 kann bis zu 40 Volt Spannung bei
+fünf Ampere liefern. Er verträgt dabei kurzzeitige Stromspitzen von bis zu sechs Ampere.
+Die aus zwei Bausteinen resultierenden 4 Anschlüsse, können beispielsweise für vier in eine Richtung steuerbare Motoren oder zwei in beide Richtungen
+steuerbare Motoren verwendet werden.
 
-Brücken
 \item[Speicher]
+Mit dem FM24C64 steht ein 64 Kilobyte großer seriell bedienbarer Speicher zur Verfügung. Der Speicher ist unterteilt in acht $\times$ 8.192 Bits,
+so daß jeweils acht Bit seriell in den Speicher geschrieben werden können. Die Speicherzelle werden also mit einer 13-stelligen Binärzahl
+adressiert$2^{13}$.
 
-RAM
+\item[LED]
+Um ein optisches Feedback (zum Beispiel für den Fall einer Fehlfunktion) für den Programmierer zu ermöglichen, sind zwei LED\footnote{LED = Light Emitting
+Diode} an den Microcontroller angeschlossen. Eine davon blau die andere grün.
+
 \end{description}
+
+Tabelle : anschlüsse input output stromaufnahme Spannungsaufnahme Gerät 
+
+Tabelle : interne Komunikation mit Micocontroller Frequenz max anzahl wörter wortlänge
 
 \newpage
 
 \section{Anforderungen an die Implementierung des Microcontrollers}
+Im folgenden werden die Auswirkungen der Vorgaben auf die Assembler-Programme des Microcontrollers beschrieben.
 
 \subsection{Bedienbarkeit}
+Was bedeutet Bedienbarkeit im Bezug auf die Programme des Microcontrollers?
 
-Konstanten
-Speicherreservierung
-Speicherplatzierung
+Ziel ist es dem Entwickler eine Art Bibliothek zur Ansteuerung der einzelnen Platinenkomponenten anzubieten.
+Folgende Punkte sind dabei mit Rücksicht auf die Assemblerumgebung weitestmöglich zu beachten:
+\begin{itemize}
+\item Die Programmpakete für die einzelnen Platinenkomponenten müssen als Module verfügbar sein, die gegebenenfalls vom Entwickler eingebunden werden
+können.
+\item Die einzelnen Module müssen sich den Arbeitsspeicher so teilen, das Keines das jeweils Andere stört bzw. Inkonsistenzen zur Laufzeit hervorruft.
+Das heißt das eine strikte Arbeitsspeichernutzung vorhanden sein muss.
 
-Codeseg
-Callseg
-BANKseg
+\item Es müssen Konventionen für den Austausch von Daten zwischen den Modulen entwickelt werden.
+
+\item Der Programmspeicher muss möglichst effizient von den Modulen genutzt werden.
+
+\item Innerhalb der Module sollte es keine weiten Verzweigungen durch Unterprogrammaufrufe geben, um dem Entwickler(und damit Nutzer der Module)
+möglichst viel Freiraum auf dem Unterprogramm-Stapel gezu wewährleisten.
+
+\item Konstante Einstellungen die sich aus der Architektur der Platine ergeben sollten dem Entwickler durch ,,sprechende'' Konstantennamen einfach
+handhabbar gemacht werden.
+\end{itemize}
 
 \subsection{Sicherheit}
-
-muss der Ing machen
+Die Implementierung der Platinen muss eventuelle Fehlfunktionen berücksichtigen und adäquat behandeln ohne die Kommunikationsebene zu stören.
+Desweiteren muss es einen sicheren Zustand geben in den die Platine bei etwaiger Fehlfunktion versetzt wird um Kurzschluss, unnötigem Leistungsverbrauch
+oder ähnlichem vorzubeugen.
 
 \subsection{Kommunikation}
 
-Interrupt
-Wake on ...
+Die Modularität des Systems bringt eine Vielzahl von Kommunikationsanforderungen mit sich. So müssen die Einzelnen Platinen in Kontakt mit der
+Steuereinheit treten, auf der Platine muss der reibungslose Austausch zwischen den Programmmodulen sichergestellt sein ohne inkonsistenzen
+hervorzurufen, auf Hardwareebene werden einzelne Kompenenten über ein serielles Protokoll angesprochen (SPI) und nicht zuletzt muss der Microcontroller
+die zeitkritische serielle Schnittstelle betreiben (sofern das Modul eingebunden ist).
 
 \subsection{Erweiterbarkeit}
-Modulstruktur und Speichermanagement
+Um auch zukünftige Weiterentwicklungen der Peripherie berücksichtigen zu können, muss die Programmierung der Komponnenten einer klaren Konvention
+folgen.So können auch neue Implemetierungen diesem Muster folgen und der Entwickler hat eine geringe Einarbeitungszeit. Eine Schnittstelle im Sinne
+einer Hochsprache ist hier nicht von Nöten, da die geringe Stacktiefe und der begrenzte Programmspeicher ohnehin eine geringe
+Verschachtelungstiefe der Unterprogramme erzwingen.
 
 \newpage
-\section{Konzeption der Implementierung}
-\label{Konzeption}
+\section{Implementierung}
+\label{Implementierung}
 \subsection{Programmierumgebung}
+\label{Umgebung}
 
-SXprogramm
-Debugmölichkeiten
+Wie bereits im vorangehenden Kapitel beschrieben war einer der Gründe für die Wahl des SX52 seine gute Handhabbarkeit bei der Entwicklung.
+Dies hängt mit der erhältichen Entwicklungsumgebung der Firma Parallax zusammen. 
+Das Programm SX52 besteht aus einem Editor einem Assembler-Interpreter und einem Laufzeitdebugprogramm. Um den Microcontroller zu programmieren
+beziehungsweise die Debugroutinen anzuwenden, benötigt man ausserdem den SX-Key \ref{cr_sx_key}. Der SX-Key übernimmt so er angeschlossen ist die Taktung des
+Prozessors, so das die Debugfunktionen möglich sind.
+
+\begin{figure}
+  \center
+  \includegraphics[width=277pt]{sx-key_m.eps}
+  \caption{Der SX-Key}
+  \label{cr_sx_key}
+\end{figure}
+
+Die Debugfunktion ermöglicht die Ausführung von
+Programmen schrittweise zu verfolgen und dabei die Registerinhalte zu überwachen. Desweiteren können bestimmte Register oder gar Bits formatiert (als binäre,
+hexadezimale oder dezimale Zahl) angezeigt werden. 
+
+\begin{figure}
+  \center
+  \includegraphics[width=400pt]{regs_dbug_500.eps}
+  \caption{Registerfenster mit Debugleiste}
+  \label{cr_sx_exe}
+\end{figure}
+
+\subsection{Funktionsweise eins SX52 Assemblerprogramms}
+Im folgenden wird die Funktionsweise eines SX52 Assemblerprogramms grob umrissen, um eine Verständniss der folgenden Erklärungen zuermöglichen.
+Ich gehe davon aus, das Begriffe wie Akkumulator,Clock (oder auch Zeitgeber) und Register bereits bekannt sind.
+
+Die Programme des SX52 sind ein einem 64 Kilobyte grossem EEPROM untergebracht. Jedes Byte hat eine Länge von zwölf Bit. Ein Byte repräsentiert eine
+Instruktion für den Microcontroller. Dabei teilt sich ein solches Byte je nach Befehl in Operationscode und Argumente. Anders als zum Beispiel bei
+einmem MIPS Assembler haben die Operationscodes nicht alle die gleiche Länge. Die Adresse der aktuell auszuführende Zeile entnimmt man dem
+Programmzähler (zu engl. Programm Counter, abgekürzt PC).
+
+Ein Programm beginnt an der höchsten Stelle des Speichers, also an der Stelle FFF (Hexadezimal). Dort wird die Einsprungadresse des Hauptprogramms
+eingelesen und in den Programmzähler geschrieben. Die Einsprungadresse wird auch als ,,\footnote{engl.reset: widerherstellen. In diesem Kontext soll
+der Anfangszustand des Programms wieder hergestellt werden}reset'' bezeichnet. Der Befehl an der aktuellen Stelle wird eingelesen und, nach dem der Programmzähler um Eins iteriert
+wurde, ausgewertet.
+
+Ein solches Programm könnte nun bis zu höchsten Stelle durchlaufen und dann wieder von der Stelle FFF (hexadezimal) aus zurückspringen. In der Praxis wird das jedoch
+selten so gehandhabt. Folgende Ereignisse können den Kreislauf unterbrechen:
+
+\begin{description}
+\item[Rollover-Interrupt]
+Der \footnote{engl.roll over: überschlagen, vorne überkippen; engl. interrupt: die Unterbrechung}Rollover-Interrupt unterbricht das Programm, schreibt
+den aktuellen Inhalt des Programmzählers, sowie den Akkumulator und die Register \footnote{FSR: File Select Register, enthält den Zeiger auf die
+Aktuelle Registerbank}FSR und \footnote{}STATUS in ein eigens für die Interruptbehandlung vorgesehenes
+Register. Danach werden die Befehle ab der Adresse 000 ausgeführt bis das Ende des Interrupts durch einen speziellen Rücksprungbefehl angezeigt wird (hier: RETIW
+oder RETI). Diese Befehle sorgen nun dafür, dass der Programmzähler, der Akkumulator und die Register FSR und STATUS wieder auf die zuvor gespeicherten
+werte gesetzt werden. Die Befehle von der Adresse 000 bis zum Rücksprungbefehl werden im folgenden als Interrupt-Routine bezeichnet.
+Während eine Interrupt-Routine ausgeführt wird, kann kein weiterer Interrupt erfolgen.
+\item[SLEEP-Befehl]
+Durch den SLEEP-Befehl wird die Clock ausgeschltet und alle den Microcontroller betreffenden Systeme nur noch minimal versorgt. Das Programm hält an.
+\item[Multi-Input-Wakeup-Interrupt]
+Der Multi-Input-Wakeup-Interrupt wir durch ein Signal am Port B ausgelöst. Er bewirkt entweder das ,,aufwachen'' des Microcontrollers, wenn dieser im
+SLEEP-Modus war, oder er startet die Interrupt-Routine.
+\item[Endlosschleife]
+Man kann das erreichen der höchste Speicherstelle auch durch eine eigene Endlosschleife verhindern, die während des Programmlaufes nicht verlassen
+wird.
+\item[Neustart durch ab- und einschalten der Versorgungsspannung]
+Natürlich kann man den Microcontroller auch aus- und wieder anschalten um das Programm zu unterbrechen.
+\end{description}
+
+Während des Programmablaufes werden Daten eingelesen, bearbeitet und ausgegeben. Dies geschieht in den Registerbänken. Man Unterscheidet im Fall des
+SX52 zwischen globalen und zu adressierenden Registerbänken zu je 16 Byte a acht Bit. Die globalen Register sind jederzeit adressierbar. Sie enthalten
+unter anderen das STATUS-Register, das FSR-Register und die Port-Register. Im FSR ( engl. File Select Register, etwa Dateiauswahlregister) stehen die ersten vier Bit der zu
+adressierenden Registerbank. Um eine Bank zu adressieren schreibt man entweder die entsprechende Adresse direkt in das FSR-Register oder nutzt den
+BANK-Befehl gefolgt von einer drei Bit Nummer, das viert Bit im FSR wird dabei immer auf 0null gesetzt. Um jetz trotzdem die undgeraden Registerbänke
+adressieren zu können muss der Programmierer das entsprechende Bit im FSR-Register setzten. Diese umständliche handhabe ist auf die Kompatibilität mit
+dem SX32 zurückzuführen, der nur acht Registerbänke zur Verfügung stehen hat.
+
+\subsubsection{Unterprogrammaufrufe}
+Unterprogrammaufrufe werden mittels CALL-Befehl realisiert. Der SX52 enthält einen Stapel der Tiefe acht, um Unterprogramme rekursiv aufzurufen.
+Beim Aufruf eines Unterprogramms wird die Rücksprungadresse auf den Stack gelegt und der Programmzähler auf den Wert des CALL-Arguments gesetzt.
+Das Argument kann jedoch nur einen Adressraum von 256 Byte ansprechen (Argumentlänge: neun Bit), drei der restlichen vier Bit für eine vollständige
+Programmspeicheradresse stehen im STATUS Register das vierte Bit wird auf null gesetzt. Für die Programmierung bedeutet dies, das mit einem
+Unterprogrammaufruf innerhalb einer Programmspeicherseite nur Unterprogramme in der unteren Hälfte aufgerufen werden können. Weiter unten im Text wird
+ein Konzept beschrieben, das diese Einschränkung geschickt umgeht.
+
+\subsubsection{Arbeitsregister}
+Der SX52 nutzt in der Summe 17 Register zur Verarbeitung von Daten zur Laufzeit. Die Register teilen sich auf in eine globale Bank und 16 indirekt 
+adressierbare Bänke. Jede Bank enthält 16 Register. Für die Adressierung der globalen Register sind keine Vorkehrungen nötig. Um die 16 ,,normalen''
+Registerbänke zu referenzieren schreibt man einfach die Registernummer hin. Die globale Register haben in den vier \footnote{Most Significent Bits:
+Höchstwertigen Bits}MSB einen ungeraden Wert stehen, während für die ,,normalen'' Register immer ein gerader Wert in den ersten vier Bit steht.
+Steht alo im Bit Nummer vier des Befehlsarguments eine Eins, so werden die Bits 0 bis 3 für die Adressierung eines globalen Registers genutzt, sonst 
+wird ein Register aus der im FSR spezifizierten Bank entnommen.
+Beispiel:
+\begin{verbatim}
+; W bezeichnet den Akkumulator
+MOV  $1A,W ; schreibt den Inhalt von W in das globale register $1A
+BANK $60   ; stellt FSR auf Bank sechs
+SETB FSR.4 ; stellt FSR auf Bank sieben
+MOV  $0A,W ; schreibtden Inhalt von W in das register Nr.$7A
+\end{verbatim}
+In der Summe stehen dem Benutzer 256 Register plus 15 globale Register zur Verfügung. Von den globalen Registern sind die ersten fünf Register für
+spezielle Aufgaben vorgesehen (unter anderen FSR und STATUS-Register),dann folgen die fünf I/O-Ports die auch als Register nutzbar sind, und dann
+bleiben noch sechs ,,freie'' Register.
+
+\begin{figure}
+  \center
+  \includegraphics[width=400pt]{register.eps}
+  \caption{Aufbau der Registerbänke im SX52}
+  \label{register}
+\end{figure}
+
+\section{Assembler-Directiven}
+
+Der zum SX52 gelieferte Assembler stellt eine Reihe von Direktiven zur Verfügung, die, klug genutzt, die Programmierung vereinfachen.
+Eine Dirktive wird nicht zur Laufzeit, sondern bereits vor der Programmierung des Programmspeichers ausgeführt. sie dienen zum Beispiel zur
+organisation des Programmcodes, zur Benennung von Variablen und Konstanten, oder zur arithmetischen Überprüfung einiger Programmkomponenten.
+Im folgenden werden einige der Direktiven beschrieben und wie sie genutzt werden können um die Zielsetzungen in der Implementierung zu verfolgen.
+
+\subsubsection{EQU-Direktive}
+Mit der EQU-Direktive werden Konstanten oder Registern Namen zugeordnet.
+\begin{verbatim}
+
+LED	EQU 	RB.5        ; sechstes Bit auf Port B wird mit LED benannt
+FOO	EQU 	$0a         ; das Register 0a wird mit FOO benannt
+BAR	EQU 	#%0000_0011 ; die Konstante BAR hat den Wert drei
+
+\end{verbatim}
+\subsubsection{ORG-Direktive}
+Die ORG-Direktive dient der genauen Platzierung von Programmcode im Programmspeicher. Man definiert eine Speicheradresse zwischen 000 und FFF 
+(hexadezimal) an welcher der folgende Programmcode beginnen soll.
+\begin{verbatim}
+
+ORG  #000	;der folgende Code wird ab Adresse 000 eingefügt
+# Es folgt die Interrupt-Routine
+...
+
+ORG  #200	;der folgende Code steht ab Adresse 200 (hex)
+CALL FOO	
+MOV  $01, #2	
+...
+
+\end{verbatim}
+\subsubsection{DS-Direktive}
+Die DS-Direktive benennt einen Programmspeicherbereich. Die größe des Bereichs in Byte wird als Argumnet übergeben.
+\begin{verbatim}
+
+FOO	DS	1
+BAR	DS	2
+
+\end{verbatim}
+\subsubsection{MACRO-Direktive}
+Ein nützliches Werkzeug bei der Speicherorganisation ist die MACRO-Direktive. Programmcode, der in ein Macro eingebunden wird lässt sich leicht aus dem
+Programm entfernen und wieder einsetzen. Diese Eigenschaft ermöglicht es Programmteile genau zu platzieren und so Adressierungsbeschränkungen zu
+umgehen.
+\begin{verbatim}
+MACRO 	FOO	; Macro namens FOO
+
+MOV	M,#BAR	; Programmcode
+
+ENDM
+.
+.
+.
+ORG	200
+FOO		; Macro FOO wird bei 200 (hex) eingefügt
+\end{verbatim}
+\subsubsection{\$-Direktive}
+Das Dollarzeichen liefert die aktuelle Bank zurück.
+\begin{verbatim}
+
+FOO EQU $	;FOO enthält die aktuelle Bank
+
+\end{verbatim}
+\subsection{Konzeption}
+\label{Konzeption}
+
+Bei der Konzeption der Module galt es die potentiellen Schwierigkeiten mit Unterprogrammaufruf, Verteilung der Programmteile auf den Speicher, sowie
+den Zugriff auf Register für den Entwickler möglichst einfach handhabbar zu machen.
+Um dies zu erreichen eignet sich eine Modulstruktur die durch geschicktes Einsetzen der Macro-Direktiven die oben genannten Schwierigkeiten umgeht.
+
+\subsubsection{Modulstruktur}
+Man unterteilt jedes Modul in verschiedene Segmente. Begreift man nun ein Assemblerprogramm als Automat mit den Zuständen Initialisierung,
+Hauptfunktion und Interrupt, so werden die einzelnen Segmente an der passenden Stelle eingebunden.
+\begin{figure}
+  \center
+  \includegraphics[width=400pt]{Automat.eps}
+  \caption{Ein Assemblerprogramm als Automat}
+  \label{Automat}
+\end{figure}
+Zusätzlich Bedarf es für die Datenorganisation
+noch ein CALL- und ein DATA-Segment. Im folgenden die Segmente im Einzelnen.
+\begin{description}
+\item[CODE-Segment]
+Im CODE-Segment befinden sich die eigentlichen Routinen eines Moduls. Jede Routine beginnt dabei mit einer Einsprungmarke und endet mit einem
+Rücksprungbefehl für Unterprogramme. Der Rücksprungbefehl setzt die durch einen CALL-Befehl gespeicherten Werte in STATUS-, FSR-Register und
+Programmzähler wieder ein, und führt das Programm von dort an weiter aus.
+\item[CALL-Segment]
+Das Callsegmnet dient dazu die 256-Byte Grenze des CALL-Befehls zu umgehen. Dieses Segment muss jeweils in den unteren 256-Byte einer
+Programmspeicherseite liegen.
+Im CALL-Segment werden Funktionsnamen mit den entsprechenden Funktionen im CODE-Segment verknüpft. Der Trick liegt dabei in der verwendung des
+JMP-Befehls. JMP springt an die im Argument übergebene Stelle in Programmspeicher. Da das Argument des JMP-Befehls neun Bit lang ist, können die vollen
+512 Byte eine Speicherseite referenzeiert werden.
+Das CALL-Segment ermöglicht also einen Unterprogrammaufruf ohne die 256-Byte Beschränkung bedenken zu müssen.
+\item[DATA-Segment]
+Wie bereits oben beschrieben stehen dem Programmierer 256 Register aus verschiedenen Bänken zur Verfügung. Um mit den Registeradressierungen nicht
+durcheinander zu kommen, empfiehlt es sich pro Modul nur auf einer Bank zu arbeiten, die dann ausschließlich dafür reserviert ist.
+Die Macros ermöglichen es bei der Programmierung auf Register Adressierung zu verzichten.
+Um das zu erreichen definiert man ein Macro in dem platz für maximal 16 Register reseviert wird. Man benutzt bei der Programmierung dann nur noch die
+Variablen für den reservierten Platz. Diese Praxis ist mit der Variablendeklaration in einer Hochsprache vergleichbar, nur das die Typisierung vom
+Benutzer und nicht vom Compiler vorgenommen wird.
+
+Um dann die entsprechende Bank zu reservieren, Wird das Macro durch die ORG Direktive an der entsprechenden Stelle eingefügt. Die erste Instruktion im
+Macro weist dann einer Variablen die aktuelle Adresse zu, so daß der Entwickler mit der Kombination BANK-Befehl und eben genannte Variablen die
+entsprechende Modulbank referenzieren ohne schon wissen zu müssen welche Bank er eigentlich nutzt.
+Beipiel
+\begin{verbatim}
+MACRO 	  FOO	; Macro namens FOO
+MEINEBANK $     ; Die aktuelle Bank wird referenziert
+VAR1      DS1   ; Ein Register reservieren
+VAR2      DS1   ; ...
+...
+ENDM
+
+ORG	$20
+FOO		; Macro FOO wird bei 20 (hex) eingefügt
+                ; enspricht der dritten Bank
+\end{verbatim}
+\item[INTERRUPT-Segment]
+\item[INIT-Segment]
+\end{description}
+\subsubsection{Datenaustausch zwischen den Modulen}
+
+Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für den Austausch von Daten reserviert. Jedes Modul holt dort seine Eingabewerte ab und
+ legt die Ergebnisse dort wieder ab.
 
 \subsection{Implemetierungen}
-Im folgenden werden Beispielhaft einige Module und die Schwierigkeiten ihrer Programmierung beschrieben.
+Im folgenden werden Beispielhaft einige Module beschrieben.
 \begin{description}
 \item[Serielle Schnittstelle]
 interrupt
 \item[PWM]
 reverse iterations
+
+
+----bis hier her heute ------!!!
 \item[Speicher]
 mini seriell
 \item[SPI]
