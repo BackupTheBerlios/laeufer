@@ -1,25 +1,273 @@
+\section{Einleitung}
+
+%--???--%
+% Platine von 12V bis 48V
+
+\section{Vorüberlegung: Zentralisiert oder Föderalistisch?}
+
+Bevor wir uns in die faszinierende Welt der Datenübertragung stürzen, sollten wir, jedenfalls
+für dieses spezielle Projekt, eine Grundsatzentscheidung treffen: Wollen wir ein möglich
+zentral gesteuertes Netzwerk verwenden, in dem das Maximum an Entscheidungen vom PDA
+getroffen wird, oder diese Entscheidungen, soweit möglich, den zu verwenden vorgesehenen SX-Platinen überlassen?
+
+
+Ein Vorteil einer zentralistisch angelegten Steuerung scheint, jedenfalls bei einem Reisefahrzeug,
+nur schwer erkennbar; der übliche Grund für solche Konstruktionen, die Minimierung von Redundanzen, greift
+in einem Netz von konzeptionell ohnehin separaten Einheiten nicht. Somit sollten wir, um den
+Datenübertragungsaufwand zu minimieren, nur mehr Konfigurationsinformationen vom PDA an die Peripherie,
+und umgekehrt nur wirklich auf dem PDA notwendige Informationen versenden; letztere lassen sich zusammenfassend
+als für den Fahrer gedachte Angaben-- Geschwindigkeit, Akkumulatorstand-- und zur Weiterleitung an andere
+Geräte vorgesehene Informationen wie Zustände von als Peripherie angeschlossenen Lichtschaltern oder Blinker-Hebeln
+beschreiben\footnote{Das Vorkommen der letztgenannten Informationen ist nicht zwingend erforderlich, falls
+die Peripherie unmittelbar miteinander kommunizieren kann, z.B. durch eine Direktverbindung oder in einem
+Multi-Master-Bussysstem.}.
+
+\newpage
+
 \section{Anforderungen an die Kommunikation}
+
+Kommunikation, wenn nicht Selbstzweck-- wie bei allen Dingen-- muß an der Meßlatte
+dessen beurteilt werden, was ihr Ziel und Zweck ist. Um von einer ``guten'' oder ``schlechten''
+Lösung unsres Kommunikationsproblemes sprechen zu können, stellt sich uns somit zunächst die Aufgabe,
+die zur Bemessung der gesuchten Qualität dienenden Kriterien niederzuschreiben und auszuformulieren,
+nicht zuletzt gegeneinander abzuwägen, denn eine vollständige Ordnung muß sein, jedenfalls für ein
+eindeutiges Urteil.
+
+Das diese Abwägung nicht einfach sein muß, ist einleuchtend, doch führen wir sie trotz dieser
+Vorüberlegung zunächst aus, um eine Beurteilungsbasis zu bilden. Was also sind jene Meßlatten,
+die wir unsrer Kommunikationslösung anlegen wollen?
+
 	\subsection{Korrektheit}
-	\subsection{Bidirektionalitaet}
+
+	Alle übertragenen Daten müssen korrekt sein.
+
+
+	Zu diesem Punkt muß mehr gesagt werden, als sein Name hergibt. Korrektheit findet sich auf mehrere
+	Arten und Weisen in unseren Forderungen wieder, die wir hier, milde axiomatisiert, auflisten wollen:
+
+	\begin{enumerate}
+	  \item{Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}\label{j-correct-0}
+	  \item{Wenn ein Datum den Empfänger erreicht, muß es zuvor versandt worden sein}\label{j-correct-1}
+	  \item{Wenn ein Datum den Empfänger mehrfach erreicht, muß seine Semantik idempotent sein}\label{j-correct-2}
+	\end{enumerate}
+
+	Von diesen drei Forderungen ist die Nummer \ref{j-correct-2} eventuell erläuterungsbedürftig. In Kommunikationssystemen
+	kommt es erfahrungsgemäß vor, daß versandte Pakete aufgrund von unangemessen ausgelösten Fehlerbehandlungen (üblicherweise,
+	wenn die Bestätigung der Gegenseite einem unbemerkten Übertragunsfehler zum Opfer fiel) wiederholt versandt werden.
+	Unsre obige Forderung ist nun auf zwei Weisen erfüllbar, nämlich zum Einen, indem verhindert wird, daß
+	der Empfänger die Botschaft mehrfach erhält, oder zum Anderen, indem auf einer höhergelegenen Interpretationsebene (auf die
+	somit diese Fehlerbehandlung verschoben wird) der Doppelempfang ohne Folgen bleibt.
+
+	Diese drei Implikationen werden unsre Grundforderungen bilden. Da wir jedoch jenseits der Wunderbaren Welt der
+	theoretischen Informatik operieren, werden sie natürlich nur ``in den allermeisten Fällen'' erfüllbar sein,
+	aber diese Aussage bezieht sich natürlich auf alle unsre Forderungen. Diese speziellen Forderungen jedoch sind von der
+	Art, in der sich wenig Verhandlungsspielraum-- im Gegensatz, zum Beispiel, zur Übertragungsgeschwindigkeit-- ergibt, somit
+	müssen wir bei von uns gewählten Technologien stets auf ihre Erfüllung oder Erfüllbarkeit achten.
+
+	\subsubsection{Bedeutung der Forderungen}
+
+	Die Forderungen selbst sind übrigens durch ein triviales Modell bereits erfüllbar, einen {\it wissentlichen Nichtverschicker},
+	der kein Datum versendet und den Sender davon in Kenntnis setzt (was die erste Forderung unmittelbar und die beiden anderen
+	trivial erfüllt). Die Forderung, daß überhaupt Daten übertragen werden können, müssen wir somit auch ausdrücken.
+
+	%
+
+	\subsection{Hinreichende Datenübertragungsrate}
+
+	Die Geschwindigkeit, mit der Daten übertragen werden, muß den Anforderungen des Projektes genügen.
+
+
+	Diese Anforderung ist, in einer derartigen Formulierung, von kaum zu übertreffender Ungenauigkeit, doch eine
+	präzise Formulierung der benötigten Datenübertragungsrate scheint in der gegebenen Situation kaum möglich, insbesondere,
+	da die Menge der anzuschließenden Geräte nicht fest gegeben ist und somit nur eine Abschätzung gemacht werden kann,
+	wieviel diese dann schließlich an ``laufenden'' Informationen benötigen beziehungsweise versenden.
+
+	Unsre Vorüberlegung jedoch, den Geräten größtmögliche Autonomie zu gewähren, legt nahe, daß die Bandbreite überschaubar
+	bleiben kann; betrachten wir dazu einen typischen Extremfall:
+
+	\subsubsection{Schnelles Tachyometer}
+
+	Typische Geschwindigkeitsmesser in verwandten Fahrzeugen werden oft nicht häufiger als zwei Mal pro Sekunde mit neuen
+	Informationen versorgt; ein genauer auflösendes Tachyometer könnte zum Beispiel mit der Fernseh-typischen Rate von 25 Hz eine
+	als ständig aktuell erscheinendende Qualität erreichen; bei 24 Bit Datenlast (8 Bit Kennziffer, 16 Bit Information)
+	wären dies folglich, in diesem Beispiel, 600 bps für dieses eine Gerät.
+
+
+	Auf die nächsthöhere glatte Zahl aufgerundet (um eventuellen Unwägsamkeiten, wie Datenverlust, zumindest in einem bescheidenen Maße
+	vorzubeugen) wären dies 1024, für eine geschätzte Obergrenze von 16 Geräten also
+	16384 bps im auf Datenlast eingeschränkten Übertragungsverkehr-- also Kontrolldaten ignorierend-- als theoretisches Minimum.
+	Das ist, aus heutiger Sicht, nicht sehr viel, was aber, nach der Vorüberlegung, unsren Erwartungen grob entspricht.
+
+
+	Bandbreite alleine reicht natürlich nicht unbedingt; die Erzählung vom mit CD-ROMs beladenen Güterzug als König der Bandbreite ist
+	geläufig genug, um an eine andere häufige Forderung der Datenübertragung zu erinnern.
+
+	%
+
+	\subsection{Geringe Latenzzeiten}
+
+	Die Zeit, die zwischen dem Versand und dem Eintreffen eines Datenpaketes vergeht, sollte minimal sein.
+
+
+	Erneut eine eher vage Forderung, die an unsere Argumentation zur nicht-Zentralisiertheit erinnert. Wie 'minimal' die Verzögerung sein
+	sollte, ist an praktischen Beispielen wohl-- abgesehen von offensichtlichen Beschränkungen-- am ehesten an einer doppelten
+	Übertragung zwischen einem Schalter und einer anderen Peripherie, beispielsweise einem Scheinwerfer, erkennbar; hier machen sich
+	hohe Latenzzeiten zwar nicht in einer gefährdenden, aber doch für den Fahrer ersichtlichen und irritierenden Weise
+	bemerkbar. Bei einer nicht direkten Verdrahtung müßte also eine Übertragung zweier Botschaften innerhalb kurzer
+	Zeit versandt werden können, bei
+	direkter Kommunikationsmöglichkeit zwischen Schalter und Licht verringert sich dies auf eine einzelne Botschaft.
+
+	Eine gute Latenzzeit für diesen Kommunikationsschritt wäre, wie im letzten Kriterium erwähnt, 0.04s; praktisch ausreichend
+	wäre jedoch auch eine schlechtere Zeit von 0.1s, da, wie erwähnt, zu guter Letzt doch ``nur'' wieder das Empfinden des Fahrers bedient wird.
+
+	Gerade an diesem Beispiel sieht man natürlich eine zuvor schon oft implizit erwähnte notwendige Anforderung, die als nächstes ausgeführt werden soll.
+
+	%
+
+	\subsection{Bidirektionalität}
+
+	Kommunikation zwischen Peripherie und PDA sollte in beide Richtungen möglich sein.
+
+
+	Diese Forderung ergibt sich unmittelbar aus der Notwendigkeit, Informationen, wie, zum Beispiel, die aktuelle Reisegeschwindigkeit,
+	aus Peripheriegeräten auszulesen.
+
+	%
+
 	\subsection{Unterstützung für mehr als einen Client}
-	\subsection{Geschwindigkeit}
-	\subsection{Gerine Ressourcenanforderungen}
+
+	Es sollte möglich sein, mehr als ein Peripheriegerät mit dem PDA kommunizieren zu lassen.
+
+
+Bei Ansteuerung von %--???--%
+
+	Ähnlich wie beim vorherigen Punkt, der Bidirektionalität, ergibt sich diese Notwendigkeit aus praktischen Erwägungen. Eine
+	Ermangelung an Bidirektionalität oder Mehr-Client-Funktionalität wäre zwar allgemein durch Verwendung mehrerer paralleler
+	Kommunikationssysteme ausgleichbar, eine solche Konstruktion ist aufgrund des Hardware-Mehraufwandes und der grundsätzlich
+	anderen Ansteuerung jedoch separat zu handhaben. Die angeklungene Forderung nach einem eher geringen Hardware-Aufwand läßt sich
+	im Übrigen noch verallgemeinern, wie wir im nächsten Punkt sehen werden.
+	%
+
+	\subsection{Geringe Ressourcenanforderungen}
+
+	Das verwendete Kommunikationssystem soll ``möglichst wenig'' Hardware, Strom, und Prozessorleistung der beteiligten Kommunikationssysteme
+	benötigen.
+
+
+
+	Eine präzisere Angabe jenseits von offensichtlichen Schranken des Machbaren sind hier nicht möglich; dies ist ein eher komparatives Kriterium.
+
+	%
+
 	\subsection{Praktische Realisierbarkeit mit gegebenen Mitteln}
 
+	Das Kommunikationssystem muß an finanziellem und technischem Aufwand realistisch implementierbar sein.
+
+
+	Insbesondere ist, rein komparativ gesehen, eine Unterstützung seitens der Sponsoren, sowohl materiell als auch
+	mit Informationen und praktischer Unterstützung ein relevantes und jedenfalls im Zweifelsfall den Ausschlag gebendes Kriterium.
+	%
+
+
+	\subsection{Die Minimalanforderungen}
+
+	Um nun nicht unnötig auszuschließen, wollen wir unsre Minimalforderungen derart formulieren, daß der Ausgleich fehlender
+	Eigenschaften auf einer höheren Ebene prinzipiell erlaubt sein soll, endgültiger Ausschluß einer Technologie würde also nur
+	erfolgen, wenn sie das Erfüllen eines der Kriterien (in einem angemessenen Maß) prinzipiell ausschließen würde.
+
+	Wir fordern von gewählten Technologien minimal, daß sie nicht ausschließen, daß folgende Kriterien erfüllt werden:
+	\begin{enumerate}
+	  \item{\bf Korrektheit}
+	  \item{{\bf Hinreichende Datenübertragungsrate}: Mindestens 16384 bps für Daten alleine}
+	  \item{{\bf Geringe Latenzzeit}: Maximal 0.05s pro Botschaft oder 0.1s für zwei Botschaften\footnote{Diese beiden Kriterien sind sehr unterschiedlich, da z.B. über Priorisierungsmechanismen unter Umständen sichergestellt werden kann, daß Botschaften, die eingingen, jedoch weiterversandt werden müssen, eine geringere Latenzzeit haben. Auf der anderen Seite jedoch ist es-- bei einer Latenz von konstant 0.05s-- durch zusätzlichen Bearbeitungsaufwand möglich, daß dennoch ein wenig mehr als 0.1s benötigt wird. Diese Zeit betrachten wir jedoch als unerheblich und verwenden somit 0.05s als ein einfacher zu handhabendes Kriterium.}}
+	  \item{\bf Bidirektionalität}
+	  \item{\bf Unterstützung für mindestens 16 Peripheriegeräte}
+	  \item{{\bf Geringe Ressourcenanforderungen}: Strombedarf auf Platine abdeckbar, eventuelle Kabel maximal handelsübliche Koaxialkabel an Dicke, 
+	    sonstige Hardware sollte maximal soviel Masse haben wie der Rest der SX-Platine}
+	  \item{\bf Praktische Realisierbarkeit}
+	\end{enumerate}
+
+
+	Mit diesen sieben Kriterien werden wir nun die verschiedenen Möglichkeiten, die sich uns zur Kommunikation bieten,
+	beurteilen.
+
+\newpage
+
 \section{Alternativen der Kommunikationshardware}
-	\subsection{Hartverdrahtung}
+
+Wir werden nun eine Reihe von Alternativen durchgehen, die uns, verbunden mit verschiedenen Vor- und Nachteilen,
+Kommunikation zwischen PDA und Peripherie erlauben. Im Falle einiger dieser Technologien könnten die benötigten Anschlüsse
+zwar unmittelbar auf die SX-Board aufgelötet werden, eine Kommunikation mit dem PDA würde jedoch einer Zwischenstation, eines
+Proxys, benötigen. Da auf den genannten Platinen ohnehin ein serieller Anschluß vorhanden ist, können sie, bei
+entsprechender Programmierung, unmittelbar als ein solcher dienen (sofern die verwendete Kommunikationsmethode
+der Forderung nach {\bf Bidirektionalität} genügt).
+
+	\subsection{Einfache Hartverdrahtung}
+	
+	Die einfachsten Dinge sind oft auch die besten, daher wollen wir zunächst die Direktverbindung des PDAs mit der Peripherie über direkte
+	Kabelverbindungen betrachten.
+
+	Diese Lösung erfüllt zunächst unsre Minimalanforderungen, erlaubt beliebig viele Peripheriegeräte und ist an Bandbreite und Latenz nur durch
+	den Systembus des SX-Controllers begrenzt. Doch schon hier stellt sich die erste Frage: Wie verbindet man die Controller direkt an ihrem
+	Systembus? Ein Arbitrierungsmechanismus müßte herbei, es muß sichergestellt werden, daß keine Übertragungen verloren gehen\footnote{Erste Forderung der Korrektheit}. Aber
+	damit haben wir schon wesentlich mehr als eine einfache Hartverdrahtung; wenn wir jedoch unser Modell beibehalten wollen, bliebe uns nur,
+	die Peripherie direkt mit den Eingängen der SX-Ports zu verbinden. Dies würde natürlich die Anzahl der anschließbaren Peripheriegeräte unmittelbar
+	beschränken-- die notwendigen 16 Geräte sollten jedoch kein prinzipielles Problem darstellen.
+
+	Eine direkte Verbindung erzwingt jedoch einen unnötig komplexen Kabelbaum (wenn zwei Peripheriegeräte direkt
+	nebeneinander liegen, ist es nicht ausreichend, sie miteinander zu verbinden-- jedes von ihnen muß einzeln verkabelt sein). Eine derartige
+	Konstruktion würde Masse am Läufer kosten und wäre fehleranfällig; dennoch verbleibt die Hartverdrahtung als eine, wenn auch nicht
+	optimale, Möglichkeit. Ihr Hauptvorteil, die hohe Geschwindigkeit und geringe Latenz (die durch zwischengeschaltete Verstärker
+	jedoch geringfügig leiden dürfte) ist im Projektrahmen zwar interessant, aber nicht fundamental ausschlaggebend.
+	
+	%
+
 	\subsection{Drahtlose Kommunikation}
-	\subsection{PC-Systembusse (ISA, PCI, VLB, MC...)}
+
+	Die Zusammenfassung aller drahtlosen Kommunikationsmittel in einer einzigen Sektion legt das Urteil über diese natürlich bereits nahe,
+	daher will ich es ohne Umschweife ausformulieren.
+
+	Drahtlose Kommunikation benötigt mehr Leistung als hartverdrahtete Kommunikation und ist störungsanfälliger; da sie kein geschlossenes
+	System erlaubt (jedenfalls nicht ohne harte Kryptographie, die jenseits der Schranken der praktischen Realisierbarkeit lag), ist
+	somit auch die Erfüllung der Forderungen der Korrektheit nur schwerlich vorstellbar.
+	%
+
 	\subsection{Universal Serial Bus (USB)}
+	%
+
 	\subsection{IEEE 802}
+	%
+
 	\subsection{IEEE 1394 ,,Firewire''}
-	\subsection{Vehicle Area Network (VAN)}
+	%
+
 	\subsection{Controller Area Network (CAN)}
 
+	Das Controller Area Network, 1986 von der Robert Bosch AG zur Multi-Master-Kommunikation im Auftrag von Mercedes entwickelt,
+
+	%
+
+	\subsection{Vehicle Area Network (VAN)}
+
+	Dieses Netzwerk, in direkter Konkurrenz zum CAN, wurde in Frankreich entwickelt, scheint sich jedoch keiner vergleichbaren
+	Popularität zu erfreuen. Ebenfalls als Multi-Master-fähiges Protokoll entworfen, wurde es 1994 ISO-standardisiert; da uns
+	keine markanten Vorteile gegenüber CAN auffielen, wählten wir das seitens unsrer Sponsoren empfohlene CAN.
+
+\newpage
+
 \section{Alternativen für das Kommunikationsprotokoll}
+
+Die Wahl des Bus-Systems (für das wir, auf externe Empfehlung hin, CAN-Controller vom Typ
+%--??--%
+verwenden), war somit gefallen. Die verwendeten CAN-Controller haben 
+%--??--%%Übertragungsfrequenz, Vergleich mit Mindestforderungen%
+
+
 	\subsection{DeviceNet}
 	\subsection{CANopen}
 	\subsection{Eigenentwicklung}
+
+\newpage
 
 \section{Verbleibenden Anforderungen und Umsetzung}
 	\subsection{Bereits durch CAN abgedeckte Anforderungen}
@@ -29,10 +277,14 @@
 		\subsection{Aufgaben des LLZ-Protokolls}
 		\subsection{Aufgaben des LLO-Protokolls}
 
+\newpage
+
 \section{Das LLZ-Protokoll}
 	\subsection{Struktur des Protokolls}
 	\subsection{Umsetzung}
 	\subsection{Tests}
+
+\newpage
 
 \section{Das LLZ-Protokoll}
 	\subsection{Struktur des Protokolls}
