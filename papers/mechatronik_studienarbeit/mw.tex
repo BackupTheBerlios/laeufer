@@ -829,16 +829,11 @@ anderer auf QT aufsetzender Softwarepakete wie z.B. KDE.
 
 \newpage
 \section{Klassenbibliothek}
-Die in Abbildung \ref{mw_einteilung} 
-  \begin{figure}
-    \center
-    \includegraphics[width=10.0cm]{mw/bilder/schnittstellen.eps}
-    \caption{Die abzudeckenden Schnittstellen (schraffiert)}
-    \label{mw_schnittstellen}
-  \end{figure}
+Abbildung \ref{mw_schnittstellen} zeigt die von der Klassenbibliothek
+zu unterstützenden Schnittstellen (schraffiert).  Diese Schnittstellen
+sollen dem Entwickler mechatronischer Komponenten durch die
+Klassenbibliothek auf dem PDA zugänglich gemacht werden.
 
-
-\subsection{Anforderungen}
 Die den Entwicklern mechatronischer Komponenten zur Verfügung
 gestellte Programmierschnittstelle bestimmt maßgeblich deren
 Produktivität und die Qualität der von ihnen erstellten Software.  In
@@ -846,6 +841,21 @@ folge dessen kommt der Klassenbibliothek eine besondere Bedeutung zu,
 die in etwa der des richtigen PDAs aus der Sicht der späteren Nutzer
 des Läufers entspricht.
 
+
+Auf die beiden Bereiche Treiber - CAN-Bus sowie Treiber - GUI soll im
+folgenden eingegangen werden.  Dem voran stehen einige Anforderungen,
+die sich aus den schon weiter oben in Kapitel \ref{aufgabe_kapitel}
+beschriebenen Anforderungen an das Gesamtsystem herleiten.
+
+\begin{figure}
+  \center
+  \includegraphics[width=7.0cm]{mw/bilder/schnittstellen.eps}
+  \caption{Die abzudeckenden Schnittstellen (schraffiert)}
+  \label{mw_schnittstellen}
+\end{figure}
+
+
+\subsection{Anforderungen}
 Die Programmierschnittstelle hat zwei wichtige Aufgaben: Die
 Bereitstellung einer einfach zu verwendenden Kommunikation zwischen
 PDA und Platinen sowie eine Schnittstellendefinition zwischen PDA
@@ -877,6 +887,36 @@ näheren Details der Kommunikationsprotokolle im Läufer sei auf Kapitel
 \ref{jameson_kapitel} verwiesen.  Hier soll nun im folgenden auf die
 Anwender- bzw. Entwicklersicht auf die Kommunikation vom PDA aus
 eingegangen werden.
+
+Die Grundidee der Kommuníkation im Läufer ist die der
+objektorientierten Programmierung (OOP).  Wir verstehen das physische
+Gerät und auch seinen Treiber als \emph{Objekte}, die sich gegenseitig
+\emph{Nachrichten} schicken.  Die Objekte selber haben einen Status,
+sind also Statusmaschinen.  Ein physisches Gerät und sein Treiber
+stellen nun gekoppelte oder kommunizierende Statusmaschinen dar.  Wenn
+sich der Status des einen \emph{signifikant} ändert, teilt es diesen
+Statusübergang dem jeweils anderen mit.  \emph{Signifikant} meint in
+diesem Zusammenhang, dass nur solche Statusübergänge dem anderen
+mitgeteilt werden, die für diesen auch von Bedeutung sind.  
+
+Als Beispiel für die Klassifikation von Übergängen siehe Bild
+\ref{mw_blinker_zustaende}.  Dort wird ein einfaches Übergangsdiagramm
+für einen Blinker dargestellt.  Die fett gezeichneten Übergänge werden
+dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Wenn
+nun das Gerät eine Fehlfunktion feststellt, geht es in den Zustand
+$Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im PDA
+davon unterrichtet werden muss.  Nicht signifikant sind die übergänge 
+
+
+\begin{figure}
+  \center
+  \includegraphics[width=14cm]{mw/bilder/zustaende.eps}
+  \caption{Übergangsdiagramm eines modellhaften Blinkers. Fette Linien
+  bedeuten Übergänge, die vom Treiber aus ausgelöst wurden.}
+  \label{mw_blinker_zustaende}
+\end{figure}
+
+
 
 Grundbausteine der Kommunikation im Läufer sind so genannte
 Nachrichten\footnote{im folgenden auch: Message}, die von einem
