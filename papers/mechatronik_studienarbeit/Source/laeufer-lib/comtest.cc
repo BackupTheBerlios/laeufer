@@ -13,7 +13,7 @@
 #include "mlp_bus.h"
 
 #define MAX_ARGS 16
-mlp_bus bus("/dev/ttyS0");
+mlp_bus bus("/dev/ttyS1");
 
 void
 massert(int v)
@@ -109,7 +109,7 @@ transmit(char *what)
 	massert(bus.send(id, op, &(args[0]), argc));
 
 	fflush(NULL);
-	fprintf(stderr, "[%02x] <- %02 (", id, op);
+	fprintf(stderr, "[%02x] <- %02x (", id, op);
 	for (int i = 0; i < argc; i++) {
 		fprintf(stderr, "%02x", args[i]);
 		if (i+1 < argc)

@@ -14,19 +14,12 @@
 ;----------------------------------------------------------
 
 
-WATCH 	UART_XCH_STATUS,8,UDEC
-;WATCH	SER01,1,FSTR
-WATCH	SER01,8,UHEX
-;WATCH	SER02,1,FSTR
-WATCH	SER02,8,UHEX
-;WATCH	SER03,1,FSTR
-WATCH	SER03,8,UHEX
-;WATCH	SER04,1,FSTR
-WATCH	SER04,8,UHEX
-;WATCH	SER05,1,FSTR
-WATCH	SER05,8,UHEX
-;WATCH	SER06,1,FSTR
-WATCH	SER06,8,UHEX
+WATCH	mlp_f_start_recv,1,UBIN
+WATCH	mlp_f_escaping,1,UBIN
+WATCH	mlp_writepos,8,UHEX
+WATCH	serial_recv_ctr,8,UHEX
+WATCH	serial_recv_pos,8,UHEX
+WATCH	serial_recv_writepos,8,UHEX
 WATCH	store_base,8,UHEX
 WATCH	STORE_FOR_IND,8,UHEX
 
@@ -189,7 +182,7 @@ GLO_XCH_BANK		= $
 
 DATA_SEG_MLP_WRITE MACRO
 MLP_WRITE_BANK		= $
-	mlp_writebank	DS 16
+	mlp_write_buffer	DS 16
 	ENDM
 	
 DATA_SEG_MLP MACRO
@@ -202,11 +195,11 @@ MLP_BANK	= $
 mlp_f_start_recv	EQU mlp_flags.0
 mlp_f_escaping		EQU mlp_flags.1
 
-MLP_SOB	EQU #$f0
-MLP_EOB	EQU #$f1
-MLP_ESC EQU #$f2
-MLP_MAXSIZE EQU #$7
-MLP_VERSION EQU #1
+MLP_SOB	EQU $f0
+MLP_EOB	EQU $f1
+MLP_ESC EQU $f2
+MLP_MAXSIZE EQU $7
+MLP_VERSION EQU 1
 	
 		ENDM
 	
@@ -215,6 +208,7 @@ MLP_VERSION EQU #1
 ;--------------------------------------
 
 INIT_SEG_MLP	MACRO 0
+	SET_BANK MLP_BANK
 	CLRB mlp_f_start_recv
 	CLRB mlp_f_escaping
 	ENDM
@@ -246,7 +240,7 @@ _mlp_writebuf
 	CLR RETVAL
 	CLR PARAM2
 	
-:copy_loop
+:translate_loop
 	MOV FSR, PARAM2
 	SET_BANK GLO_XCH_BANK
 	MOV TMPREG, IND
@@ -254,10 +248,10 @@ _mlp_writebuf
 	MOV FSR, RETVAL
 	SET_BANK MLP_WRITE_BANK
 	
-	CJB TMPREG, #$f0, RETVAL:writeb
-	CJAE TMPREG, #$f8, RETVAL:writeb
+	CJB TMPREG, #$f0, :writeb
+	CJAE TMPREG, #$f8, :writeb
 	;; Otherwise, we must escape
-	MOV IND, #$MLP_ESC
+	MOV IND, #MLP_ESC
 	INC RETVAL
 :writeb
 	MOV IND, TMPREG
@@ -275,7 +269,7 @@ _mlp_writebuf
 	;; --- DEBUG CODE ---
 	TEST RETVAL
 	SNZ
-	SETB LEDgreen
+	CLRB LEDgreen
 	;; --- END OF DEBUG CODE ---
 	
 	RETP
@@ -285,31 +279,32 @@ _mlp_writebuf
 	;; Behandelt internes Kommando der Seriell<->CAN Translationsschicht
 	;; PARAMETER:	PARAM1:	CMD
 	;;		PARAM2:	Parameter
-_mlp_handle_command
+_sub_mlp_handle_command
 	CJNE PARAM1, #0, :no_turnoff_light
-	SNB PARAM1.0
-	CLRB LEDblue
-	SNB PARAM1.1
-	CLRB LEDgreen
+	SNB PARAM2.0
+	SETB LEDblue
+	SNB PARAM2.1
+	SETB LEDgreen
 	RETP
 :no_turnoff_light
 
 	CJNE PARAM1, #1, :no_turnon_light
-	SNB PARAM1.0
-	SETB LEDblue
-	SNB PARAM1.1
-	SETB LEDgreen
+	SNB PARAM2.0
+	CLRB LEDblue
+	SNB PARAM2.1
+	CLRB LEDgreen
 	RETP
 :no_turnon_light
 
 	CJNE PARAM1, #2, :no_echo_version
 	SET_BANK GLO_XCH_BANK
-	MOV $10, MLP_SOB
-	MOV $11, #2
-	MOV $12, MLP_VERSION
-	MOV $13, MLP_EOB
+	MOV $10, #MLP_SOB
+	MOV $11, #$e1		; Reply for this device
+	MOV $12, #2
+	MOV $13, #MLP_VERSION
+	MOV $14, #MLP_EOB
 	
-	MOV PARAM1, #4
+	MOV PARAM1, #5
 	MOV PARAM2, #0
 	CALL @MLP_writebuf
 	RETP
@@ -333,7 +328,7 @@ MLP_writebuf
 
 ;;; INTERNE API
 _MLP_handle_command
-	JMP _mlp_handle_command
+	JMP _sub_mlp_handle_command
 	ENDM
 
 
@@ -342,10 +337,7 @@ _MLP_handle_command
 ;;; --------------------------
 MLP_MAINLOOP	MACRO 0
 
-;;; Double-check this!
-	BREAK
-
-:mlp_read_loop_start
+mlp_read_loop_start
 	;; Start with the "READ" loop:	PDA to CAN
 
 	MOV PARAM1, #1
@@ -353,30 +345,34 @@ MLP_MAINLOOP	MACRO 0
 	CALL @SERIAL_readbuf
 	TEST RETVAL		; Read a byte?
 	
-	CSNZ
+	SNZ
 	JMP :mlp_read_loop_done
 	;; Got a byte!
+	
 	SET_BANK GLO_XCH_BANK
 	MOV TMPREG, $10		; First byte in global exchange bank
 
+	SET_BANK MLP_BANK
+	
 	SNB mlp_f_start_recv	; Do we receive or wait for a SOB?
 	JMP :read_handle_real_input
-:read_handle_boring_input		; Haven't received an MLP_SOB yet
-	SET_BANK MLP_BANK
+:read_handle_boring_input		; Haven't received an #MLP_SOB yet
 
-	CJNE TMPREG, MLP_SOB, :mlp_read_loop_done
+	CJNE TMPREG, #MLP_SOB, :mlp_read_loop_done
 
 	SETB mlp_f_start_recv	; Start receiving
-	JMP :mlp_read_loop_start	; Start over, try to receive
+	CLR mlp_writepos
+	JMP mlp_read_loop_start	; Start over, try to receive
 
 :read_handle_real_input
-	CJNE TMPREG, MLP_ESC, :mlp_read_normal
+		
+	CJNE TMPREG, #MLP_ESC, :mlp_read_normal
 	;; Escape character
 	SETB mlp_f_escaping
-	JMP :mlp_read_loop_start	; Start over, try to read escaped char
+	JMP mlp_read_loop_start	; Start over, try to read escaped char
 	
 :mlp_read_normal
-	CJE TMPREG, MLP_EOB, :mlp_read_finished_recv ; End of block?
+	CJE TMPREG, #MLP_EOB, :mlp_read_finished_recv ; End of block?
 	;; No end of block, normal char
 	MOV W, TMPREG
 	SNB mlp_f_escaping
@@ -386,7 +382,7 @@ MLP_MAINLOOP	MACRO 0
 	;; Now W has the received character
 
 	MOV TMPREG, W
-	CJAE mlp_writepos, MLP_MAXSIZE, :mlp_read_loop_error
+	CJAE mlp_writepos, #MLP_MAXSIZE, :mlp_read_loop_error
 
 	MOV FSR, mlp_writepos
 	SET_BANK MLP_BANK
@@ -394,11 +390,11 @@ MLP_MAINLOOP	MACRO 0
 	SET_BANK MLP_BANK
 	INC mlp_writepos
 
-	JMP :mlp_read_loop_start
+	JMP mlp_read_loop_start
 
 :mlp_read_finished_recv
-
-	CJNE mlp_writepos, MLP_MAXSIZE, :mlp_read_loop_error
+	CLRB mlp_f_start_recv
+	CJNE mlp_writepos, #MLP_MAXSIZE, :mlp_read_loop_error
 	;; Jump to error address if we read more or less than 9 bytes total
 
 	CLR PARAM1
@@ -413,7 +409,7 @@ MLP_MAINLOOP	MACRO 0
 	MOV IND, TMPREG
 
 	INC PARAM1
-	CJB PARAM1, MLP_MAXSIZE, :mlp_read_finished_loop
+	CJB PARAM1, #MLP_MAXSIZE, :mlp_read_finished_loop
 
 	SET_BANK GLO_XCH_BANK
 	MOV TMPREG, $10
@@ -421,23 +417,23 @@ MLP_MAINLOOP	MACRO 0
 	OR $10, #$f0		; REPORT from same device
 ;;; --- ENDE DES TESTCODES ---
 
-	AND TMPREG, $1f
+	AND TMPREG, #$1f
 	CJNE TMPREG, #1, :mlp_read_handle_remote
 	;; Handle local command
-	CALL @_MLP_handle_command
 	MOV PARAM1, $11
 	MOV PARAM2, $12
-	JMP :mlp_read_loop_start
+	CALL @_MLP_handle_command
+	JMP mlp_read_loop_start
 	
 :mlp_read_handle_remote
-	MOV PARAM1, MLP_MAXSIZE
+	MOV PARAM1, #MLP_MAXSIZE
 	MOV PARAM2, 0
 	CALL @MLP_writebuf	; TESTCODE!!!
 ;;; 	CALL @CAN_send_mlp
-	JMP :mlp_read_loop_start
+	JMP mlp_read_loop_start
 	
 :mlp_read_loop_error
-	SETB LEDblue
+	CLRB LEDblue
 	JMP :mlp_read_loop_done
 	
 :mlp_read_loop_done
@@ -468,7 +464,7 @@ Port_reg	    DS		1	; register zum Zwischenspeichern des Ports
 wait_counter	    DS		1	; quasi der scancounter fürs senden (verzögert die änderung des Output um 4 Interrupts)
 bitcounter2	    DS		1	; zählt die Bits die gesendet wurden
 tosend		    DS		1	; zu sendendes Byte
-UART_XCH_STATUS		DS	1	; Globales Register für den Zustand des Empfangsspeichers der seriellen Schnittstelle
+serial_recv_writepos	DS	1	; Globales Register für den Zustand des Empfangsspeichers der seriellen Schnittstelle
 serial_recv_ctr		DS	1	; Anzahl der erhaltenen, noch nicht gelesenen Bytes
 serial_recv_pos		DS	1	; Leseposition fuer erhaltene Bytes
 	
@@ -501,8 +497,6 @@ TEST_BIT_AUSGANG	EQU	RD.7 ; nur zum testen .....
 INIT_SEG_SERIAL		MACRO
 	SET_BANK SERIAL_BANK
 	
-;BREAK
-
 	SETB	STD		; Transmit Datat am anfang auf 1
 	MOV	bitcounter, #8
 	CLR	StoredByte
@@ -512,7 +506,7 @@ INIT_SEG_SERIAL		MACRO
 	CLR	STOPBIT_COUNTER
 	CLR	serial_recv_ctr		; Noch keine Daten erhalten
 	CLR	serial_recv_pos
-	CLR	UART_XCH_STATUS
+	CLR	serial_recv_writepos
 
 
 	MOV	store_base, #SERIAL_READ_BANK
@@ -577,7 +571,6 @@ Endbehandlung
 ending
 	DEC	wait_counter
 absend				; ENDE DES SENDE-TEILS
-
 	; ******************* empfangsteil***********************
 	CSBE	serial_recv_ctr, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16), dann wird nix empfangen
 	JMP	endint
@@ -609,15 +602,16 @@ absend				; ENDE DES SENDE-TEILS
 
 	
 	MOV	W, store_base	; auf die Adresse der Bank 
-	ADD	W, UART_XCH_STATUS	; die Adresse des Registers
+	ADD	W, serial_recv_writepos	; die Adresse des Registers
 
 	; je nach stand des XCH_STTUS byte wir das gelesene Byte an die höchste oder keine stelle geschrieben	
-		
 	MOV	FSR,W		; die errechnete adresse ins FSR
 	MOV	IND, STORE_FOR_IND ; und das gelesenen Byte per indireckte Adressierung wegschreiben
-	INC	UART_XCH_STATUS	; +1 damit kein altes Word überschrieben wird
-	AND	UART_XCH_STATUS, #$0f
+	
 	SET_BANK SERIAL_BANK	; wieder auf die serielle Bank wechseln
+	INC	serial_recv_writepos	; +1 damit kein altes Word überschrieben wird
+	AND	serial_recv_writepos, #$0f
+	INC	serial_recv_ctr ; Anzahl der gelesenen Bytes erhoehen
 
 	MOV	STOPBIT_COUNTER, #4
 	CLRB	receiving_Flag
@@ -638,7 +632,7 @@ checkForStart
 	SKIP	
 stopbit	DEC	STOPBIT_COUNTER
 
-	CSBE	UART_XCH_STATUS, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16)
+	CSBE	serial_recv_ctr, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16)
 	CLRB	RTS			; dann wir RTS auf null gestellt
 
 endint
@@ -778,11 +772,18 @@ _serial_readbuf_status
 	;; RETVAL < PARAM1 sein und SERIAL_readbuf_status()
 _serial_readbuf
 	CALL _serial_readbuf_status
-	MOV W,RETVAL
 	
-	CSAE RETVAL, PARAM1	; Weniger Bytes lesbar als angefordert?
-	MOV PARAM1, W
+	CSB RETVAL, PARAM1	; Weniger Bytes lesbar als angefordert?
+	jmp :better
+	MOV PARAM1, RETVAL
+:better
 	MOV RETVAL, PARAM1	; Anzahl der wirklich gelesenen Bytes
+
+	TEST RETVAL
+	SNZ
+	RETP			; Nothing to read!
+
+	SUB serial_recv_ctr, RETVAL ; Anzahl Bytes im Puffer verringern
 
 	;; Uebertragung der Bytes
 	SET_BANK SERIAL_BANK
@@ -838,15 +839,14 @@ SERIAL_readbuf_status
 	JMP	_serial_readbuf_status
 	
 SERIAL_readbuf
-	JMP	_serial_readbuf_status
+	JMP	_serial_readbuf
 			ENDM
 
 
 SERIAL_MAINLOOP		MACRO 0
 		
 		; wenn 0 dann ist das Byte nicht lesbar
-
-	SET_BANK SERIAL_READ_BANK	
+;;; 	SET_BANK SERIAL_READ_BANK	
 
 	;TEST	UART_XCH_STATUS
 	;JZ	nothinToDo
@@ -857,8 +857,7 @@ SERIAL_MAINLOOP		MACRO 0
 	;JZ	nothinToDo
 	
 
-	
-	CJNE UART_XCH_STATUS, #15, nothinToDo
+;;; 	CJNE UART_XCH_STATUS, #15, nothinToDo
 	
 	;MOV	W, #SERIAL_READ_BANK
 	;ADD	W, UART_XCH_STATUS	; die Adresse des Registers
@@ -869,10 +868,10 @@ SERIAL_MAINLOOP		MACRO 0
 	;MOV	PARAM1,IND	; und das gelesenen Byte per indirekte Adressierung wegschreiben
 	;DEC	UART_XCH_STATUS	; -1 damit kein Byte doppelt gelesen wird
 
-	MOV	PARAM1, SER01
-	
-	CALL	@SERIAL_sendbyte
-	DEC	UART_XCH_STATUS
+;;; 	MOV	PARAM1, SER
+
+;;; 	CALL	@SERIAL_sendbyte
+;;; 	DEC	UART_XCH_STATUS
 	
 	nothinToDo
 	;; Transmit buffer management
@@ -1088,18 +1087,21 @@ main
                 MOV !RB, #PORT_B_WKED
 
                 CLR !WDT
-                
+
+		SETB LEDgreen
+		SETB LEDblue
+	
+		INIT_SEG_SERIAL
+		INIT_SEG_MLP
+	
 		; interrupt aktivieren
                 MOV !OPTION, #OPTION_ACCRTCC_INT  ;interrupt wieder anschalten
-
-		INIT_SEG_SERIAL
 
 ;--------------------------------------
 ;--------------------------------------
 ; Hauptprogramm
 ;--------------------------------------
 ;--------------------------------------
-
 
 
 		SET_BANK GLO_XCH_BANK
@@ -1133,15 +1135,8 @@ main
 	MLP_MAINLOOP
 		
 	JMP	mainloop
+
 	
-	
-;Hier muss ich mir noch GEDANKEN über eine Ringspeicher machen...
-;
-;
-;
-
-
-
 ;--------------------------------------
 ; Routinen Page 0
 ;--------------------------------------

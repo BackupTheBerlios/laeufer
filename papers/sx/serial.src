@@ -382,9 +382,12 @@ absend				; ENDE DES SENDE-TEILS
 	MOV	FSR,W		; die errechnete adresse ins FSR
 	MOV	IND, STORE_FOR_IND ; und das gelesenen Byte per indireckte Adressierung wegschreiben
 	INC	UART_XCH_STATUS	; +1 damit kein altes Word überschrieben wird
+CLRB	LEDblue
+	CJB UART_XCH_STATUS, #14,:nogreen
+CLRB	LEDgreen
+:nogreen
 	SET_BANK SERIAL_BANK	; wieder auf die serielle Bank wechseln
 
-CLRB 	LEDblue
 	MOV	STOPBIT_COUNTER, #4
 	CLRB	receiving_Flag
 	
@@ -395,7 +398,6 @@ checkForStart
 	; hier wird gechecked ob ein startbit gesendet wurde
 	JB	SRD, endint ; wenn an RD keine 0 anliegt, dann gehe zu schluss
 
-	CLRB 	LEDgreen
 	;CLR	UART_XCH_STATUS ; im Global. Statusreg zeigen, dass Byte jetzt nicht gelesen werden darf!
 	MOV	scancounter, #5
 	MOV	bitcounter, #8

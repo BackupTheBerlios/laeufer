@@ -10,6 +10,8 @@
 #include <cstdio>
 #include "mlp_bus.h"
 
+/*#define IO_DEBUG*/
+
 #define MLP_ORDER (6 << 5)
 #define MLP_REPORT (7 << 5)
 
@@ -94,15 +96,6 @@ mlp_deserialize_message(mlp_message_t &dest, int len, byte *src)
 		dest.data[writepos++] = c;
 	}
 
-	if ((pos < len) || (writepos < MLP_MESSAGE_SIZE)) {
-			fprintf(stderr, "MLP-deserialize: Message too short or EOB too soon!\n Message was: [");
-			for (int i = 0; i < len; i++)
-				fprintf(stderr, "%02x ", 0xff & src[i]);
-			fprintf(stderr, "]\n");
-
-			return -1;
-	}
-
 	return 0;
 }
 
@@ -123,14 +116,15 @@ mlp_bus::init(bool *devices, bool **operations)
 	termios options;
 	int i, j;
 
-	fd = open(fd_name, O_RDWR | O_NOCTTY | O_NDELAY);
+	fd = open(fd_name, O_RDWR | O_NOCTTY | O_NDELAY | O_SYNC);
   
 	if (fd == -1) {
 		perror("MLP:init");
 		return BUS_ERROR_FATAL;
 	}
   
-	fcntl(fd, F_SETFL, 0);
+	/*	fcntl(fd, F_SETFL, 0); */
+	fcntl(fd, F_SETFL, FASYNC);
   
 	/* Initialize data rate */
 	tcgetattr(fd, &options);
@@ -147,7 +141,8 @@ mlp_bus::init(bool *devices, bool **operations)
 	options.c_cflag &= ~CSTOPB;
 	options.c_cflag &= ~CSIZE;
 	options.c_cflag |= CS8;
-	options.c_iflag &= ~(IXON | IXOFF);
+	options.c_iflag &= ~(IXON | IXOFF | IGNBRK );
+	options.c_lflag &= ~(ICANON | ISIG | IEXTEN);
   
 	tcsetattr(fd, TCSANOW, &options);
 
@@ -175,17 +170,26 @@ mlp_bus::send(int id, int op, byte *data = NULL,
 	buf.data[0] = MLP_ORDER | id;
 	buf.data[1] = op;
 
-	if (length > MLP_MESSAGE_SIZE - 2)
+	if (length > MLP_MESSAGE_SIZE - 2) {
+		cerr << "MLP: More than " << MLP_MESSAGE_SIZE - 2 << " bytes of arguments not supported!\n";
 		throw new string("MLP: More than 5 bytes of arguments not supported");
+	}
 
 	if (data && length)
 		memcpy(buf.data + 2, data, length);
 
-	mlp_serialize_message(msg_buf, MLP_MESSAGE_SIZE, buf);
-	if (write(fd, &msg_buf, MLP_MESSAGE_SIZE) < MLP_MESSAGE_SIZE) {
+	int msglen = mlp_serialize_message(msg_buf, MLP_MESSAGE_SIZE, buf);
+	if (write(fd, &msg_buf, msglen) < msglen) {
 		perror("MLP:send");
 		return BUS_ERROR_GENERIC;
 	}
+
+#ifdef IO_DEBUG
+	fprintf(stderr, "{[<<-- ");
+	for (int i = 0; i < msglen; i++)
+		fprintf(stderr, "%02x ", msg_buf[i]);
+	fprintf(stderr, "]}\n");
+#endif
 
 	return 0;
 }
@@ -194,16 +198,35 @@ mlp_bus::send(int id, int op, byte *data = NULL,
 int recv_count = 0;
 
 int
+select_read(int fd, unsigned char *dest, int maxread)
+{
+	struct timeval tv;
+	int rv;
+	fd_set fds;
+
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+
+	FD_SET(fd, &fds);
+	rv = select(fd+1, &fds, NULL, NULL, &tv);
+
+	if (rv <= 0) /* No input or error */
+		return rv;
+	else
+		return read(fd, dest, maxread);
+}
+
+int
 mlp_bus::messages_waiting()
 {
 	int maxread = MLP_MAX_BUF_SIZE - partial_msg_pos;
-	int got_bytes = read(fd, &partial_message + partial_msg_pos,
-			     maxread);
+	int got_bytes = select_read(fd, (unsigned char *) (&partial_message + partial_msg_pos),
+				    maxread);
 
 	if (got_bytes > 0) {
 		for (int j = partial_msg_pos; j < partial_msg_pos + got_bytes; j++) {
 			byte b = partial_message[j];
-#ifndef NO_DEBUG
+#ifdef IO_DEBUG
 			fprintf(stderr, "{{ %d:%02x }}", recv_count++, 0xff & b);
 #endif
 			if (b == MLP_SERIAL_SOB
@@ -218,6 +241,7 @@ mlp_bus::messages_waiting()
 			}
 		}
 	}
+	fprintf(stderr, "Received %d bytes.\n", got_bytes);
 
 	if (start_of_message > (MLP_MAX_BUF_SIZE >> 1)) {
 		int delta = start_of_message;
