@@ -1,43 +1,74 @@
 \section{Anforderungen an die Peripherieelektronik}
 \subsection{Gesamtkonzept}
-Die Mechatronik im Projekt L"aufer muß einer Reihe projektspezifischer Anforderungen standhalten. Was bedeuten also die eingangs geschilderten
-Zielsetzungen für die Peripherieelektronik?
+Die Mechatronik im Projekt L"aufer muß einer Reihe projektspezifischer
+Anforderungen standhalten. Was bedeuten also die eingangs
+geschilderten Zielsetzungen für die Peripherieelektronik?
 
-Da sich der genaue Funktionsumfang aller mechatronischen Komponenten f"ur die Zukunft nicht abschätzen l"asst, und neue Komponenten jederzeit einfach
-einzugliedern sein sollen muss das System leicht erweiterbar sein. Für die  Zielgruppe zur Nutzung der Platinen 
-muss das System mit vertretbarem Aufwandt bedienbar sein. Für den nutzenden Ingenieur ist der Effekt und nicht der Weg interessant.
-Die begrenzten Resourcen eines autnomen Systems wie dem L"aufer erfordern außerdem eine sparsame Nutzung von Energie.
-Um die Fahrer nicht durch Fehlfunktionen oder Ausfall eines Gerätes zu gefährden muß das System betriebssicher sein. Das heißt sowohl in der physikalischen
-Auslegung als auch in der Implementierung m"ussen m"ogliche Extreme in der Nutzung des Fahrzeugs ber"ucksichtigt werden. Dies beinhaltet auch eine
-gewisse Fehlertoleranz.
-Nicht zuletzt muss die Lösung zum einen durch das vorhandene Know How im Umfeld des Projekt L"aufer umsetzbar als auch finanzierbar sein.
-Bei der Zusammenstellung der Platine muss ausserdem die Verf"ugbarkeit der Bauelemente sichergestellt sein.
-Wie in den restlichen Teilen des Läufers zollt der Designer auch hier seinen Tribut: die Platine sollte so wenig Raum wie möglich einnehmen 
+Da sich der genaue Funktionsumfang aller mechatronischen Komponenten
+f"ur die Zukunft nicht abschätzen l"asst, und neue Komponenten
+jederzeit einfach einzugliedern sein sollen muss das System leicht
+erweiterbar sein. Für die Zielgruppe zur Nutzung der Platinen muss das
+System mit vertretbarem Aufwandt bedienbar sein. Für den nutzenden
+Ingenieur ist der Effekt und nicht der Weg interessant.  Die
+begrenzten Resourcen eines autnomen Systems wie dem L"aufer erfordern
+außerdem eine sparsame Nutzung von Energie.  Um die Fahrer nicht durch
+Fehlfunktionen oder Ausfall eines Gerätes zu gefährden muß das System
+betriebssicher sein. Das heißt sowohl in der physikalischen Auslegung
+als auch in der Implementierung m"ussen m"ogliche Extreme in der
+Nutzung des Fahrzeugs ber"ucksichtigt werden. Dies beinhaltet auch
+eine gewisse Fehlertoleranz.  Nicht zuletzt muss die Lösung zum einen
+durch das vorhandene Know How im Umfeld des Projekt L"aufer umsetzbar
+als auch finanzierbar sein.  Bei der Zusammenstellung der Platine muss
+ausserdem die Verf"ugbarkeit der Bauelemente sichergestellt sein.  Wie
+in den restlichen Teilen des Läufers zollt der Designer auch hier
+seinen Tribut: die Platine sollte so wenig Raum wie möglich einnehmen
 um dem Design des Fahrzeugs gr"oßtm"oglichen Freiraum zu gew"ahren.
 
 
 \subsection{Kosten}
-Die Platine enthält lediglich Standardbauelemente wie sie zum Teil auch in der Automobilindustrie verwendet werden. Die Kosten für die IC's belaufen sich auf ca
-58,- \geneuronarrow{} (eine genaue Aufstellung ergibt sich aus Tabelle \ref{cr_ic}). Die passiven Bauelemnete belaufen sich auf ca 20,- \geneuronarrow{} (LEDs, Kondensatoren, Spule, Dioden und Widerstände).
-Zusammen mit der vierlagigen Platte ergibt das einen Preis von ca. 110,- \geneuronarrow{} ohne Bestückungskosten. Das Layout erlaubt jedoch eine Teilbestückung die sich auf die für ein spezifisches Peripheriegerät notwendigen
-Bauelemente beschränkt. Ein weitere wichtger Punkt bei der Kostenbestimmung war die Verwendbarkeit und das Zusammenspiel der Bauelemente in der
-gewünschten Zusammenstellung. Um gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen begleitete die Firma Cetron den gesammten Prozess der
-Platinenentwicklung. Von der Idee, dem Prototypen, der Auswahl der Komponenten, des Microcontrollers, dem Layout der Platine in den zwei Revisionen bis 
-hin zur Suche nach Sponsoren für 12 4-Layer Platinen sowie bei der Bestückung derselben stand die Firma Cetron mit Rat und Tat bei.
+Die Platine enthält lediglich Standardbauelemente wie sie zum Teil
+auch in der Automobilindustrie verwendet werden. Die Kosten für die
+IC's belaufen sich auf ca 58,- \geneuronarrow{} (eine genaue
+Aufstellung ergibt sich aus Tabelle \ref{cr_ic}). Die passiven
+Bauelemnete belaufen sich auf ca 20,- \geneuronarrow{} (LEDs,
+Kondensatoren, Spule, Dioden und Widerstände).  Zusammen mit der
+vierlagigen Platte ergibt das einen Preis von ca. 110,-
+\geneuronarrow{} ohne Bestückungskosten. Das Layout erlaubt jedoch
+eine Teilbestückung die sich auf die für ein spezifisches
+Peripheriegerät notwendigen Bauelemente beschränkt. Ein weitere
+wichtger Punkt bei der Kostenbestimmung war die Verwendbarkeit und das
+Zusammenspiel der Bauelemente in der gewünschten Zusammenstellung. Um
+gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen
+begleitete die Firma Cetron den gesammten Prozess der
+Platinenentwicklung. Von der Idee, dem Prototypen, der Auswahl der
+Komponenten, des Microcontrollers, dem Layout der Platine in den zwei
+Revisionen bis hin zur Suche nach Sponsoren für 12 4-Layer Platinen
+sowie bei der Bestückung derselben stand die Firma Cetron mit Rat und
+Tat bei.
 
-Die genauen Kosten der Platine hängen nicht unwesentlich von der Wahl der Komponentendistributoren ab. Preisunterschiede von bis zu 400 \% (z.B. bei
-blauen LEDs) sind keine Seltenheit. Eine sorgfältiger Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der Kostenbestimmung (und
-letztendlich des Einkaufs) gewesen.
+Die genauen Kosten der Platine hängen nicht unwesentlich von der Wahl
+der Komponentendistributoren ab. Preisunterschiede von bis zu 400 \%
+(z.B. bei blauen LEDs) sind keine Seltenheit. Eine sorgfältiger
+Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der
+Kostenbestimmung (und letztendlich des Einkaufs) gewesen.
+
 \subsection{Sicherheit}
-Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor falscher Bedienung durch einen Entwickler wurde bei der Auswahl der Komponenten als
-auch beim Layout auf Robustheit Wert gelegt. Die Platine sowie die Bauelemente enthalten eine Reihe von Schutzmechanismen wie Zener-dioden oder eine
-,,Schmelzsicherung'' in Form einer besonders dünnen Leiterbahn.
-Die aktiven Komponenten sind ausserdem selbst durch diverse Schutzmaßnahmen vor Überhitzung und/oder Stromspitzen geschützt.
+Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor
+falscher Bedienung durch einen Entwickler wurde bei der Auswahl der
+Komponenten als auch beim Layout auf Robustheit Wert gelegt. Die
+Platine sowie die Bauelemente enthalten eine Reihe von
+Schutzmechanismen wie Zener-dioden oder eine ,,Schmelzsicherung'' in
+Form einer besonders dünnen Leiterbahn.  Die aktiven Komponenten sind
+ausserdem selbst durch diverse Schutzmaßnahmen vor Überhitzung
+und/oder Stromspitzen geschützt.
 
 \subsection{Design}
-Um sich in das Design des Läufers zu integrieren sind sowohl die Erweiterbarkeit als auch die simple Grösse der Platine von Wichtigkeit.
-Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat also etwa die Grösse
-einer Checkkarte (siehe Abbildung \ref{Platine-Karte}).
+Um sich in das Design des Läufers zu integrieren sind sowohl die
+Erweiterbarkeit als auch die simple Grösse der Platine von
+Wichtigkeit.  Die Erweiterbarkeit ist bereits im Bereich Flexibilität
+beschrieben. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat
+also etwa die Grösse einer Checkkarte (siehe Abbildung
+\ref{Platine-Karte}).
 
 \begin{figure}
   \center
@@ -51,77 +82,124 @@ einer Checkkarte (siehe Abbildung \ref{Platine-Karte}).
 \section{Platinenlayout}
 %Komentar zur interdiszipl. Erörterung der Anforderungen
 \subsection{Platine}
-Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der später
-erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side Switches waren nicht integriert und die andeschlossene Peripherie wurde durch einen SX28 
-gesteuert (zwei I/O-Ports weniger als der SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue vierlagige Chequekartengroße Trägerplatine ersetzt. Erst die Entwicklung dieser
-zweiten Platine wurde von dieser Studienarbeit begleitet. Der zweite Iteration berücksichtigte dann eine Reihe weiterer Ideen zur Anäherung an das Ziel
-einer multifunktionalen Mechatronikapplikation für Maschinenbauingenieure.
-Die Dimensionierung der passiven Bauelemente erlaubt eine Anpassung an andere Versorgungsspannungen als die momentanen 12 Volt. Ein Spannungswandler
-kann Versorgungsspannungen von bis zu 48 Volt auf die für CMOS üblichen 5 Volt herunterregeln.
-Die Platine entstand in ständiger Cooperation mit den Maschinenbaustudenten des Projekts und der Firma Cetron. Dazu waren immer wieder Erörterungen von
+Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die
+erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der
+später erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side
+Switches waren nicht integriert und die andeschlossene Peripherie
+wurde durch einen SX28 gesteuert (zwei I/O-Ports weniger als der
+SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue
+vierlagige Chequekartengroße Trägerplatine ersetzt. Erst die
+Entwicklung dieser zweiten Platine wurde von dieser Studienarbeit
+begleitet. Der zweite Iteration berücksichtigte dann eine Reihe
+weiterer Ideen zur Anäherung an das Ziel einer multifunktionalen
+Mechatronikapplikation für Maschinenbauingenieure.  Die
+Dimensionierung der passiven Bauelemente erlaubt eine Anpassung an
+andere Versorgungsspannungen als die momentanen 12 Volt. Ein
+Spannungswandler kann Versorgungsspannungen von bis zu 48 Volt auf die
+für CMOS üblichen 5 Volt herunterregeln.  Die Platine entstand in
+ständiger Cooperation mit den Maschinenbaustudenten des Projekts und
+der Firma Cetron. Dazu waren immer wieder Erörterungen von
 Aufgabenfeldern der Maschinenbauer nötig.
 
 \section{Wahl der Komponenten}
 \subsection{Microcontroller}
 
-Der Markt für Microcontroller stellt eine große Auswahl an verschiedensten Konfigurationen zur Verfügung. Um bei der großen Auswahl zügig zu einer guten
-Entscheidung zu kommen gilt es die Menge der Kriterien frühzeitig einzuschränken.
+Der Markt für Microcontroller stellt eine große Auswahl an
+verschiedensten Konfigurationen zur Verfügung. Um bei der großen
+Auswahl zügig zu einer guten Entscheidung zu kommen gilt es die Menge
+der Kriterien frühzeitig einzuschränken.
 
-Wichtigste Kriterien bei der Auswahl waren dementsprechend: Preis, Anzahl I/O-Ports, Taktfrequenz (für die Kommunikation nach RS232-\linebreak Standard wichtig),
-Qualität erhältlicher Entwicklungsumgebungen, Energieverbrauch, Grösse des Programm- und Arbeitsspeichers sowie vorhandene
-Interrupt-Möglichkeiten.
+Wichtigste Kriterien bei der Auswahl waren dementsprechend: Preis,
+Anzahl I/O-Ports, Taktfrequenz (für die Kommunikation nach
+RS232-\linebreak Standard wichtig), Qualität erhältlicher
+Entwicklungsumgebungen, Energieverbrauch, Grösse des Programm- und
+Arbeitsspeichers sowie vorhandene Interrupt-Möglichkeiten.
 
-Um den Preis gering zu halten empfahl sich eine 8-Bit Architektur.
-Im 8-Bit Bereich sind Produkte folgender Hersteller näher in Betracht gezogen worden: Infineon/Siemens (C515-Familie), Motorola (68HC11),Microchip
-(PIC16Fx), Ubicom (SX).
+Um den Preis gering zu halten empfahl sich eine 8-Bit Architektur.  Im
+8-Bit Bereich sind Produkte folgender Hersteller näher in Betracht
+gezogen worden: Infineon/Siemens (C515-Familie), Motorola
+(68HC11),Microchip (PIC16Fx), Ubicom (SX).
 
 \begin{itemize}
-
-\item Infineons SABC515-Familie bietet mit zum Teil integrierten RS232-Bauelementen eine reiche Auswahl für Kommunikationsanwendungen. Mit bis zu 24Mhz 
-erfüllt der Microcontroller sind die Microcontroller für die vorgesehene Anwendungen schnell genug. Der Preis von 9 bis 14 \geneuronarrow{} pro
-Microcontroller ist vergleichbar hoch. Desweiteren müssen für den SABC515 die Programme in externen Speicherbausteinen abgelegt werden, die
-unnötig viel Platz in Anspruch nehmen.
-
-\item Die Microcontrollerreihe 68HC11 von Motorola wird bereits vielfach inder Autoindustrie genutzt. 
-Die Betrachtungen beschränken sich auf die 68HC11F-Familie aus dieser Reihe. Die CISC-Architektur machen die Implementierung
-von Kommunikationsanwendungen \linebreak schwierig. Motorola gleicht dies durch eine reiche Auswahl an Modellen mit integrierter Kommunikationslogik aus. 
-Für die 68HC11Fx Familie sind mehrere Entwicklungsumgebungen, und reichlich Beispielapplikationen erhältlich. Die betrachteten Microcontroller 
-wiesen jedoch höchstens einen interruptfähigen Pin auf, um Interrupts durch externe Geräte auszulösen. Desweiteren existiert kein Stromsparmodus.
-auch die Preise von bis zu 14 \geneuronarrow{} sprechen gegen den 68HC11x.
-
-\item Microchip ist in den USA für die PIC-Microcontroller bekannt. PIC sind schnelle RISC Microcontroller die sich gut für Kommunikationsanwendungen
-eignen. Für die Läufer-Platine wurde die PIC16F87x-Familie unter die Lupe genommen. Auch hier ist eine große Anzahl an Quellen für die
-Programmierung sowie eine Auswahl an Entwicklungsumgebungen erhältlich. Der PIC16F87x ist mit 14 interruptfähigen Pins unter seinen
-Konkurrenten am besten ausgestattet. Die sehr dürftige Ausstattung mit Programmspeicher schränkt die Eignung für die Mechatrinikplatine jedoch
-wieder ein.
-
-\item Mit dem SX52 von Ubicom steht noch ein weiterer PIC-Microcontroller zur Auswahl. Mit acht interruptfähigen PIN's ist der SX52 nicht ganz so gut
-ausgestattet wie der PIC16F87x, reicht aber für die vorgegebenen Zwecke aus. Das Mangel an Programmspeicher teilt der SX52 mit vier KiloByte
-nicht mit seinem Konkurrenten. Sein Preis ist mit ca. 7 \geneuronarrow{} besser als der des Motorolas und gleichauf mit dem PIC-Controller.
-Durch die PIC-Kompa\-tibilität stehen auch für den SX52 viele Resourcen offen. Mit bis zu 100 Mhz ist der SX52 der schnellste Microcontroller
-seiner Klasse.
-
-Letztendlich ausschlaggebend für die Wahl des SX52, ist letztendlich die erhältliche Entwicklungsumgebung der Firma Parallax. Die Software
-ermöglicht eine schrittweise Verfolgung des Programmablaufs, und spiegelt dabei die Arbeitsspeicherbelegung.
-Nähers dazu im Kapitel \ref{Umgebung} Programierumgebung.
+  
+\item Infineons SABC515-Familie bietet mit zum Teil integrierten
+  RS232-Bauelementen eine reiche Auswahl für
+  Kommunikationsanwendungen. Mit bis zu 24Mhz erfüllt der
+  Microcontroller sind die Microcontroller für die vorgesehene
+  Anwendungen schnell genug. Der Preis von 9 bis 14 \geneuronarrow{}
+  pro Microcontroller ist vergleichbar hoch. Desweiteren müssen für
+  den SABC515 die Programme in externen Speicherbausteinen abgelegt
+  werden, die unnötig viel Platz in Anspruch nehmen.
+  
+\item Die Microcontrollerreihe 68HC11 von Motorola wird bereits
+  vielfach inder Autoindustrie genutzt.  Die Betrachtungen beschränken
+  sich auf die 68HC11F-Familie aus dieser Reihe. Die CISC-Architektur
+  machen die Implementierung von Kommunikationsanwendungen \linebreak
+  schwierig. Motorola gleicht dies durch eine reiche Auswahl an
+  Modellen mit integrierter Kommunikationslogik aus.  Für die 68HC11Fx
+  Familie sind mehrere Entwicklungsumgebungen, und reichlich
+  Beispielapplikationen erhältlich. Die betrachteten Microcontroller
+  wiesen jedoch höchstens einen interruptfähigen Pin auf, um
+  Interrupts durch externe Geräte auszulösen. Desweiteren existiert
+  kein Stromsparmodus.  auch die Preise von bis zu 14 \geneuronarrow{}
+  sprechen gegen den 68HC11x.
+  
+\item Microchip ist in den USA für die PIC-Microcontroller bekannt.
+  PIC sind schnelle RISC Microcontroller die sich gut für
+  Kommunikationsanwendungen eignen. Für die Läufer-Platine wurde die
+  PIC16F87x-Familie unter die Lupe genommen. Auch hier ist eine große
+  Anzahl an Quellen für die Programmierung sowie eine Auswahl an
+  Entwicklungsumgebungen erhältlich. Der PIC16F87x ist mit 14
+  interruptfähigen Pins unter seinen Konkurrenten am besten
+  ausgestattet. Die sehr dürftige Ausstattung mit Programmspeicher
+  schränkt die Eignung für die Mechatrinikplatine jedoch wieder ein.
+  
+\item Mit dem SX52 von Ubicom steht noch ein weiterer
+  PIC-Microcontroller zur Auswahl. Mit acht interruptfähigen PIN's ist
+  der SX52 nicht ganz so gut ausgestattet wie der PIC16F87x, reicht
+  aber für die vorgegebenen Zwecke aus. Das Mangel an Programmspeicher
+  teilt der SX52 mit vier KiloByte nicht mit seinem Konkurrenten. Sein
+  Preis ist mit ca. 7 \geneuronarrow{} besser als der des Motorolas
+  und gleichauf mit dem PIC-Controller.  Durch die
+  PIC-Kompa\-tibilität stehen auch für den SX52 viele Resourcen offen.
+  Mit bis zu 100 Mhz ist der SX52 der schnellste Microcontroller
+  seiner Klasse.
+  
+  Letztendlich ausschlaggebend für die Wahl des SX52, ist letztendlich
+  die erhältliche Entwicklungsumgebung der Firma Parallax. Die
+  Software ermöglicht eine schrittweise Verfolgung des
+  Programmablaufs, und spiegelt dabei die Arbeitsspeicherbelegung.
+  Nähers dazu im Kapitel \ref{Umgebung} Programierumgebung.
 
 \end{itemize}
 
 
-Ein tabellarischer Vergleich der Microcontroller findet sich nochmals in Tabelle \ref{cr_microcontroller}.
+Ein tabellarischer Vergleich der Microcontroller findet sich nochmals
+in Tabelle \ref{cr_microcontroller}.
 
 \subsubsection{Die erste Wahl im Detail}
 
-Der SX52(52 steht für die Anzahl an Pins) birgt acht Seiten a 512 12-Bit Worten Programmspeicher für den Programmcode und 16 $\times$ 16 8-Bit Registerbänke sowie eine Spezialbank zur Konfiguration.
-Das heißt es stehen 8 Kilobyte (1 Byte = 12 Bit) für Programmcode und $2^{8}$ 8-Bit Register zu Laufzeit zur Verfügung.
-Für Unterprogrammaufrufe steht ein Stapel mit einer Tiefe von acht Einträgen zur Verfügung. Der Programmspeicher entspricht physikalisch einem Flashrom, sodaß das zum Beispiel weiterentwickelte Versionen auch im nachhinein
-eingespielt werden können. Diese Möglichkeit erleichtert auch die Entwicklung insofern als das Programme nicht erst in simulierter Umgebung getestet
-werden muss, sondern sofort im Einsatzumfeld erprobt werden kann ohne große Kosten zu verursachen.
+Der SX52(52 steht für die Anzahl an Pins) birgt acht Seiten a 512
+12-Bit Worten Programmspeicher für den Programmcode und 16 $\times$ 16
+8-Bit Registerbänke sowie eine Spezialbank zur Konfiguration.  Das
+heißt es stehen 8 Kilobyte (1 Byte = 12 Bit) für Programmcode und
+$2^{8}$ 8-Bit Register zu Laufzeit zur Verfügung.  Für
+Unterprogrammaufrufe steht ein Stapel mit einer Tiefe von acht
+Einträgen zur Verfügung. Der Programmspeicher entspricht physikalisch
+einem Flashrom, sodaß das zum Beispiel weiterentwickelte Versionen
+auch im nachhinein eingespielt werden können. Diese Möglichkeit
+erleichtert auch die Entwicklung insofern als das Programme nicht erst
+in simulierter Umgebung getestet werden muss, sondern sofort im
+Einsatzumfeld erprobt werden kann ohne große Kosten zu verursachen.
 
-Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur Laufzeit an- und ausschltbar
-ist. Der Microcontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit aktivier und deaktivierbar ist. Einer der fünf Ports kann als
-Interrupt oder Weck-port konfiguriert werden. Das heißt ein Signal an diesem Port löst einen Interrupt aus bzw. ,,weckt'' den Mocrocontroller aus dem
-Stromsparmodus. 
+Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output
+nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur
+Laufzeit an- und ausschltbar ist. Der Microcontroller hat eine
+Interrupt-funktion die ebenfalls zur Laufzeit aktivier und
+deaktivierbar ist. Einer der fünf Ports kann als Interrupt oder
+Weck-port konfiguriert werden. Das heißt ein Signal an diesem Port
+löst einen Interrupt aus bzw. ,,weckt'' den Mocrocontroller aus dem
+Stromsparmodus.
 
 
 
@@ -131,25 +209,25 @@ Stromsparmodus.
   \begin{center}
     \begin{tabular}{|c|c|c|c|}
       \hline
-      \emph{Microcontroller} 		& \emph{SX52} 		& \emph{68HC11Fx} & \emph{PIC16F87x} \\
+      \emph{Microcontroller}        & \emph{SX52}       & \emph{68HC11Fx} & \emph{PIC16F87x} \\
       \hline
-      \emph{Architektur} 		& RISC & CISC & RISC\\
+      \emph{Architektur}        & RISC & CISC & RISC\\
       \hline
       \emph{Arbeitsspeicher (in Bytes)} & 256 & 1000 & 256 \\
       \hline
       \emph{Programmspeicher}           & $4kB$ & $20kB$ & 368 words \\
       \hline
-      \emph{Anzahl I/O Pins}       	& $5 \times 8$ & $7 \times 8 + 1 \times 8$ {\tiny input only}& $5 \times 8$\\
+      \emph{Anzahl I/O Pins}        & $5 \times 8$ & $7 \times 8 + 1 \times 8$ {\tiny input only}& $5 \times 8$\\
       \hline
-      \emph{Taktfrequenz}		& $50 Mhz$ & $4 Mhz$ & $20 Mhz$\\
+      \emph{Taktfrequenz}       & $50 Mhz$ & $4 Mhz$ & $20 Mhz$\\
       \hline
-      \emph{Interrupt \footnote{x=ja,o=nein}intern/extern }		& ja / ja {\tiny8 Pins}& ja / ja {\tiny 1 Pin} & ja / ja {\tiny14 Pins}\\
+      \emph{Interrupt \footnote{x=ja,o=nein}intern/extern }     & ja / ja {\tiny8 Pins}& ja / ja {\tiny 1 Pin} & ja / ja {\tiny14 Pins}\\
       \hline
-      \emph{Serielle Schnittstelle}	& nein & ja & nein \\
+      \emph{Serielle Schnittstelle} & nein & ja & nein \\
       \hline
-      \emph{Strom im Sparmodus}		& $1\mu A$ & / & $5\mu A$\\
+      \emph{Strom im Sparmodus}     & $1\mu A$ & / & $5\mu A$\\
       \hline
-      \emph{ca. Preis}			& 7 \geneuronarrow{}& 14 \geneuronarrow{} &  7\geneuronarrow{}\\
+      \emph{ca. Preis}          & 7 \geneuronarrow{}& 14 \geneuronarrow{} &  7\geneuronarrow{}\\
       \hline
     \end{tabular}
   \end{center}
@@ -157,73 +235,103 @@ Stromsparmodus.
 
 
 \subsection{Peripherie}
-Um eine flexible Nutzung der Platine zu sichern gilt es eine Vielzahl von Anschlußmöglichkeiten zur Verfügung zu stellen. Im folgenden werden die
-genutzen Bauelemente und Funktionalitäten der Platine beschrieben.
+Um eine flexible Nutzung der Platine zu sichern gilt es eine Vielzahl
+von Anschlußmöglichkeiten zur Verfügung zu stellen. Im folgenden
+werden die genutzen Bauelemente und Funktionalitäten der Platine
+beschrieben.
+
 \begin{description}
-\item[Serial Peripheral Interface (SPI)]
-\label{cr_SPI-Bus}
-Die große Anzahl an Bauelementen macht eine sparsame Nutzung der I/O-Ports am Microprozessor nötig.
-Zu diesem Zweck sind der CAN-Bus-Chip, zwei Low-Side-Switches, ein Analog-Digital-Wandler und ein Digital-Analog-Wandler über ein SPI-Bus System mit
-dem Microcontroller verbunden. Jeder dieser Bausteine hat einen Chipselect-Eingang der bei einer logischen Null den jeweiligen Baustein aktiviert. Der
-Datentransfer geschieht dann zwischen Microcontroller und dem selektierten Baustein. 
+\item[Serial Peripheral Interface (SPI)]\label{cr_SPI-Bus} Die große
+  Anzahl an Bauelementen macht eine sparsame Nutzung der I/O-Ports am
+  Microprozessor nötig.  Zu diesem Zweck sind der CAN-Bus-Chip, zwei
+  Low-Side-Switches, ein Analog-Digital-Wandler und ein
+  Digital-Analog-Wandler über ein SPI-Bus System mit dem
+  Microcontroller verbunden. Jeder dieser Bausteine hat einen
+  Chipselect-Eingang der bei einer logischen Null den jeweiligen
+  Baustein aktiviert. Der Datentransfer geschieht dann zwischen
+  Microcontroller und dem selektierten Baustein.
+  
+  Das jeweilige Chipselect wird über einen Multiplexer gesetzt. Diese
+  Lösung spart nicht nur wertvolle Pins am Port des Microcontrollers,
+  sie garaniert auch das keine zwei oder mehr Geräte auf den
+  Datentransfer reagieren. Macht die Applikation also ein Stück
+  sicherer.
 
-Das jeweilige Chipselect wird über einen Multiplexer gesetzt. Diese Lösung spart nicht nur wertvolle Pins am Port des Microcontrollers, sie garaniert
-auch das keine zwei oder mehr Geräte auf den Datentransfer reagieren. Macht die Applikation also ein Stück sicherer.
-\item[Kommunikation]
-Neben dem SPI-Bus zur internen Kommunikation stehen eine serielle Schnittstelle nach RS232-Standard und, wie bereits im vorangegangenem
-Kapitel\ref{kapitel_jameson}
-beschrieben, ein CAN-Bus für die externe Kommunikation zur Verfügung. 
-Die serielle Schnittstelle ist direkt über einen Wandlerbaustein (MAX202CSE) mit dem Microcontroller verbunden. Durch die Anbindung des 
-RXD- (RXD = Receive Data) und CTS-Signals (CTS = Clear To Send) an den interruptfähigen Port des Microcontrollers ist eine Aktivierung der
-Platine via
-serieller Schnittstelle möglich.
-\item[Digital-Analog-Wandler]
-Der am SPI-Bus angeschlossene Digital-Analog-Wandler dekodiert eine $2\times12$ Bit lange Nachricht und wandelt diese in zwei analoge Signale um.
-Die Ausgabe ist eine lineare Funktion des Betrags der Eingangszahlen, so daß 000hex für null Volt und FFFhex für zwölf Volt stehen.
+\item[Kommunikation] Neben dem SPI-Bus zur internen Kommunikation
+  stehen eine serielle Schnittstelle nach RS232-Standard und, wie
+  bereits im vorangegangenem Kapitel\ref{kapitel_jameson} beschrieben,
+  ein CAN-Bus für die externe Kommunikation zur Verfügung.  Die
+  serielle Schnittstelle ist direkt über einen Wandlerbaustein
+  (MAX202CSE) mit dem Microcontroller verbunden. Durch die Anbindung
+  des RXD- (RXD = Receive Data) und CTS-Signals (CTS = Clear To Send)
+  an den interruptfähigen Port des Microcontrollers ist eine
+  Aktivierung der Platine via serieller Schnittstelle möglich.
 
-\item[Analog-Digital-Wandler]
-Der LTC 1594 von Linear Tchnologie enthält einen 4-Kanal Multiplexer über den einer von vier Eingängen an den Analog-Digital-Wandler geführt werden
-kann. Der LTC 1594 ist ebenso wie der Digital-Analog-Wandler über den SPI-Bus an den Microcontroller angeschlossen. Zur Konfigurations werden 
-anfangs vier Bit übertragen die zum einen als Aktivierung und zum anderen für die Auswahl des Multiplexereingangs dienen.
-Wenn ein Eingang ausgewählt ist, dann codiert der Analog-Digital-Wandler die anliegende Spannung bis maximal 12 Volt in 12 Bit. Die Abtastrate 
-beträgt 16,8 kHz.
-
-Über Jumper lässt sich eine Rückkopplung der Brückenausgänge mit den Eingängen des Anlog-Digital-Wandlers herstellen.
-Der Strom an der Brücke wird über einen Widerstand geführt, die abfallende Spannung mit einem Operationsverstärker verstärkt und dann im
-Analog-Digital-Wandler gemessen.
-Das heißt es existiert eine direkte Möglichkeit zu Messung der Leistungsaufnahme der an der Brücke angeschlossenen Verbraucher (z.B. Motoren).
-
-\item[Low-Side-Switch]
-
-Mit dem Siemens Smart Octal Low Side Switch TLE 6230 GP stehen über den SPI-Bus zwei Acht-Bit Schalter zur Verfügung.
-Die Ansteuerung erfolgt über zwei acht-Bit Wörter, wobei das erste Wort der Konfiguration, das Zweite der Freischaltung dient.
-Vier der Acht Anschlüsse sind PWM\footnote{PWM Puls Weit Modulation oder engl. Pulse Width Modulation}-bar. Die notwendigen Signale dazu gehen direkt
-vom Microcontroller aus (also ohne den Umweg über den SPI-Bus).
-Die Bausteine haben einen Kurzschlußschutz integriert. Mehr über die Puls Weit Modulation in \ref{cr_puls}
-
-\item[Digitale Eingänge]
-Mit dem ULN2004A gibt es über 7 Anschlüsse einen direkten Zugang zum Microcontroller. 
-Der sieben Darlington Schlatungen enthaltende Baustein von STMicroelectronics Akzeptiert eine Eingangsspannung von fünf bis zu acht Volt, je nach
-Eingangsstrom.
-Drei der Eingänge werden an den interruptfähigen Port des Microcontrollers durchgeschaltet. Dadurch ergibt sich eine weitere Möglichkeit die Platine
-von ausserhalb zu ,,wecken''.
-
-\item[Brücken]
-Für verbrauchsstarke Gleichstromgeräte sind zwei H-Brücken Der Firma Infineon auf der Platine enthalten. Der TLE 5206-2 kann bis zu 40 Volt Spannung bei
-fünf Ampere liefern. Er verträgt dabei kurzzeitige Stromspitzen von bis zu sechs Ampere.
-Die aus zwei Bausteinen resultierenden 4 Anschlüsse, können beispielsweise für vier in eine Richtung steuerbare Motoren oder zwei in beide Richtungen
-steuerbare Motoren verwendet werden.
-
-\item[Speicher]
-Mit dem FM24C64 steht ein 64 Kilobyte großer seriell bedienbarer Speicher zur Verfügung. Der Speicher ist unterteilt in acht $\times$ 8.192 Bits,
-so daß jeweils acht Bit seriell in den Speicher geschrieben werden können. Die Speicherzelle werden also mit einer 13-stelligen Binärzahl
-adressiert ($2^{13} = 8.192 $).
-Der FM24C64 ist über ein sogennates ,,Two-wire Interface''\footnote{Two-wire. engl: zwei Drähte} an den SX angeschlossen. Dabei generiert der SX
-als Master das Tacktsignal für die serielle Übertragung. 
-
-\item[LED]
-Um ein optisches Feedback (zum Beispiel für den Fall einer Fehlfunktion) für den Programmierer zu ermöglichen, sind zwei LED\footnote{LED = Light Emitting
-Diode} an den Microcontroller angeschlossen. Eine davon blau die andere grün.
+\item[Digital-Analog-Wandler] Der am SPI-Bus angeschlossene
+  Digital-Analog-Wandler dekodiert eine $2\times12$ Bit lange
+  Nachricht und wandelt diese in zwei analoge Signale um.  Die Ausgabe
+  ist eine lineare Funktion des Betrags der Eingangszahlen, so daß
+  000hex für null Volt und FFFhex für zwölf Volt stehen.
+  
+\item[Analog-Digital-Wandler] Der LTC 1594 von Linear Tchnologie
+  enthält einen 4-Kanal Multiplexer über den einer von vier Eingängen
+  an den Analog-Digital-Wandler geführt werden kann. Der LTC 1594 ist
+  ebenso wie der Digital-Analog-Wandler über den SPI-Bus an den
+  Microcontroller angeschlossen. Zur Konfigurations werden anfangs
+  vier Bit übertragen die zum einen als Aktivierung und zum anderen
+  für die Auswahl des Multiplexereingangs dienen.  Wenn ein Eingang
+  ausgewählt ist, dann codiert der Analog-Digital-Wandler die
+  anliegende Spannung bis maximal 12 Volt in 12 Bit. Die Abtastrate
+  beträgt 16,8 kHz.
+  
+  Über Jumper lässt sich eine Rückkopplung der Brückenausgänge mit den
+  Eingängen des Anlog-Digital-Wandlers herstellen.  Der Strom an der
+  Brücke wird über einen Widerstand geführt, die abfallende Spannung
+  mit einem Operationsverstärker verstärkt und dann im
+  Analog-Digital-Wandler gemessen.  Das heißt es existiert eine
+  direkte Möglichkeit zu Messung der Leistungsaufnahme der an der
+  Brücke angeschlossenen Verbraucher (z.B. Motoren).
+  
+\item[Low-Side-Switch]Mit dem Siemens Smart Octal Low Side Switch TLE
+  6230 GP stehen über den SPI-Bus zwei Acht-Bit Schalter zur
+  Verfügung.  Die Ansteuerung erfolgt über zwei acht-Bit Wörter, wobei
+  das erste Wort der Konfiguration, das Zweite der Freischaltung
+  dient.  Vier der Acht Anschlüsse sind PWM\footnote{PWM Puls Weit
+    Modulation oder engl. Pulse Width Modulation}-bar. Die notwendigen
+  Signale dazu gehen direkt vom Microcontroller aus (also ohne den
+  Umweg über den SPI-Bus).  Die Bausteine haben einen Kurzschlußschutz
+  integriert. Mehr über die Puls Weit Modulation in \ref{cr_puls}
+  
+\item[Digitale Eingänge] Mit dem ULN2004A gibt es über 7 Anschlüsse
+  einen direkten Zugang zum Microcontroller.  Der sieben Darlington
+  Schlatungen enthaltende Baustein von STMicroelectronics Akzeptiert
+  eine Eingangsspannung von fünf bis zu acht Volt, je nach
+  Eingangsstrom.  Drei der Eingänge werden an den interruptfähigen
+  Port des Microcontrollers durchgeschaltet. Dadurch ergibt sich eine
+  weitere Möglichkeit die Platine von ausserhalb zu ,,wecken''.
+  
+\item[Brücken] Für verbrauchsstarke Gleichstromgeräte sind zwei
+  H-Brücken Der Firma Infineon auf der Platine enthalten. Der TLE
+  5206-2 kann bis zu 40 Volt Spannung bei fünf Ampere liefern. Er
+  verträgt dabei kurzzeitige Stromspitzen von bis zu sechs Ampere.
+  Die aus zwei Bausteinen resultierenden 4 Anschlüsse, können
+  beispielsweise für vier in eine Richtung steuerbare Motoren oder
+  zwei in beide Richtungen steuerbare Motoren verwendet werden.
+  
+\item[Speicher] Mit dem FM24C64 steht ein 64 Kilobyte großer seriell
+  bedienbarer Speicher zur Verfügung. Der Speicher ist unterteilt in
+  acht $\times$ 8.192 Bits, so daß jeweils acht Bit seriell in den
+  Speicher geschrieben werden können. Die Speicherzelle werden also
+  mit einer 13-stelligen Binärzahl adressiert ($2^{13} = 8.192 $).
+  Der FM24C64 ist über ein sogennates ,,Two-wire
+  Interface''\footnote{Two-wire. engl: zwei Drähte} an den SX
+  angeschlossen. Dabei generiert der SX als Master das Tacktsignal für
+  die serielle Übertragung.
+  
+\item[LED] Um ein optisches Feedback (zum Beispiel für den Fall einer
+  Fehlfunktion) für den Programmierer zu ermöglichen, sind zwei
+  LED\footnote{LED = Light Emitting Diode} an den Microcontroller
+  angeschlossen. Eine davon blau die andere grün.
 
 \end{description}
 
@@ -233,79 +341,103 @@ Diode} an den Microcontroller angeschlossen. Eine davon blau die andere grün.
   \begin{center}
     \begin{tabular}{|c|c|c|c|}
       \hline
-      \emph{Komponente} 		& \parbox[]{60pt}{\emph{Hersteller- bezeichnung}} 		& \emph{Hersteller} & \emph{ca. Preis in \geneuronarrow{}} \\
+      \emph{Komponente}         & \parbox[]{60pt}{\emph{Hersteller- bezeichnung}}       & \emph{Hersteller} & \emph{ca. Preis in \geneuronarrow{}} \\
       \hline
-      \emph{Brücken} 			& TLE 5206-2 & Infineon & 4.33\\
+      \emph{Brücken}            & TLE 5206-2 & Infineon & 4.33\\
       \hline
-      \emph{Spannungswandler} 		& LM2594 & National Semiconductor & 5,09\\
+      \emph{Spannungswandler}       & LM2594 & National Semiconductor & 5,09\\
       \hline
       \emph{Operationsverstärker}       & LM324 & National Semiconductor & 0,31 \\
       \hline
-      \emph{Darlington Array}       	& ULN2004A & STMicroelectronics & 0,66 \\
+      \emph{Darlington Array}           & ULN2004A & STMicroelectronics & 0,66 \\
       \hline
-      \emph{Microcontroller}		& SX52 & Ubicom & 7 \\
+      \emph{Microcontroller}        & SX52 & Ubicom & 7 \\
       \hline
-      \emph{Low Side Switch}		& TLE 6230 GP & Infineon & 3.79\\
+      \emph{Low Side Switch}        & TLE 6230 GP & Infineon & 3.79\\
       \hline
-      \emph{RS232}	                & Max202CWE & Dallas Semiconductor & 3,26 \\
+      \emph{RS232}                  & Max202CWE & Dallas Semiconductor & 3,26 \\
       \hline
-      \emph{CAN-Controller}		& MCP2510 & Microchip & 4.25\\
+      \emph{CAN-Controller}     & MCP2510 & Microchip & 4.25\\
       \hline
-      \emph{Analog-Digital-Wandler}	& LTC 1594 & Linear Technology & 11,30 \\
+      \emph{Analog-Digital-Wandler} & LTC 1594 & Linear Technology & 11,30 \\
       \hline
-      \emph{Digital-Analog-Wandler}	& LTC 1446 & Linear Technology &  12,60\\
+      \emph{Digital-Analog-Wandler} & LTC 1446 & Linear Technology &  12,60\\
       \hline
-      \emph{Multiplexer}		& MM74HC138 & Fairchild & 0,36 \\
+      \emph{Multiplexer}        & MM74HC138 & Fairchild & 0,36 \\
       \hline
     \end{tabular}
-    Die Preise sind den Katalogen von RS-Components\cite{RSC}, Farnell\cite{farnell} und Bürklin\cite{Burk} entnommen.
+    Die Preise sind den Katalogen von RS-Components\cite{RSC},
+    Farnell\cite{farnell} und Bürklin\cite{Burk} entnommen.
   \end{center}
 \end{table}
 
 \newpage
 
 \section{Anforderungen an die Implementierung des Microcontrollers}
-Im folgenden werden die Auswirkungen der Vorgaben auf die Assembler-Programme des Microcontrollers beschrieben.
+Im folgenden werden die Auswirkungen der Vorgaben auf die
+Assembler-Programme des Microcontrollers beschrieben.
 
 \subsection{Bedienbarkeit}
-Was bedeutet Bedienbarkeit im Bezug auf die Programme des Microcontrollers?
+Was bedeutet Bedienbarkeit im Bezug auf die Programme des
+Microcontrollers?
 
-Ziel ist es dem Entwickler eine Art Bibliothek zur Ansteuerung der einzelnen Platinenkomponenten anzubieten.
-Folgende Punkte sind dabei mit Rücksicht auf die Assemblerumgebung weitestmöglich zu beachten:
+Ziel ist es dem Entwickler eine Art Bibliothek zur Ansteuerung der
+einzelnen Platinenkomponenten anzubieten.  Folgende Punkte sind dabei
+mit Rücksicht auf die Assemblerumgebung weitestmöglich zu beachten:
+
 \begin{itemize}
-\item Die Programmpakete für die einzelnen Platinenkomponenten müssen als Module verfügbar sein, die gegebenenfalls vom Entwickler eingebunden werden
-können.
-\item Die einzelnen Module müssen sich den Arbeitsspeicher so teilen, das Keines das jeweils Andere stört bzw. Inkonsistenzen zur Laufzeit hervorruft.
-Das heißt das eine strikte Arbeitsspeichertrennung vorhanden sein muss.
+  
+\item Die Programmpakete für die einzelnen Platinenkomponenten müssen
+  als Module verfügbar sein, die gegebenenfalls vom Entwickler
+  eingebunden werden können.
 
-\item Es müssen Konventionen für den Austausch von Daten zwischen den Modulen entwickelt werden.
-
-\item Der Programmspeicher muss möglichst effizient von den Modulen genutzt werden.
-
-\item Innerhalb der Module sollte es keine weiten Verzweigungen durch Unterprogrammaufrufe geben, um dem Entwickler(und damit dem Nutzer der Module)
-möglichst viel Freiraum auf dem Unterprogramm-Stapel zu gewähren.
-
-\item Konstante Einstellungen die sich aus der Architektur der Platine ergeben sollten dem Entwickler durch ,,sprechende'' Konstantennamen einfach
-handhabbar gemacht werden.
+\item Die einzelnen Module müssen sich den Arbeitsspeicher so teilen,
+  das Keines das jeweils Andere stört bzw. Inkonsistenzen zur Laufzeit
+  hervorruft.  Das heißt das eine strikte Arbeitsspeichertrennung
+  vorhanden sein muss.
+  
+\item Es müssen Konventionen für den Austausch von Daten zwischen den
+  Modulen entwickelt werden.
+  
+\item Der Programmspeicher muss möglichst effizient von den Modulen
+  genutzt werden.
+  
+\item Innerhalb der Module sollte es keine weiten Verzweigungen durch
+  Unterprogrammaufrufe geben, um dem Entwickler(und damit dem Nutzer
+  der Module) möglichst viel Freiraum auf dem Unterprogramm-Stapel zu
+  gewähren.
+  
+\item Konstante Einstellungen die sich aus der Architektur der Platine
+  ergeben sollten dem Entwickler durch ,,sprechende'' Konstantennamen
+  einfach handhabbar gemacht werden.
 \end{itemize}
 
 \subsection{Sicherheit}
-Die Implementierung der Platinen muss eventuelle Fehlfunktionen berücksichtigen und adäquat behandeln ohne die Kommunikationsebene zu stören.
-Desweiteren muss es einen sicheren Zustand geben in den die Platine bei etwaiger Fehlfunktion versetzt wird um Kurzschluss, unnötigem Leistungsverbrauch
-oder ähnlichem vorzubeugen.
+Die Implementierung der Platinen muss eventuelle Fehlfunktionen
+berücksichtigen und adäquat behandeln ohne die Kommunikationsebene zu
+stören.  Desweiteren muss es einen sicheren Zustand geben in den die
+Platine bei etwaiger Fehlfunktion versetzt wird um Kurzschluss,
+unnötigem Leistungsverbrauch oder ähnlichem vorzubeugen.
 
 \subsection{Kommunikation}
 
-Die Modularität des Systems bringt eine Vielzahl von Kommunikationsanforderungen mit sich. So müssen die Einzelnen Platinen in Kontakt mit der
-Steuereinheit treten, auf der Platine muss der reibungslose Austausch zwischen den Programmmodulen sichergestellt sein ohne inkonsistenzen
-hervorzurufen, auf Hardwareebene werden einzelne Komponenten über ein serielles Protokoll angesprochen (SPI) und nicht zuletzt muss der Microcontroller
-die zeitkritische serielle Schnittstelle betreiben (sofern das Modul eingebunden ist).
+Die Modularität des Systems bringt eine Vielzahl von
+Kommunikationsanforderungen mit sich. So müssen die Einzelnen Platinen
+in Kontakt mit der Steuereinheit treten, auf der Platine muss der
+reibungslose Austausch zwischen den Programmmodulen sichergestellt
+sein ohne inkonsistenzen hervorzurufen, auf Hardwareebene werden
+einzelne Komponenten über ein serielles Protokoll angesprochen (SPI)
+und nicht zuletzt muss der Microcontroller die zeitkritische serielle
+Schnittstelle betreiben (sofern das Modul eingebunden ist).
 
 \subsection{Erweiterbarkeit}
-Um auch zukünftige Weiterentwicklungen der Peripherie berücksichtigen zu können, muss die Programmierung der Komponnenten einer klaren Konvention
-folgen.So können auch neue Implemetierungen diesem Muster folgen und der Entwickler hat eine geringe Einarbeitungszeit. Eine Schnittstelle im Sinne
-einer Hochsprache ist hier nicht von Nöten, da die geringe Stacktiefe und der begrenzte Programmspeicher ohnehin eine geringe
-Verschachtelungstiefe der Unterprogramme erzwingen.
+Um auch zukünftige Weiterentwicklungen der Peripherie berücksichtigen
+zu können, muss die Programmierung der Komponnenten einer klaren
+Konvention folgen.So können auch neue Implemetierungen diesem Muster
+folgen und der Entwickler hat eine geringe Einarbeitungszeit. Eine
+Schnittstelle im Sinne einer Hochsprache ist hier nicht von Nöten, da
+die geringe Stacktiefe und der begrenzte Programmspeicher ohnehin eine
+geringe Verschachtelungstiefe der Unterprogramme erzwingen.
 
 \newpage
 \section{Konzeption}
@@ -313,11 +445,15 @@ Verschachtelungstiefe der Unterprogramme erzwingen.
 \subsection{Entwicklungsumgebung}
 \label{Umgebung}
 
-Wie bereits oben beschrieben war einer der Gründe für die Wahl des SX52 seine gute Handhabbarkeit bei der Entwicklung.
-Dies hängt mit der erhältichen Entwicklungsumgebung der Firma Parallax zusammen. 
-Das Programm SX52 besteht aus einem Editor einem Assembler-Interpreter und einem Laufzeitdebugprogramm. Um den Microcontroller zu programmieren
-beziehungsweise die Debugroutinen anzuwenden, benötigt man ausserdem den SX-Key \ref{cr_sx_key}. Der SX-Key übernimmt so er angeschlossen ist die Taktung des
-Prozessors, so das die Debugfunktionen möglich wird.
+Wie bereits oben beschrieben war einer der Gründe für die Wahl des
+SX52 seine gute Handhabbarkeit bei der Entwicklung.  Dies hängt mit
+der erhältichen Entwicklungsumgebung der Firma Parallax zusammen.  Das
+Programm SX52 besteht aus einem Editor einem Assembler-Interpreter und
+einem Laufzeitdebugprogramm. Um den Microcontroller zu programmieren
+beziehungsweise die Debugroutinen anzuwenden, benötigt man ausserdem
+den SX-Key \ref{cr_sx_key}. Der SX-Key übernimmt so er angeschlossen
+ist die Taktung des Prozessors, so das die Debugfunktionen möglich
+wird.
 \begin{figure}
   \center
   \includegraphics[width=277pt]{sx-key_m.eps}
@@ -325,13 +461,18 @@ Prozessors, so das die Debugfunktionen möglich wird.
   \label{cr_sx_key}
 \end{figure}
 
-Die Debugfunktion ermöglicht es, die Ausführung von
-Programmen schrittweise zu verfolgen und dabei die Registerinhalte zu überwachen. Desweiteren können bestimmte Register oder gar Bits formatiert (als binäre,
-hexadezimale oder dezimale Zahl) angezeigt werden. Bei jeder Änderung durch einen Befehl werden die betroffenen Register rot umrandet. Auf diese 
-Art lässt sich schnell feststellen ob das Programm in den korrekten Bereichen des Arbeitsspeichers arbeitet. Abbildung \ref{cr_sx_exe} zeigt das
-Registerfenster der Entwicklungsumgebung im Debugmodus. In der Tabelle sind alle Register aufgezählt. Zur linken sieht man die Inhalte der
-globalen Register sowohl in binärer als auch in hexadezimaler Form. desweiteren sind der Programmzähler (PC) und der Akkumulator (W) am oberen
-Rand zu sehen.
+Die Debugfunktion ermöglicht es, die Ausführung von Programmen
+schrittweise zu verfolgen und dabei die Registerinhalte zu überwachen.
+Desweiteren können bestimmte Register oder gar Bits formatiert (als
+binäre, hexadezimale oder dezimale Zahl) angezeigt werden. Bei jeder
+Änderung durch einen Befehl werden die betroffenen Register rot
+umrandet. Auf diese Art lässt sich schnell feststellen ob das Programm
+in den korrekten Bereichen des Arbeitsspeichers arbeitet. Abbildung
+\ref{cr_sx_exe} zeigt das Registerfenster der Entwicklungsumgebung im
+Debugmodus. In der Tabelle sind alle Register aufgezählt. Zur linken
+sieht man die Inhalte der globalen Register sowohl in binärer als auch
+in hexadezimaler Form. desweiteren sind der Programmzähler (PC) und
+der Akkumulator (W) am oberen Rand zu sehen.
 
 \begin{figure}
   \center
@@ -341,68 +482,114 @@ Rand zu sehen.
 \end{figure}
 
 \subsection{Funktionsweise eins SX52 Assemblerprogramms}
-Im folgenden wird die Funktionsweise eines SX52 Assemblerprogramms grob umrissen, um eine Verständniss der folgenden Erklärungen zu ermöglichen.
-Ich gehe davon aus, das Begriffe wie Akkumulator, Clock (oder auch Zeitgeber) und Register bereits bekannt sind.
+Im folgenden wird die Funktionsweise eines SX52 Assemblerprogramms
+grob umrissen, um eine Verständniss der folgenden Erklärungen zu
+ermöglichen.  Ich gehe davon aus, das Begriffe wie Akkumulator, Clock
+(oder auch Zeitgeber) und Register bereits bekannt sind.
 
-Die Programme des SX52 sind in einem 64 Kilobyte grossem Programmspeicher untergebracht. Jedes Byte hat eine Länge von zwölf Bit. Ein Byte repräsentiert eine
-Instruktion für den Microcontroller. Dabei teilt sich ein solches Byte je nach Befehl in Operationscode und Argumente. Es handelt sich beim SX52
-um eine RISC-Archutektur, das heißt der anteil des Operationscodes an einer Instruktion ist (fast) immer gleich. Die Adresse der aktuell auszuführende Zeile entnimmt man dem
-Programmzähler (zu engl. Programm Counter, abgekürzt PC).
+Die Programme des SX52 sind in einem 64 Kilobyte grossem
+Programmspeicher untergebracht. Jedes Byte hat eine Länge von zwölf
+Bit. Ein Byte repräsentiert eine Instruktion für den Microcontroller.
+Dabei teilt sich ein solches Byte je nach Befehl in Operationscode und
+Argumente. Es handelt sich beim SX52 um eine RISC-Archutektur, das
+heißt der anteil des Operationscodes an einer Instruktion ist (fast)
+immer gleich. Die Adresse der aktuell auszuführende Zeile entnimmt man
+dem Programmzähler (zu engl. Programm Counter, abgekürzt PC).
 
-Ein Programm beginnt an der höchsten Stelle des Speichers, also an der Stelle FFF (Hexadezimal). Dort wird die Einsprungadresse des Hauptprogramms
-eingelesen und in den Programmzähler geschrieben. Die Einsprungadresse wird auch als ,,\footnote{engl.reset: widerherstellen. In diesem Kontext soll
-der Anfangszustand des Programms wieder hergestellt werden}reset'' bezeichnet. Der Befehl an der aktuellen Stelle wird eingelesen und, nachdem der Programmzähler um Eins iteriert
-wurde, ausgewertet.
+Ein Programm beginnt an der höchsten Stelle des Speichers, also an der
+Stelle FFF (Hexadezimal). Dort wird die Einsprungadresse des
+Hauptprogramms eingelesen und in den Programmzähler geschrieben. Die
+Einsprungadresse wird auch als ,,\footnote{engl.reset:
+  widerherstellen. In diesem Kontext soll der Anfangszustand des
+  Programms wieder hergestellt werden}reset'' bezeichnet. Der Befehl
+an der aktuellen Stelle wird eingelesen und, nachdem der
+Programmzähler um Eins iteriert wurde, ausgewertet.
 
-Ein solches Programm könnte nun bis zu höchsten Stelle durchlaufen und dann wieder von der Stelle FFF (hexadezimal) aus zurückspringen. In der Praxis wird das jedoch
-selten so gehandhabt. Folgende Ereignisse können den Kreislauf unterbrechen:
+Ein solches Programm könnte nun bis zu höchsten Stelle durchlaufen und
+dann wieder von der Stelle FFF (hexadezimal) aus zurückspringen. In
+der Praxis wird das jedoch selten so gehandhabt. Folgende Ereignisse
+können den Kreislauf unterbrechen:
 
 \begin{description}
-\item[Rollover-Interrupt]
-Der \footnote{engl.roll over: überschlagen, vorne überkippen; engl. interrupt: die Unterbrechung}Rollover-Interrupt unterbricht das
-Programm,\linebreak schreibt
-den aktuellen Inhalt des Programmzählers, sowie den Akkumulator und die Register \footnote{FSR: File Select Register, enthält den Zeiger auf die
-Aktuelle Registerbank}FSR und \footnote{}STATUS in ein eigens für die Interruptbehandlung vorgesehenes
-Register. Danach werden die Befehle ab der Adresse 000hex ausgeführt bis das Ende des Interrupts durch einen speziellen Rücksprungbefehl angezeigt wird (hier: RETIW
-oder RETI). Diese Befehle sorgen nun dafür, dass der Programmzähler, der Akkumulator und die Register FSR und STATUS wieder auf die zuvor gespeicherten
-Werte gesetzt werden. Die Befehle von der Adresse 000hex bis zum Rücksprungbefehl werden im folgenden als Interrupt-Routine bezeichnet.
-Während eine Interrupt-Routine ausgeführt wird, wird kein weiterer Interrupt erkannt.
-\item[SLEEP-Befehl]
-Durch den SLEEP-Befehl wird die Clock ausgeschaltet und alle den Microcontroller betreffenden Systeme nur noch minimal versorgt. Das Programm hält an.
-\item[Multi-Input-Wakeup-Interrupt]
-Der Multi-Input-Wakeup-Interrupt wird durch ein Signal am Port B ausgelöst. Er bewirkt entweder das ,,aufwachen'' des Microcontrollers, wenn dieser im
-SLEEP-Modus war, oder er startet die Interrupt-Routine.
-\item[Endlosschleife]
-Man kann das erreichen der höchste Speicherstelle auch durch eine eigene Endlosschleife verhindern, die während des Programmlaufes nicht verlassen
-wird.
+\item[Rollover-Interrupt] Der \footnote{engl.roll over: überschlagen,
+    vorne überkippen; engl. interrupt: die
+    Unterbrechung}Rollover-Interrupt unterbricht das
+  Programm,\linebreak schreibt den aktuellen Inhalt des
+  Programmzählers, sowie den Akkumulator und die Register
+  \footnote{FSR: File Select Register, enthält den Zeiger auf die
+    Aktuelle Registerbank}FSR und \footnote{}STATUS in ein eigens für
+  die Interruptbehandlung vorgesehenes Register. Danach werden die
+  Befehle ab der Adresse 000hex ausgeführt bis das Ende des Interrupts
+  durch einen speziellen Rücksprungbefehl angezeigt wird (hier: RETIW
+  oder RETI). Diese Befehle sorgen nun dafür, dass der Programmzähler,
+  der Akkumulator und die Register FSR und STATUS wieder auf die zuvor
+  gespeicherten Werte gesetzt werden. Die Befehle von der Adresse
+  000hex bis zum Rücksprungbefehl werden im folgenden als
+  Interrupt-Routine bezeichnet.  Während eine Interrupt-Routine
+  ausgeführt wird, wird kein weiterer Interrupt erkannt.
+  
+\item[SLEEP-Befehl] Durch den SLEEP-Befehl wird die Clock
+  ausgeschaltet und alle den Microcontroller betreffenden Systeme nur
+  noch minimal versorgt. Das Programm hält an.
+  
+\item[Multi-Input-Wakeup-Interrupt] Der Multi-Input-Wakeup-Interrupt
+  wird durch ein Signal am Port B ausgelöst. Er bewirkt entweder das
+  ,,aufwachen'' des Microcontrollers, wenn dieser im SLEEP-Modus war,
+  oder er startet die Interrupt-Routine.
+  
+\item[Endlosschleife] Man kann das erreichen der höchste
+  Speicherstelle auch durch eine eigene Endlosschleife verhindern, die
+  während des Programmlaufes nicht verlassen wird.
+  
 \item[Neustart durch ab- und einschalten der Versorgungsspannung]
-Natürlich kann man den Microcontroller auch aus- und wieder anschalten um das Programm zu unterbrechen.
+  Natürlich kann man den Microcontroller auch aus- und wieder
+  anschalten um das Programm zu unterbrechen.
 \end{description}
 
-Während des Programmablaufes werden Daten eingelesen, bearbeitet und ausgegeben. Dies geschieht in den Registerbänken. Man Unterscheidet im Fall des
-SX52 zwischen globalen und zu adressierenden Registerbänken zu je 16 Byte (1 Byte = 8 Bit). Die globalen Register sind jederzeit adressierbar. Sie enthalten
-unter anderen das STATUS-Register, das FSR-Register und die Port-Register. Im FSR ( engl. File Select Register, etwa Dateiauswahlregister) stehen die ersten vier Bit der zu
-adressierenden Registerbank. Um eine Bank zu adressieren schreibt man entweder die entsprechende Adresse direkt in das FSR-Register oder nutzt den
-BANK-Befehl gefolgt von einer drei-Bit Nummer, das vierte Bit im FSR wird dabei immer auf Null gesetzt. Um jetz trotzdem die ungeraden Registerbänke
-adressieren zu können muss der Programmierer das entsprechende Bit im FSR-Register setzten. Diese umständliche handhabe ist auf die Kompatibilität mit
-dem SX32 zurückzuführen, der nur acht Registerbänke zur Verfügung stehen hat.
+Während des Programmablaufes werden Daten eingelesen, bearbeitet und
+ausgegeben. Dies geschieht in den Registerbänken. Man Unterscheidet im
+Fall des SX52 zwischen globalen und zu adressierenden Registerbänken
+zu je 16 Byte (1 Byte = 8 Bit). Die globalen Register sind jederzeit
+adressierbar. Sie enthalten unter anderen das STATUS-Register, das
+FSR-Register und die Port-Register. Im FSR ( engl. File Select
+Register, etwa Dateiauswahlregister) stehen die ersten vier Bit der zu
+adressierenden Registerbank. Um eine Bank zu adressieren schreibt man
+entweder die entsprechende Adresse direkt in das FSR-Register oder
+nutzt den BANK-Befehl gefolgt von einer drei-Bit Nummer, das vierte
+Bit im FSR wird dabei immer auf Null gesetzt. Um jetz trotzdem die
+ungeraden Registerbänke adressieren zu können muss der Programmierer
+das entsprechende Bit im FSR-Register setzten. Diese umständliche
+handhabe ist auf die Kompatibilität mit dem SX32 zurückzuführen, der
+nur acht Registerbänke zur Verfügung stehen hat.
 
 \subsubsection{Unterprogrammaufrufe}
-Unterprogrammaufrufe werden mittels CALL-Befehl realisiert. Der SX52 enthält einen Stapel der Tiefe acht, um Unterprogramme verschachtelt aufzurufen.
-Beim Aufruf eines Unterprogramms wird die Rücksprungadresse auf den Stack gelegt und der Programmzähler auf den Wert des CALL-Arguments gesetzt.
-Das Argument kann jedoch nur einen Adressraum von 256 Byte ansprechen (Argumentlänge: neun Bit), drei der restlichen vier Bit für eine vollständige
-Programmspeicheradresse stehen im STATUS Register. Das vierte Bit wird auf null gesetzt. Für die Programmierung bedeutet dies, daß mit einem
-Unterprogrammaufruf innerhalb einer Programmspeicherseite nur Unterprogramme in der unteren Hälfte aufgerufen werden können. Im Abschnitt \ref{cr_call_seg}
-wird ein Konzept beschrieben, das diese Einschränkung geschickt umgeht.
+Unterprogrammaufrufe werden mittels CALL-Befehl realisiert. Der SX52
+enthält einen Stapel der Tiefe acht, um Unterprogramme verschachtelt
+aufzurufen.  Beim Aufruf eines Unterprogramms wird die
+Rücksprungadresse auf den Stack gelegt und der Programmzähler auf den
+Wert des CALL-Arguments gesetzt.  Das Argument kann jedoch nur einen
+Adressraum von 256 Byte ansprechen (Argumentlänge: neun Bit), drei der
+restlichen vier Bit für eine vollständige Programmspeicheradresse
+stehen im STATUS Register. Das vierte Bit wird auf null gesetzt. Für
+die Programmierung bedeutet dies, daß mit einem Unterprogrammaufruf
+innerhalb einer Programmspeicherseite nur Unterprogramme in der
+unteren Hälfte aufgerufen werden können. Im Abschnitt
+\ref{cr_call_seg} wird ein Konzept beschrieben, das diese
+Einschränkung geschickt umgeht.
 
 \subsubsection{Arbeitsregister}
-Der SX52 nutzt in der Summe 17 Register zur Verarbeitung von Daten zur Laufzeit. Die Register teilen sich auf in eine globale Bank und 16 indirekt 
-adressierbare Bänke. Jede Bank enthält 16 Register. Für die Adressierung der globalen Register sind keine Vorkehrungen nötig. Um die 16 ,,normalen''
-Registerbänke zu referenzieren schreibt man einfach die Registernummer hin. Die globale Register haben in den vier \footnote{Most Significent Bits:
-Höchstwertigen Bits}MSB einen ungeraden Wert stehen, während für die ,,normalen'' Register immer ein gerader Wert in den ersten vier Bit steht.
-Steht alo im Bit Nummer vier des Befehlsarguments eine Eins, so werden die Bits 0 bis 3 für die Adressierung eines globalen Registers genutzt, sonst 
-wird ein Register aus der im FSR spezifizierten Bank entnommen.
-Beispiel:
+Der SX52 nutzt in der Summe 17 Register zur Verarbeitung von Daten zur
+Laufzeit. Die Register teilen sich auf in eine globale Bank und 16
+indirekt adressierbare Bänke. Jede Bank enthält 16 Register. Für die
+Adressierung der globalen Register sind keine Vorkehrungen nötig. Um
+die 16 ,,normalen'' Registerbänke zu referenzieren schreibt man
+einfach die Registernummer hin. Die globale Register haben in den vier
+\footnote{Most Significent Bits: Höchstwertigen Bits}MSB einen
+ungeraden Wert stehen, während für die ,,normalen'' Register immer ein
+gerader Wert in den ersten vier Bit steht.  Steht alo im Bit Nummer
+vier des Befehlsarguments eine Eins, so werden die Bits 0 bis 3 für
+die Adressierung eines globalen Registers genutzt, sonst wird ein
+Register aus der im FSR spezifizierten Bank entnommen.  Beispiel:
 \begin{verbatim}
 ; W bezeichnet den Akkumulator
 MOV  $1A,W ; schreibt von W in das globale Register $1A
@@ -410,9 +597,11 @@ BANK $60   ; stellt FSR auf Bank sechs
 SETB FSR.4 ; stellt FSR auf Bank sieben
 MOV  $0A,W ; schreibt von W in das Register Nr.$7A
 \end{verbatim}
-In der Summe stehen dem Benutzer 256 Register plus 15 globale Register zur Verfügung. Von den globalen Registern sind die ersten fünf Register für
-spezielle Aufgaben vorgesehen (unter anderen FSR und STATUS-Register),dann folgen die fünf I/O-Ports die auch als Register nutzbar sind, und dann
-bleiben noch sechs ,,freie'' Register.
+In der Summe stehen dem Benutzer 256 Register plus 15 globale Register
+zur Verfügung. Von den globalen Registern sind die ersten fünf
+Register für spezielle Aufgaben vorgesehen (unter anderen FSR und
+STATUS-Register),dann folgen die fünf I/O-Ports die auch als Register
+nutzbar sind, und dann bleiben noch sechs ,,freie'' Register.
 
 \begin{figure}
   \center
@@ -423,126 +612,170 @@ bleiben noch sechs ,,freie'' Register.
 
 \subsection{Assembler-Directiven}
 
-Der zum SX52 gelieferte Assembler stellt eine Reihe von Direktiven zur Verfügung, die, klug genutzt, die Programmierung vereinfachen.
-Eine Dirktive wird nicht zur Laufzeit, sondern bereits vor der Programmierung des Programmspeichers ausgeführt. Sie dient zum Beispiel zur
-Organisation des Programmcodes, zur Benennung von Variablen und Konstanten, oder zur arithmetischen Überprüfung einiger Programmkomponenten.
-Im folgenden werden einige der Direktiven beschrieben und wie sie genutzt werden können um die zuvor formulierten Ziele in 
-der Implementierung zu erfüllen.
+Der zum SX52 gelieferte Assembler stellt eine Reihe von Direktiven zur
+Verfügung, die, klug genutzt, die Programmierung vereinfachen.  Eine
+Dirktive wird nicht zur Laufzeit, sondern bereits vor der
+Programmierung des Programmspeichers ausgeführt. Sie dient zum
+Beispiel zur Organisation des Programmcodes, zur Benennung von
+Variablen und Konstanten, oder zur arithmetischen Überprüfung einiger
+Programmkomponenten.  Im folgenden werden einige der Direktiven
+beschrieben und wie sie genutzt werden können um die zuvor
+formulierten Ziele in der Implementierung zu erfüllen.
 
 \subsubsection{EQU-Direktive}
-Mit der EQU-Direktive wird Konstanten oder Registern ein Name zugeordnet, der dann beim Programmieren statt der Zahl bzw. Registernummer genutzt
-werden kann.
+Mit der EQU-Direktive wird Konstanten oder Registern ein Name
+zugeordnet, der dann beim Programmieren statt der Zahl bzw.
+Registernummer genutzt werden kann.
 \begin{verbatim}
-LED	EQU 	RB.5        ; sechstes Bit auf Port B wird mit LED benannt
-FOO	EQU 	$0a         ; das Register 0a wird mit FOO benannt
-BAR	EQU 	#%0000_0011 ; die Konstante BAR hat den Wert drei
+LED EQU     RB.5        ; sechstes Bit auf Port B wird mit LED benannt
+FOO EQU     $0a         ; das Register 0a wird mit FOO benannt
+BAR EQU     #%0000_0011 ; die Konstante BAR hat den Wert drei
 \end{verbatim}
+
 \subsubsection{ORG-Direktive}
-Die ORG-Direktive dient der genauen Platzierung von Programmcode im Programmspeicher. Man definiert eine Adresse zwischen 000hex und
-FFFhex, an welcher der Programmcode dann im Programmspeicher stehen soll .
+Die ORG-Direktive dient der genauen Platzierung von Programmcode im
+Programmspeicher. Man definiert eine Adresse zwischen 000hex und
+FFFhex, an welcher der Programmcode dann im Programmspeicher stehen
+soll .
+
 \begin{verbatim}
-ORG  #000	;der folgende Code wird ab Adresse 000 eingefügt
+ORG  #000   ;der folgende Code wird ab Adresse 000 eingefügt
 # Es folgt die Interrupt-Routine
 ...
 
-ORG  #200	;der folgende Code steht ab Adresse 200 (hex)
-CALL FOO	
-MOV  $01, #2	
+ORG  #200   ;der folgende Code steht ab Adresse 200 (hex)
+CALL FOO    
+MOV  $01, #2    
 ...
 \end{verbatim}
 \subsubsection{DS-Direktive}
 Die DS-Direktive benennt einen Programmspeicherbereich. Die größe des Bereichs in Byte wird als Argumnet übergeben.
 \begin{verbatim}
-FOO	DS	1
-BAR	DS	2
+FOO DS  1
+BAR DS  2
 \end{verbatim}
-\subsubsection{MACRO-Direktive}
-Ein nützliches Werkzeug bei der Speicherorganisation ist die MACRO-Direktive. Programmcode, der in ein Macro eingebunden wird lässt sich leicht aus dem
-Programm entfernen und wieder einsetzen. Diese Eigenschaft ermöglicht es Programmteile genau zu platzieren und so Adressierungsbeschränkungen zu
-umgehen.
-\begin{verbatim}
-MACRO 	FOO	; Macro namens FOO
 
-MOV	M,#BAR	; Programmcode
+\subsubsection{MACRO-Direktive}
+Ein nützliches Werkzeug bei der Speicherorganisation ist die
+MACRO-Direktive. Programmcode, der in ein Macro eingebunden wird lässt
+sich leicht aus dem Programm entfernen und wieder einsetzen. Diese
+Eigenschaft ermöglicht es Programmteile genau zu platzieren und so
+Adressierungsbeschränkungen zu umgehen.
+\begin{verbatim}
+MACRO   FOO ; Macro namens FOO
+
+MOV M,#BAR  ; Programmcode
 
 ENDM
 .
 .
 .
-ORG	200
-FOO		; Macro FOO wird bei 200 (hex) eingefügt
+ORG 200
+FOO     ; Macro FOO wird bei 200 (hex) eingefügt
 \end{verbatim}
+
 \subsubsection{\$-Direktive}
 Das Dollarzeichen liefert die aktuelle Bank zurück.
 \begin{verbatim}
-FOO EQU $	;FOO enthält die aktuelle Bank
+FOO EQU $   ;FOO enthält die aktuelle Bank
 \end{verbatim}
 
 \subsection{Assembler-Module}
 \label{Assembler-Module}
 
-Bei der Konzeption der Module galt es, die potentiellen Schwierigkeiten mit Unterprogrammaufruf, Verteilung der Programmteile auf den Speicher, sowie
-den Zugriff auf Register für den Entwickler möglichst einfach handhabbar zu machen.
-Um dies zu erreichen eignet sich eine Modulstruktur die durch geschicktes Einsetzen der Macro-Direktiven die oben genannten Schwierigkeiten umgeht.
+Bei der Konzeption der Module galt es, die potentiellen
+Schwierigkeiten mit Unterprogrammaufruf, Verteilung der Programmteile
+auf den Speicher, sowie den Zugriff auf Register für den Entwickler
+möglichst einfach handhabbar zu machen.  Um dies zu erreichen eignet
+sich eine Modulstruktur die durch geschicktes Einsetzen der
+Macro-Direktiven die oben genannten Schwierigkeiten umgeht.
+
 \subsubsection{Modulstruktur}
-Man unterteilt jedes Modul in verschiedene Segmente. Begreift man nun ein Assemblerprogramm als Automat mit den Zuständen Initialisierung,
-Hauptfunktion und Interrupt, so werden die einzelnen Segmente an der passenden Stelle eingebunden.
+Man unterteilt jedes Modul in verschiedene Segmente. Begreift man nun
+ein Assemblerprogramm als Automat mit den Zuständen Initialisierung,
+Hauptfunktion und Interrupt, so werden die einzelnen Segmente an der
+passenden Stelle eingebunden.
+
 \begin{figure}
   \center
   \includegraphics[width=400pt]{Automat.eps}
   \caption{Ein Assemblerprogramm als Automat}
   \label{Automat}
 \end{figure}
-Zusätzlich Bedarf es für die Datenorganisation
-noch ein CALL- und ein DATA-Segment. Im folgenden die Segmente im Einzelnen.
-\begin{description}
-\item[CODE-Segment]
-Im CODE-Segment befinden sich die eigentlichen Routinen eines Moduls. Jede Routine beginnt dabei mit einer Einsprungmarke und endet mit einem
-Rücksprungbefehl für Unterprogramme. Der Rücksprungbefehl setzt die durch einen CALL-Befehl gespeicherten Werte in STATUS-, FSR-Register und
-Programmzähler wieder ein, und führt das Programm von dort an weiter aus.
-\item[CALL-Segment]
-\label{cr_call_seg}
-Das Call-Segment dient dazu die 256-Byte Grenze des CALL-Befehls zu umgehen. Dieses Segment muss jeweils in den unteren 256-Byte einer
-Programmspeicherseite liegen.
-Im CALL-Segment werden Funktionsnamen mit den entsprechenden Funktionen im CODE-Segment verknüpft. Der Trick liegt dabei in der verwendung des
-JMP-Befehls. JMP springt an die im Argument übergebene Stelle im Programmspeicher. Da das Argument des JMP-Befehls neun Bit lang ist, können die vollen
-512 Byte einer Speicherseite referenziert werden.
-Das CALL-Segment ermöglicht also einen Unterprogrammaufruf ohne die 256-Byte Beschränkung bedenken zu müssen. Desweiteren fügt der Assembler noch einen
-PAGE-Befehl ein wenn dem CALL ein @ vorangestellt wird, so dass auch dies Beschränkung wegfällt.
-\item[DATA-Segment]
-Wie bereits oben beschrieben stehen dem Programmierer 256 Register auf verschiedenen Bänken zur Verfügung. Um mit den Registeradressierungen nicht
-durcheinander zu kommen, empfiehlt es sich pro Modul nur auf einer Bank zu arbeiten.
-Die Macros ermöglichen es bei der Programmierung auf Registeradressierung zu verzichten.
-Um das zu erreichen definiert man ein Macro in dem Platz für maximal 16 Register reseviert wird. Man benutzt bei der Programmierung dann nur noch die
-Variablen für den reservierten Platz.
 
-Um dann die entsprechende Bank zu reservieren, wird das Macro durch die ORG-Direktive an der entsprechenden Stelle eingefügt. Die erste Instruktion im
-Macro weist dann einer Variablen die aktuelle Adresse zu, so daß der Entwickler mit der Kombination BANK-Befehl und eben genannte Variablen die
-entsprechende Modulbank referenzieren kann ohne schon bei der Implemetierung wissen zu müssen welche Bank er eigentlich nutzt.
-Beipiel
+Zusätzlich Bedarf es für die Datenorganisation noch ein CALL- und ein
+DATA-Segment. Im folgenden die Segmente im Einzelnen.
+
+\begin{description}
+
+\item[CODE-Segment] Im CODE-Segment befinden sich die eigentlichen
+  Routinen eines Moduls. Jede Routine beginnt dabei mit einer
+  Einsprungmarke und endet mit einem Rücksprungbefehl für
+  Unterprogramme. Der Rücksprungbefehl setzt die durch einen
+  CALL-Befehl gespeicherten Werte in STATUS-, FSR-Register und
+  Programmzähler wieder ein, und führt das Programm von dort an weiter
+  aus.
+
+\item[CALL-Segment]\label{cr_call_seg} Das Call-Segment dient dazu die
+  256-Byte Grenze des CALL-Befehls zu umgehen. Dieses Segment muss
+  jeweils in den unteren 256-Byte einer Programmspeicherseite liegen.
+  Im CALL-Segment werden Funktionsnamen mit den entsprechenden
+  Funktionen im CODE-Segment verknüpft. Der Trick liegt dabei in der
+  verwendung des JMP-Befehls. JMP springt an die im Argument
+  übergebene Stelle im Programmspeicher. Da das Argument des
+  JMP-Befehls neun Bit lang ist, können die vollen 512 Byte einer
+  Speicherseite referenziert werden.  Das CALL-Segment ermöglicht also
+  einen Unterprogrammaufruf ohne die 256-Byte Beschränkung bedenken zu
+  müssen. Desweiteren fügt der Assembler noch einen PAGE-Befehl ein
+  wenn dem CALL ein @ vorangestellt wird, so dass auch dies
+  Beschränkung wegfällt.
+
+\item[DATA-Segment] Wie bereits oben beschrieben stehen dem
+  Programmierer 256 Register auf verschiedenen Bänken zur Verfügung.
+  Um mit den Registeradressierungen nicht durcheinander zu kommen,
+  empfiehlt es sich pro Modul nur auf einer Bank zu arbeiten.  Die
+  Macros ermöglichen es bei der Programmierung auf
+  Registeradressierung zu verzichten.  Um das zu erreichen definiert
+  man ein Macro in dem Platz für maximal 16 Register reseviert wird.
+  Man benutzt bei der Programmierung dann nur noch die Variablen für
+  den reservierten Platz.
+  
+  Um dann die entsprechende Bank zu reservieren, wird das Macro durch
+  die ORG-Direktive an der entsprechenden Stelle eingefügt. Die erste
+  Instruktion im Macro weist dann einer Variablen die aktuelle Adresse
+  zu, so daß der Entwickler mit der Kombination BANK-Befehl und eben
+  genannte Variablen die entsprechende Modulbank referenzieren kann
+  ohne schon bei der Implemetierung wissen zu müssen welche Bank er
+  eigentlich nutzt.  Beipiel
 \begin{verbatim}
-MACRO 	  FOO	; Macro namens FOO
+MACRO     FOO   ; Macro namens FOO
 MEINEBANK $     ; Die aktuelle Bank wird referenziert
 VAR1      DS1   ; Ein Register reservieren
 VAR2      DS1   ; ...
 ...
 ENDM
 
-ORG	 $20
-FOO		; Macro FOO wird bei 20 (hex) eingefügt
+ORG  $20
+FOO     ; Macro FOO wird bei 20 (hex) eingefügt
                 ; enspricht der dritten Bank
 \end{verbatim}
-\item[INTERRUPT-Segment]
-Benötigt man für ein Modul auch Routinen die durch einen Interrupt ausgelöst werden, so schreibt man den dazu nötigen Code in ein Macro.
-Dieses Macro wird als Interrupt-Segment beschrieben. Die Interrupsegmente schreibt man dann hintereinander an die Adresse 000 (hexadezimal). In den
-Interruptsegmenten darf kein Interrupt-Rücksprungbefehl (RETI oder RETIW) stehen. Der muss am Ende der Macroliste stehen um sicherzustellen das alle Segmente ausgeführt
-werden.
-\item[INIT-Segment]
-Jedes Modul benötigt auch einen Bereich im Initialbereich des Gesamtprogramms zur Initalisierung seiner Variablen. Dazu definiert man zu jedem Modul
-ein INIT-Macro. 
+  
+\item[INTERRUPT-Segment] Benötigt man für ein Modul auch Routinen die
+  durch einen Interrupt ausgelöst werden, so schreibt man den dazu
+  nötigen Code in ein Macro.  Dieses Macro wird als Interrupt-Segment
+  beschrieben. Die Interrupsegmente schreibt man dann hintereinander
+  an die Adresse 000 (hexadezimal). In den Interruptsegmenten darf
+  kein Interrupt-Rücksprungbefehl (RETI oder RETIW) stehen. Der muss
+  am Ende der Macroliste stehen um sicherzustellen das alle Segmente
+  ausgeführt werden.
+
+\item[INIT-Segment] Jedes Modul benötigt auch einen Bereich im
+  Initialbereich des Gesamtprogramms zur Initalisierung seiner
+  Variablen. Dazu definiert man zu jedem Modul ein INIT-Macro.
 \end{description}
-Zusammengefasst könnte ein Programm nach den oben beschriebenen Konventionen dann wie folgt aussehen:
-\small{
+
+Zusammengefasst könnte ein Programm nach den oben beschriebenen
+Konventionen dann wie folgt aussehen: \small{
 \begin{verbatim}
 ;M O D U L E
 ; Modul_1
@@ -638,127 +871,180 @@ CODE_MODUL_3
 }
 \subsubsection{Datenaustausch zwischen den Modulen}
 
-Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für den Austausch von Daten reserviert. Jedes Modul entnimmt dort seine Eingabewerte und
- legt die Ergebnisse dort wieder ab.
+Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für
+den Austausch von Daten reserviert. Jedes Modul entnimmt dort seine
+Eingabewerte und legt die Ergebnisse dort wieder ab.
 
 \section{Implemetierungen}
-Im folgenden werden beispielhaft Module für einige Bauelemente beschrieben.
+Im folgenden werden beispielhaft Module für einige Bauelemente
+beschrieben.
 
 \begin{description}
-\item[Serielle Schnittstelle]
-Die serielle Datenübertragung ist in der Norm RS232 festgelegt.
-Danach können zwei Computer über die Datenleitungen TxD (Transmit Data) und RxD (Receive Data) miteinander kommunizieren.
-Ein Byte wird im 8n1 Modus gesendet. Das heißt es werden acht Bits digital gesendet. Zusätzlich wird jedem Datenbyte ein Startbit voran-
-und ein Stopbit nachgestellt. Eine Fehlerüberprüfung (Parity) findet bei der Implementierung in diesem Fall nicht statt.
-Es handelt sich bei der RS232 um eine asysnchrone Übertragung die,
-im Gegensatz zur synchronen Übertragung, ohne separates Taktsignal erfolgt.
-Ein Empfänger muß das eintreffende Signal mit einer mehrfachen Taktferquenz abtasten 
-und so das Taktsignal rückgewinnen. Das setzt ein akkurates Timing voraus.
-Um sicherzustellen, das eine Zustandsänderung am Eingang registriert wird, nimmt man als Abtastrate das vierfache der Zielfrequenz ab.
-Um beispielsweise bei einer Zielfrequenz F von 115.200 Baud eine Änderung der eingehenden Flanke festzustellen, wird der Eingangszustand 
-mit 460,8 kHz abgetastet.
-Um ein genaues Timing zu realisieren nutzt die Implementierung den Rollover Interrupt. Der Rollover Interrupt löst alle 256 Zyklen
-einen Interrupt aus. Dies entspricht bei einer Taktfrequenz $T$ von 50 Mhz einem Takt von 195.312,5 Hz.
-reduziert man nun die Anzahl der Zyklen bis zum nächsten Interrupt, so lässt sich die Interrupt-Frequenz regulieren. Der
-Befehl RETIW macht das möglich. RETIW setzt den Interruptzähler auf den im Akkumulator W übergebenen Wert.
-So lässt sich mit 108 Zyklen pro Interrupt ein Takt von ungefär 115.200 Baud realisieren (vierfache Abtastrate).
-In diesem Beispiel wird davon ausgegangen, das im interrupt keine weiteren Verzögerungen auftreten. Wenn jedoch mehrere Module mit
-Interrupt-Segmenten genutzt werden, so muss die Verzögerung beim setzen des neuen Rollover Interrupt berücksichtigt werden.
-Für eine Anzahl $n$ von Zyklen ergibt sich der zu übergebende Wert $w$ für der Akkumulator wie folgt:
+\item[Serielle Schnittstelle] Die serielle Datenübertragung ist in der
+  Norm RS232 festgelegt.  Danach können zwei Computer über die
+  Datenleitungen TxD (Transmit Data) und RxD (Receive Data)
+  miteinander kommunizieren.  Ein Byte wird im 8n1 Modus gesendet. Das
+  heißt es werden acht Bits digital gesendet. Zusätzlich wird jedem
+  Datenbyte ein Startbit voran- und ein Stopbit nachgestellt. Eine
+  Fehlerüberprüfung (Parity) findet bei der Implementierung in diesem
+  Fall nicht statt.  Es handelt sich bei der RS232 um eine asysnchrone
+  Übertragung die, im Gegensatz zur synchronen Übertragung, ohne
+  separates Taktsignal erfolgt.  Ein Empfänger muß das eintreffende
+  Signal mit einer mehrfachen Taktferquenz abtasten und so das
+  Taktsignal rückgewinnen. Das setzt ein akkurates Timing voraus.  Um
+  sicherzustellen, das eine Zustandsänderung am Eingang registriert
+  wird, nimmt man als Abtastrate das vierfache der Zielfrequenz ab.
+  Um beispielsweise bei einer Zielfrequenz F von 115.200 Baud eine
+  Änderung der eingehenden Flanke festzustellen, wird der
+  Eingangszustand mit 460,8 kHz abgetastet.  Um ein genaues Timing zu
+  realisieren nutzt die Implementierung den Rollover Interrupt. Der
+  Rollover Interrupt löst alle 256 Zyklen einen Interrupt aus. Dies
+  entspricht bei einer Taktfrequenz $T$ von 50 Mhz einem Takt von
+  195.312,5 Hz.  reduziert man nun die Anzahl der Zyklen bis zum
+  nächsten Interrupt, so lässt sich die Interrupt-Frequenz regulieren.
+  Der Befehl RETIW macht das möglich. RETIW setzt den Interruptzähler
+  auf den im Akkumulator W übergebenen Wert.  So lässt sich mit 108
+  Zyklen pro Interrupt ein Takt von ungefär 115.200 Baud realisieren
+  (vierfache Abtastrate).  In diesem Beispiel wird davon ausgegangen,
+  das im interrupt keine weiteren Verzögerungen auftreten. Wenn jedoch
+  mehrere Module mit Interrupt-Segmenten genutzt werden, so muss die
+  Verzögerung beim setzen des neuen Rollover Interrupt berücksichtigt
+  werden.  Für eine Anzahl $n$ von Zyklen ergibt sich der zu
+  übergebende Wert $w$ für der Akkumulator wie folgt:
 \begin{displaymath}
 w = \left\lfloor \frac{T}{4*F} \right\rfloor - n
 \end{displaymath}
 mit \begin{math}w \gg 0\end{math}.
-\begin{math}w \gg 0\end{math} deutet darauf hin das dei Interruptroutine nicht zu groß ausfallen sollte, da sonst die Ausführung sonstiger
-Programme zu kurz kommt.
-Nutzt man also das Modul, so muss zuvor eine Baudrate für die serielle Übertragung festgelegt werden, und im Interrupt-Segment eingetragen
-werden. Für die Platine ist eine Baudrate größer als 115.200 nicht empfehlenswert, da sonst die eigentlichen Programmteile nicht mehr
+\begin{math}w \gg 0\end{math} 
+deutet darauf hin das dei Interruptroutine nicht zu groß ausfallen
+sollte, da sonst die Ausführung sonstiger Programme zu kurz kommt.
+Nutzt man also das Modul, so muss zuvor eine Baudrate für die serielle
+Übertragung festgelegt werden, und im Interrupt-Segment eingetragen
+werden. Für die Platine ist eine Baudrate größer als 115.200 nicht
+empfehlenswert, da sonst die eigentlichen Programmteile nicht mehr
 ausreichend zur Ausführung kommen.
-\item[Puls Weit Modulation]
-\label{cr_puls}
-Mittels Puls-Weit-Modulation läßt sich an digital angeteuerten geräten analogen Verhalten erzeugen.
-Dabei wird die Trägheit der jeweiligen elektromechanischen Gerätes augenutzt um die digitalen Impulse zu einer monoton steigenden Funktion zu
-,,wandeln''. 
-Man unterteilt ein Zeitintervall $I$ äquidistant in $n$ kleinere Zeitintervalle $z_{i}$ mit $i = 0,...,n$. 
-Geht man davon aus das ein Ausgang zwei Zustände $low$ und $high$ einnehmen kann, und das jedes Zeitintervall $z_{i}$ mit dem Zustand
-$low$ beginnt. In jedem Zeitintervall $z_{i}$ wählt man dann ein $t_{i}$ mit $0 < t_{i} < |z_{i}|$ ab welchem der Wert des Ausgangs
-auf $high$ geht.
-Die Grösse $t_{i}$ bestimmt dann die Intensität mit der das am Ausgang angeschlossene Gerät betrieben wird. Im folgenden wird $t_{i}$
-auch Pulsweite genannt.
-Ein angeschlossener Gleichstromotor zum Beispiel dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als normal.
-Ändert man nun $t_{i}$ in die eine oder andere Richtung, so erzeugt man Dim-effekte.
-Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$, die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$ nach $high$
-übergeht (siehe dazu \ref{cr_pwm}).
 
-Auf die Platine sind die Brücken und die PWM-baren Low-Side-Switchs für die Puls Weit Modulation vorgesehen.
-Ein $z_{i}$ entspricht 256 Interrups. In jedem Interrupt wird ein Zähler iterriert bis dieser überläuft. Bei jedem Übelauf wird der
-Zustand auf $low$ bzw $high$ gesetzt (je nachdem ob von Aus nach An oder umgekehrt moduliert wird). Im Hauptprogramm (CODE-Segment)
-wird dann der Zähler mit einer Variable verglichen die dei Pulsweite bestimmt. Je nach Anwendung kann man nun die Pulsweite veändern,
-indem man sie iterriert oder decrementiert bzw. unterschiedlich initialisiert.
+\item[Puls Weit Modulation]\label{cr_puls}Mittels Puls-Weit-Modulation
+  läßt sich an digital angeteuerten geräten analogen Verhalten
+  erzeugen.  Dabei wird die Trägheit der jeweiligen
+  elektromechanischen Gerätes augenutzt um die digitalen Impulse zu
+  einer monoton steigenden Funktion zu ,,wandeln''.  Man unterteilt
+  ein Zeitintervall $I$ äquidistant in $n$ kleinere Zeitintervalle
+  $z_{i}$ mit $i = 0,...,n$.  Geht man davon aus das ein Ausgang zwei
+  Zustände $low$ und $high$ einnehmen kann, und das jedes
+  Zeitintervall $z_{i}$ mit dem Zustand $low$ beginnt. In jedem
+  Zeitintervall $z_{i}$ wählt man dann ein $t_{i}$ mit $0 < t_{i} <
+  |z_{i}|$ ab welchem der Wert des Ausgangs auf $high$ geht.  Die
+  Grösse $t_{i}$ bestimmt dann die Intensität mit der das am Ausgang
+  angeschlossene Gerät betrieben wird.  Im folgenden wird $t_{i}$ auch
+  Pulsweite genannt.  Ein angeschlossener Gleichstromotor zum Beispiel
+  dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als normal.
+  Ändert man nun $t_{i}$ in die eine oder andere Richtung, so erzeugt
+  man Dim-effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
+  die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$
+  nach $high$ übergeht (siehe dazu \ref{cr_pwm}).
+  
+  Auf die Platine sind die Brücken und die PWM-baren Low-Side-Switchs
+  für die Puls Weit Modulation vorgesehen.  Ein $z_{i}$ entspricht 256
+  Interrups. In jedem Interrupt wird ein Zähler iterriert bis dieser
+  überläuft. Bei jedem Übelauf wird der Zustand auf $low$ bzw $high$
+  gesetzt (je nachdem ob von Aus nach An oder umgekehrt moduliert
+  wird). Im Hauptprogramm (CODE-Segment) wird dann der Zähler mit
+  einer Variable verglichen die dei Pulsweite bestimmt. Je nach
+  Anwendung kann man nun die Pulsweite veändern, indem man sie
+  iterriert oder decrementiert bzw. unterschiedlich initialisiert.
 %reverse iterations
 \begin{figure}
-  \center
-  \includegraphics[width=400pt]{pwm.eps}
+  \center \includegraphics[width=400pt]{pwm.eps}
   \caption{Puls Weit Modulation einer linearen Funktion}
   \label{cr_pwm}
 \end{figure}
 
-\item[SPI]
-Um eines der Geräte über den SPI-Bus zu adressieren muss das betreffende Gerät per Chip-Select aktiviert werden.
-Wie in \ref{cr_SPI-Bus} beschrieben erfolgt die Aktivierung der einzelnen Geräte über einen Multiplexer der über die Pins 
-drei bis fünf am Port D an den SX52 angeschlossen ist.
-Die folgenden Konstanten repräsentieren die Pinbelegungen des Port D für die einzelnen Geräte:
+\item[SPI] Um eines der Geräte über den SPI-Bus zu adressieren muss
+  das betreffende Gerät per Chip-Select aktiviert werden.  Wie in
+  \ref{cr_SPI-Bus} beschrieben erfolgt die Aktivierung der einzelnen
+  Geräte über einen Multiplexer der über die Pins drei bis fünf am
+  Port D an den SX52 angeschlossen ist.  Die folgenden Konstanten
+  repräsentieren die Pinbelegungen des Port D für die einzelnen
+  Geräte:
 \begin{verbatim}
-SPI_TLE1		EQU %0000_0000 ; Low-Side-Switch
-SPI_TLE2		EQU %0000_1000 ; Low-Side-Switch
-SPI_ADC			EQU %0001_0000 ; Analog-Digital-Wandler
-SPI_DAC			EQU %0001_1000 ; Digital-Analog-Wandler
-SPI_CAN			EQU %0010_0000 ; CAN-Controller
-SPI_RESET		EQU %0010_1000 ; RESET aller RESET-fähigen Geräte
-SPI_NOTCON		EQU %0011_0000 ; zu keinem Gerät verbunden
+SPI_TLE1        EQU %0000_0000 ; Low-Side-Switch
+SPI_TLE2        EQU %0000_1000 ; Low-Side-Switch
+SPI_ADC         EQU %0001_0000 ; Analog-Digital-Wandler
+SPI_DAC         EQU %0001_1000 ; Digital-Analog-Wandler
+SPI_CAN         EQU %0010_0000 ; CAN-Controller
+SPI_RESET       EQU %0010_1000 ; RESET aller RESET-fähigen Geräte
+SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
 \end{verbatim}
-Das Bitmuster SPI\_NOTCON kann genutzt werden um mit Sicherheit kein Gerät anzuwählen, so das man bei der Programmierung nicht auf die
-Pinbelegungen auf Port D achten zu müssen.
-Wenn das Gerät ausgewählt ist, erfolgt gerätespezifisch die Übertragung verschiedener Bitmuster.
-Im Detail werden die Geräte wie folgt behandelt:
+  Das Bitmuster SPI\_NOTCON kann genutzt werden um mit Sicherheit kein
+  Gerät anzuwählen, so das man bei der Programmierung nicht auf die
+  Pinbelegungen auf Port D achten zu müssen.  Wenn das Gerät
+  ausgewählt ist, erfolgt gerätespezifisch die Übertragung
+  verschiedener Bitmuster.  Im Detail werden die Geräte wie folgt
+  behandelt:
 \begin{description}
-\item{TLE} Es werden $2 \times 8$ Bit Wörter in den Low Side Switch übertragen. Das erste Wort Konfiguriert die Schitches für die einzelnen Pins,
-das zweite aktiviert die Einstellung dann gegebenenfalls.
-\item{ADC} Noch bevor der Analog-Digital-Wandler per Chip-Select aktiviert wird, werden 4 bit zum auswählen des zu wandelden Eingangs übertragen,
-erst nachdem Chip-Select dann auf $low$ gesenkt wurde, wird nach kurzer verzögerung das Ergebnis an den Microcontroller geschickt.
-
-\item{DAC}Zwei mal 12 Bit werden in das Shift-Register des Digital-Analog-Wandlers übertragen und dann beim Wechsel des Chip-Select Signals von
-$low$ nach $high$ aktiviert. das heißt die analogen Interpretation der 12-Bit-Muster liegen in Volt an den Ausgängen des Digital-Analog-wandlers
-an.
+\item{TLE} Es werden $2 \times 8$ Bit Wörter in den Low Side Switch
+  übertragen. Das erste Wort Konfiguriert die Schitches für die
+  einzelnen Pins, das zweite aktiviert die Einstellung dann
+  gegebenenfalls.
+\item{ADC} Noch bevor der Analog-Digital-Wandler per Chip-Select
+  aktiviert wird, werden 4 bit zum auswählen des zu wandelden Eingangs
+  übertragen, erst nachdem Chip-Select dann auf $low$ gesenkt wurde,
+  wird nach kurzer verzögerung das Ergebnis an den Microcontroller
+  geschickt.
+  
+\item{DAC}Zwei mal 12 Bit werden in das Shift-Register des
+  Digital-Analog-Wandlers übertragen und dann beim Wechsel des
+  Chip-Select Signals von $low$ nach $high$ aktiviert. das heißt die
+  analogen Interpretation der 12-Bit-Muster liegen in Volt an den
+  Ausgängen des Digital-Analog-wandlers an.
 \item{CAN}siehe dazu Kapitel \ref{jameson_kapitel}.
 \end{description}
 
-\item[Speicher]
-Für jede Operation (ob schreiben oder lesen) , wird das Gerät über die Bits 1 bis 3 der ersten 8 Bit adressiert. in den Bits 7 bis 4 steht die
-Slave ID (hier 1010). Das nullte Bit zeigt an ob eine Lese- (1) oder Schreibe-Operation (0) anschließt. Nach der Adressierung sendet der Master
-beliebig viele acht-Bit Worte und erhält nach jedem Word eine Bestätigung (engl. Akknowledge) vom Speicherbaustein.
-Bei der Lese-Operation unterscheidet man zwischen sequentiellem Lesen und selektivem Lesen.
-Beim sequentiellen Lesen werden vom Master dem oben beschriebenen Adressierungsbyte zwei Byte mit der Speicheradresse des gesuchten Wortes
-übertragen. Ab diesem Zeitpunkt beginnt der FM24C64 mit dem senden des Worts von der adressierten Speicheradresse. Nach jedem Byte wird wieder
-eine Bestätigung gesendet und das im Speicher folgende Wort kann sequentiell ausgelesen werden ohne erneut adressieren zu müssen. 
-Beim selektiven Lesen beginnt der Master wie bei einer Schreibeoperation (LSB = 0). Er schreibt das Adressierungsbyte und spezifiziert mit den folgenden
-zwei acht-Bit Worten die Speicheradresse. Nachdem der FM24C64 den Eingang der Speicheradresse bestätigt hat setzt der Master eine Start-Signal ab.
-Dadurch wird der Schreibmodus abgebrochen. Wenn der Master jetzt direckt im Anschluß das Adressierungsbyte mit gesetzten Lesebit sendet geht der
-FM24C64 in den sequentiellen Lesemodus über. 
+\item[Speicher] Für jede Operation (ob schreiben oder lesen) , wird
+  das Gerät über die Bits 1 bis 3 der ersten 8 Bit adressiert. in den
+  Bits 7 bis 4 steht die Slave ID (hier 1010). Das nullte Bit zeigt an
+  ob eine Lese- (1) oder Schreibe-Operation (0) anschließt. Nach der
+  Adressierung sendet der Master beliebig viele acht-Bit Worte und
+  erhält nach jedem Word eine Bestätigung (engl. Akknowledge) vom
+  Speicherbaustein.  Bei der Lese-Operation unterscheidet man zwischen
+  sequentiellem Lesen und selektivem Lesen.  Beim sequentiellen Lesen
+  werden vom Master dem oben beschriebenen Adressierungsbyte zwei Byte
+  mit der Speicheradresse des gesuchten Wortes übertragen. Ab diesem
+  Zeitpunkt beginnt der FM24C64 mit dem senden des Worts von der
+  adressierten Speicheradresse. Nach jedem Byte wird wieder eine
+  Bestätigung gesendet und das im Speicher folgende Wort kann
+  sequentiell ausgelesen werden ohne erneut adressieren zu müssen.
+  Beim selektiven Lesen beginnt der Master wie bei einer
+  Schreibeoperation (LSB = 0). Er schreibt das Adressierungsbyte und
+  spezifiziert mit den folgenden zwei acht-Bit Worten die
+  Speicheradresse. Nachdem der FM24C64 den Eingang der Speicheradresse
+  bestätigt hat setzt der Master eine Start-Signal ab.  Dadurch wird
+  der Schreibmodus abgebrochen. Wenn der Master jetzt direckt im
+  Anschluß das Adressierungsbyte mit gesetzten Lesebit sendet geht der
+  FM24C64 in den sequentiellen Lesemodus über.
 \end{description}
 
 \newpage
 \section{Fazit}
-Die Wahl des Microcontrollers hat sich als gut erwiesen, da sich eine gut handhabbare Programmstruktur erstellen lies. Das dies nicht nur aus der
-Sicht eines Informatikers gilt, hat die Schulung des Münchner Projektteams im Mai 2002 gezeigt. Auch in Zukunft wird die Platine dort in anderen
-mechatronischen Projekten genutzt werden. Ebenso hat die Arbeit gezeigt wie wichtig der Austausch zwischen den Teammitgliedern und den
-beteiligten Disziplinen für eine adäquate Anforderungslösung ist.
+Die Wahl des Microcontrollers hat sich als gut erwiesen, da sich eine
+gut handhabbare Programmstruktur erstellen lies. Das dies nicht nur
+aus der Sicht eines Informatikers gilt, hat die Schulung des Münchner
+Projektteams im Mai 2002 gezeigt. Auch in Zukunft wird die Platine
+dort in anderen mechatronischen Projekten genutzt werden. Ebenso hat
+die Arbeit gezeigt wie wichtig der Austausch zwischen den
+Teammitgliedern und den beteiligten Disziplinen für eine adäquate
+Anforderungslösung ist.
 \section{Ausblick}
-Die Grundlagen für die Nutzung der Platine ist erfolgt. Um die Nutzung noch komfortabler zu gestalten ist es wünschenswert eine
-didaktisch sinnvolle Anleitung zu schaffen. Darüber hinaus ist eine ausführliche Technische Dokumentation brauchbar.
-Während meiner Recherchen für Beispielprogramme stieß ich auch auf einen C-Compiler für den SX52. Würde man nun eine grafische Oberfläche
-zur Nutzung der Module mit dem C-Kompiler verbinden, könnte man eine komplette und komfortable Mechatronik-Entwicklungsumgebung als
-Produkt anbieten. Insbesondere in Bildungsbereich könnte dies Anklang finden.
+Die Grundlagen für die Nutzung der Platine ist erfolgt. Um die Nutzung
+noch komfortabler zu gestalten ist es wünschenswert eine didaktisch
+sinnvolle Anleitung zu schaffen. Darüber hinaus ist eine ausführliche
+Technische Dokumentation brauchbar.  Während meiner Recherchen für
+Beispielprogramme stieß ich auch auf einen C-Compiler für den SX52.
+Würde man nun eine grafische Oberfläche zur Nutzung der Module mit dem
+C-Kompiler verbinden, könnte man eine komplette und komfortable
+Mechatronik-Entwicklungsumgebung als Produkt anbieten. Insbesondere in
+Bildungsbereich könnte dies Anklang finden.
 %Anleitung
 %C-Compiler
 %Techn Docu
