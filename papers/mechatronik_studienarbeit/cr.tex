@@ -59,6 +59,50 @@ Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe d
 \newpage
 \section{Wahl der Komponenten}
 \subsection{Microcontroller}
+HC-Familie Motorola
+
+8051-Familie 
+-Infineon
+SAB80C35
+---------------------------------------
+Intels 8-Bit Industriestandard:
+Vom 8008 zu 8080 und 8085, Vergleich mit Zilog Z80 22.4.2002 
+
+Preiswert und leistungsfa"hig:
+Motorola 6800 und 6809 im Vergleich zu MOS 6502 
+
+Die 16Bit-A"ra
+Die Konkurrenten:
+Intel 8086/88 vs. Motorola 68K 29.4.2002
+
+Texas Instruments TI9900, Zilog Z8000 und National Semi. NS16016
+
+Von 16 auf 32Bit:
+Intel 80286-486 und Pentium(I) vs. Motorola 68020-060 und NS16032 
+-------------------------------------------------
+
+SAB80C166
+
+SAB C167LM
+
+80C31
+
+68HC11
+
+HC12-Familie Motorola
+
+MC68HC812A4
+
+8-16-32 bit MCs
+
+PIC by Microchip
+
+
+Taktfrequenz
+Preis
+Erhältlich
+Entwicklungsumgebung
+
 
 Die Wahl des Microcontrollers beruht auf der Empfehlung der Firma Cetron. Im folgenden werden im groben die Eigenschaften beschrieben. Weitere Details
 stehen im Teil \ref{Konzeption} Konzeption der Implementierung.
@@ -383,7 +427,7 @@ Man unterteilt jedes Modul in verschiedene Segmente. Begreift man nun ein Assemb
 Hauptfunktion und Interrupt, so werden die einzelnen Segmente an der passenden Stelle eingebunden.
 \begin{figure}
   \center
-  \includegraphics[width=400pt]{Automat.eps}
+  \includegraphics[width=400pt]{Automat2.eps}
   \caption{Ein Assemblerprogramm als Automat}
   \label{Automat}
 \end{figure}
@@ -400,9 +444,10 @@ Programmspeicherseite liegen.
 Im CALL-Segment werden Funktionsnamen mit den entsprechenden Funktionen im CODE-Segment verknüpft. Der Trick liegt dabei in der verwendung des
 JMP-Befehls. JMP springt an die im Argument übergebene Stelle in Programmspeicher. Da das Argument des JMP-Befehls neun Bit lang ist, können die vollen
 512 Byte eine Speicherseite referenzeiert werden.
-Das CALL-Segment ermöglicht also einen Unterprogrammaufruf ohne die 256-Byte Beschränkung bedenken zu müssen.
+Das CALL-Segment ermöglicht also einen Unterprogrammaufruf ohne die 256-Byte Beschränkung bedenken zu müssen. Desweiteren fügt der Assembler noch einen
+PAGE-Befehl ein wenn dem CALL ein @ vorangestellt wird, so dass auch dies Beschränkung wegfällt.
 \item[DATA-Segment]
-Wie bereits oben beschrieben stehen dem Programmierer 256 Register aus verschiedenen Bänken zur Verfügung. Um mit den Registeradressierungen nicht
+Wie bereits oben beschrieben stehen dem Programmierer 256 Register auf verschiedenen Bänken zur Verfügung. Um mit den Registeradressierungen nicht
 durcheinander zu kommen, empfiehlt es sich pro Modul nur auf einer Bank zu arbeiten, die dann ausschließlich dafür reserviert ist.
 Die Macros ermöglichen es bei der Programmierung auf Register Adressierung zu verzichten.
 Um das zu erreichen definiert man ein Macro in dem platz für maximal 16 Register reseviert wird. Man benutzt bei der Programmierung dann nur noch die
@@ -426,35 +471,203 @@ FOO		; Macro FOO wird bei 20 (hex) eingefügt
                 ; enspricht der dritten Bank
 \end{verbatim}
 \item[INTERRUPT-Segment]
+Benötigt man für ein Modul auch Routinen die durch einen Interrupt ausgelöst werden, so schreibt man den dazu nötigen Code in ein Macro.
+Dieses Macro wird als Interrupt-Segment beschrieben. Die Interrupsegmente schreibt man dann hintereinander an die Adresse 000 (hexadezimal). In den
+Interruptsegmenten darf kein Interrupt Rücksprungbefehl stehen. Der muss am Ende der Macroliste stehen um sicherzustellen das alle Segmente ausgeführt
+werden.
 \item[INIT-Segment]
+Jedes Modul benötigt auch einen Bereich im Initialbereich des Gesamtprogramms zur Initalisierung seiner Variablen. Dazu definiert man zu jedem Modul
+ein INIT-Macro. 
 \end{description}
+Zusammengefasst könnte ein Programm nach den oben beschriebenen Konventionen dann wie folgt aussehen:
+\small{
+\begin{verbatim}
+;M O D U L E
+; Modul_1
+
+; DATASEGMENT
+    MACRO   DATA_MODUL_1
+     MEINEBANK $     ; Die aktuelle Bank wird referenziert
+     VAR1      DS1   ; Ein Register reservieren
+     VAR2      DS1   ; ...
+    ENDM
+    
+; INTERRUPTSEGMENT
+    MACRO   INTERR_MODUL_1
+    ;Anweisungen die bei Interrupt ausgeführt werden sollen
+    ENDM
+    
+; INITSEGMENT
+    MACRO   INIT_MODUL_1
+    ;Initialisierung der Variablen
+    ENDM
+    
+; CALLSEGMENT
+    MACRO   CALL_MODUL_1
+     routine_1
+     JMP _routine_1 
+    ENDM
+    
+; CODESEGMENT
+   MACRO   CODE_MODUL_1
+   _routine_1 ;Sprungmarke für CALL-Segment
+   ; der eigenliche Code
+   ...
+   ENDM
+
+; Modul_2
+...
+; CALLSEGMENT
+    MACRO   CALL_MODUL_2
+     routine_2
+     JMP _routine_2
+    ENDM
+    
+; CODESEGMENT
+   MACRO   CODE_MODUL_2
+   _routine_2 ;Sprungmarke für CALL-Segment
+   ; der eigenliche Code
+   ...
+   ENDM
+...
+; Modul_3
+...
+
+;P R O G R A M M
+Hier wird jetzt der Programmcode auf den Speicher verteilt
+
+ORG $000
+;Interrupt
+INTERR_MODUL_1
+INTERR_MODUL_2
+INTERR_MODUL_3
+RETI ;aus Interrupt herausspringen
+
+ORG $500 
+main        ;anfängliche Einsprungmarke
+;Initialisierung
+;Interrupt abschalten
+...
+;allgemeine Konfiguration
+...
+INIT_MODUL_1
+INIT_MODUL_2
+INIT_MODUL_3
+;Interrupt wieder einschalten
+mainprog   ; Hauptteil des Programms
+...
+@CALL routine_1
+...
+@CALL routine_2
+...
+JMP mainprog
+
+ORG $600
+CALL_MODUL_1
+CALL_MODUL_2
+CODE_MODUL_1
+CODE_MODUL_2
+
+ORG $800
+CALL_MODUL_3
+CODE_MODUL_3
+
+\end{verbatim}
+}
 \subsubsection{Datenaustausch zwischen den Modulen}
 
-Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für den Austausch von Daten reserviert. Jedes Modul holt dort seine Eingabewerte ab und
+Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für den Austausch von Daten reserviert. Jedes Modul entnimmt dort seine Eingabewerte und
  legt die Ergebnisse dort wieder ab.
 
 \subsection{Implemetierungen}
-Im folgenden werden Beispielhaft einige Module beschrieben.
+Im folgenden werden beispielhaft Module für einige Bauelemente beschrieben.
 \begin{description}
 \item[Serielle Schnittstelle]
-interrupt
+Die serielle Datenu"bertragung ist in der Norm RS232 festgelegt.
+Danach ko"nnen zwei Computer u"ber die Datenleitungen TxD (Transmit Data) und RxD (Receive Data) miteinander kommunizieren.
+
+
+Ein Byte wird als Folge von Bits digital gesendet. Zusa"tzlich wird jedem Datenbyte ein Startbit vorangestellt.
+Zur U"berpru"fung folgt ein Parita"tsbit und letzlich noch ein Stopbit. Eine Fehleru"berpru"fung (Parity) findet bei der Implementierung in diesem Fall nicht statt.
+
+
+
+Die Serielle Schnittstelle nutzt den Interrupt um ein korrektes Timing zu erreichen. Der Befehl RETIW kürzt den Zeitraum bis zum nächsten Rollover
+Interrupt um den Betrag im Akkumulator W. So lässt sich die Frequenz relativ genau an den gewünschte Wert anpassen.
+Bei einer Taktfrequenz von 50 MHz benötigt ein Zyklus 20 Nanosekunden (Bis auf Sprungbefehle benötigt jede Instruktion nur einen
+Zyklus).
+Die genaue Taktung erreicht man durch den Interrupt.
+Bei einer Baudrate von 115200 muß alle x ns eine Abtastung auf eine eingehendes Signal erfolgen.
+
+Die UART (Universal Asynchronous Receiver / Transmitter) ist ein Chip (Baustein), die zur Kommunikation u"ber eine serielle Schnittstelle beno"tigt wird. Kommunikation bedeute hier Datenaustausch u"ber Input- bzw. Output-Leitungen.
+Die UART u"bertra"gt im Modus 8n1 8-Bit-Daten serialisiert in einem Rahmen, der aus einem Start-Bit und einem Stop-Bit besteht. 
+
+ Daraus ergeben sich die Datenu"bertragungsparameter Parita"tsart (even, none, odd, space, mark), Anzahl der Datenbits (5-8), Anzahl der Stopbits (1-2) und die Anzahl der pro Sekunde folgenden Bits (Baudrate; 300-115200). Diese Parameter werden durch entsprechende Software an den seriellen Ein-Ausgabe-Baustein (UART- Universal Asynchroneous Receive and Transmit) u"bermittelt, der die Datenu"bertragung an der seriellen Schnittstelle (COM) steuert. Die Datenu"bertragung ist im wesentlichen von der Leistungsfa"higkeit des UART-Schaltkreises abha"ngig. Insbesondere wird die Baudrate durch verschiedene Schaltkreistypen beschra"nkt (vgl. Bild 8: z.B. UART 8250 bis 19,2 kBaud). 
+
+
+Die meisten AVR-Typen haben eine Hardware-UART eingebaut. Das Wort UART sagt zuna"chst einmal nur aus, da? 
+es sich um einen universellen Sende-Empfa"nger handelt, der asynchron Daten u"bertra"gt. Die asynchrone Datenu"bertragung erfolgt
+ im Gegensatz zur synchronen ohne separates Taktsignal. Deshalb ist nur eine Sende- und eine Empfangsleitung sowie eine Masseleitung
+  erforderlich. Ein UART-Empfa"nger mu? das eintreffende Signal mit einer mehrfachen Taktferquenz abtasten und so das Taktsignal ru"ckgewinnen. Das setzt ein akkurates Timing beim UART-Sender voraus. Man kann eine UART durchaus als reine Software-Lo"sung realisieren und Bascom bietet diese Mo"glichkeit auch. Aber das kostet sehr viel Rechenzeit (und Programmspeicher), bringt Fehler in der Datenu"bertragungsrate mit sich und la"?t logischerweise keine hohen U"bertragungsraten zu. Bitte achten sie in der Bascom-Hilfe genau darauf, ob sich ein bestimmter Befehl auf die Hard- oder Software-UART bezieht und bringen Sie beides nicht durcheinander.
+
+Datenwort: Die gebra"uchlichste U"bertragungsart fu"r ein Datenwort ist 8N1, also 8 Datenbits, kein (N) Parita"tsbit und 1 Stopbit. Die Hardware-UART des AVR bietet mehr Mo"glichkeiten (z.B. auch 9 Datenbits), aber das will ich hier nicht behandeln. Bascom verwendet standardma"?ig 8N1.
+
+
+Um eine Frequenz von 115 Baud zu realisieren benötigt man eine 4 mal so hohe Abtastfrequenz.
+
+Je nach Fre
+
+Der 
+
+
+Abtastung 1/4 der Baudrate
+Um nun ca. alle 0,008695652 Sekunden ein Signal zu senden 
+
+Alle 256 Zyklen wird ein Rollover Interrupt ausgelöst bei einer Taktfrequenz von 50 MHz sind das 50.000.000 Instr/s = 20 Nano Sekunden pro Instr.
+
+1/50000000=0.000 000 020 Sec -> 20 NanoSek;;  50_000_000 Cyc/sec 460800 Cyc/Sec ==> 108,5069444
+
+TaktFrequenz/4*Baudrate = Anzahl der Instruktionen bis Interrupt ausgelöst werden soll.
+
+
+Tabelle
+Baudraten
+von bis 
+max = 
+
+
+
+115200 Baud -> 115200 Bit/s
+
+460800 bit/s ->0.000_002_17  = ca 2,17 mycroSec
+
+1/115200 => alle 0,000_00868 Sec eine Bit setzten
+
+also ca. alle 0,000_00212 Sec einmal Abtasten
+
 \item[PWM]
+Die Puls-Weit-Modulation ist ein Verfahren zur ...
+
+
 reverse iterations
 
 
-----bis hier her heute ------!!!
+----Bild von approximierter Kurve------!!!
 \item[Speicher]
 mini seriell
 \item[SPI]
 mux 
 \item[Sensorik]
-Rückkopplung
-\end{description}
 
-\section{Beispielszenario Scheibenwischer}
+Rückkopplung
+
+\end{description}
 \newpage
 \section{Fazit}
-
+Die Wahl des Microcontrollers hat sich als gut erwiesen, da sich eine gut handhabbare Programmstruktur erstellen lies. Das dies nicht nur aus der
+Sicht eines Informatikers so ist hat die Schulung des Münchner Projektteams im Mai 2002 gezeigt. Auch in Zukunft wird die Platine dort auch in anderen
+für den mechatronischen Bereich genutzt werden. Ebenso hat die Arbeit gezeigt wie wichtig der Austausch zwischen den Teammitgliedern und den
+beteiligten Disziplinen für eine adäquate Anforderungslösung ist.
 \section{Ausblick}
 Anleitung
 C-Compiler
