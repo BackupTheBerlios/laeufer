@@ -1,0 +1,1397 @@
+<!DOCTYPE UI><UI>
+<class>DebugTreiberGUI</class>
+<widget>
+    <class>QWidget</class>
+    <property stdset="1">
+        <name>name</name>
+        <cstring>DebugTreiberGUI</cstring>
+    </property>
+    <property stdset="1">
+        <name>geometry</name>
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>240</width>
+            <height>300</height>
+        </rect>
+    </property>
+    <property stdset="1">
+        <name>sizePolicy</name>
+        <sizepolicy>
+            <hsizetype>0</hsizetype>
+            <vsizetype>0</vsizetype>
+        </sizepolicy>
+    </property>
+    <property stdset="1">
+        <name>minimumSize</name>
+        <size>
+            <width>240</width>
+            <height>300</height>
+        </size>
+    </property>
+    <property stdset="1">
+        <name>maximumSize</name>
+        <size>
+            <width>240</width>
+            <height>300</height>
+        </size>
+    </property>
+    <property stdset="1">
+        <name>caption</name>
+        <string>DebugTreiberGUI</string>
+    </property>
+    <widget>
+        <class>QTabWidget</class>
+        <property stdset="1">
+            <name>name</name>
+            <cstring>Tab</cstring>
+        </property>
+        <property stdset="1">
+            <name>enabled</name>
+            <bool>true</bool>
+        </property>
+        <property stdset="1">
+            <name>geometry</name>
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>240</width>
+                <height>300</height>
+            </rect>
+        </property>
+        <property>
+            <name>toolTip</name>
+            <string></string>
+        </property>
+        <widget>
+            <class>QWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SendenTab</cstring>
+            </property>
+            <attribute>
+                <name>title</name>
+                <string>Senden</string>
+            </attribute>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>75</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Operation:</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_3</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>40</y>
+                        <width>141</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Anzahl Datenbytes:</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>sendButton</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>60</x>
+                        <y>220</y>
+                        <width>120</width>
+                        <height>32</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Senden!</string>
+                </property>
+                <property stdset="1">
+                    <name>default</name>
+                    <bool>true</bool>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Daten absenden</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QGroupBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>DatenBytes</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>70</y>
+                        <width>220</width>
+                        <height>150</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>title</name>
+                    <string>DatenBytes</string>
+                </property>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte12</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 12</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte14</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 14</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte5</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 5</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte4</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 4</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte8</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 8</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte13</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 13</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte9</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 9</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte10</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 10</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 1</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>25</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 2</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 3</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte7</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 7</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte11</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 11</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte6</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 6</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>byte0</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property stdset="1">
+                        <name>value</name>
+                        <number>0</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 0</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget>
+                <class>QSpinBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>toOpId</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>10</y>
+                        <width>58</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>maxValue</name>
+                    <number>64</number>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Die auf dem Gerät auszulösende Operation</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QSpinBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>toLength</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>40</y>
+                        <width>58</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>maxValue</name>
+                    <number>15</number>
+                </property>
+                <property stdset="1">
+                    <name>value</name>
+                    <number>0</number>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Anzahl der zu übertragenden Datenbytes</string>
+                </property>
+            </widget>
+        </widget>
+        <widget>
+            <class>QWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>EmpfangenTab</cstring>
+            </property>
+            <attribute>
+                <name>title</name>
+                <string>Empfangen</string>
+            </attribute>
+            <widget>
+                <class>QGroupBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>DatenBytes_Received</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>70</y>
+                        <width>220</width>
+                        <height>150</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>title</name>
+                    <string>DatenBytes</string>
+                </property>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte1</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 1</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte2</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>25</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 2</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte3</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 3</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte5</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 5</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte6</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 6</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte7</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 7</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte10</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 10</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte11</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>160</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 11</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte9</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 9</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte14</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>110</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 14</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte13</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>60</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 13</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte12</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>110</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 12</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte8</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>80</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 8</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte4</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>50</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 4</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>rbyte0</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>enabled</name>
+                        <bool>false</bool>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>10</x>
+                            <y>20</y>
+                            <width>50</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>255</number>
+                    </property>
+                    <property stdset="1">
+                        <name>value</name>
+                        <number>0</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Byte 0</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget>
+                <class>QSpinBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>receiveNumber</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>10</y>
+                        <width>58</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>maxValue</name>
+                    <number>0</number>
+                </property>
+                <property stdset="1">
+                    <name>value</name>
+                    <number>0</number>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Nummer der Übertragung</string>
+                </property>
+                <property>
+                    <name>whatsThis</name>
+                    <string>Einstellen, welche der gespeicherten Übertragungen angezeiht werden soll</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel1_2</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>40</y>
+                        <width>80</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Operation:</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QLabel</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>TextLabel4</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>10</x>
+                        <y>10</y>
+                        <width>80</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Übertragung</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QSpinBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>fromOpId</cstring>
+                </property>
+                <property stdset="1">
+                    <name>enabled</name>
+                    <bool>false</bool>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>160</x>
+                        <y>40</y>
+                        <width>58</width>
+                        <height>25</height>
+                    </rect>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Die Empfangene Operation</string>
+                </property>
+            </widget>
+            <widget>
+                <class>QCheckBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>Pause</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>70</x>
+                        <y>230</y>
+                        <width>106</width>
+                        <height>24</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Pause</string>
+                </property>
+            </widget>
+        </widget>
+        <widget>
+            <class>QWidget</class>
+            <property stdset="1">
+                <name>name</name>
+                <cstring>SetupTab</cstring>
+            </property>
+            <attribute>
+                <name>title</name>
+                <string>Setup</string>
+            </attribute>
+            <widget>
+                <class>QGroupBox</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>GroupBox5</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>8</x>
+                        <y>10</y>
+                        <width>220</width>
+                        <height>90</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>title</name>
+                    <string>Geräte-ID</string>
+                </property>
+                <widget>
+                    <class>QSpinBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>DeviceID</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>140</x>
+                            <y>30</y>
+                            <width>59</width>
+                            <height>26</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>maxValue</name>
+                        <number>32</number>
+                    </property>
+                    <property stdset="1">
+                        <name>value</name>
+                        <number>1</number>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>ID des zu testenden Gerätes</string>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Hier kann man die ID einstellen, für die sich die GUI zuständig fühlt, d.h. die, unter der man Senden und Emfangen möchte.</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QLabel</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>toDeviceLabel</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>12</x>
+                            <y>30</y>
+                            <width>70</width>
+                            <height>20</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Gerät</string>
+                    </property>
+                </widget>
+                <widget>
+                    <class>QCheckBox</class>
+                    <property stdset="1">
+                        <name>name</name>
+                        <cstring>broadcast</cstring>
+                    </property>
+                    <property stdset="1">
+                        <name>geometry</name>
+                        <rect>
+                            <x>50</x>
+                            <y>60</y>
+                            <width>106</width>
+                            <height>24</height>
+                        </rect>
+                    </property>
+                    <property stdset="1">
+                        <name>text</name>
+                        <string>Broadcast</string>
+                    </property>
+                    <property>
+                        <name>toolTip</name>
+                        <string>Als Broadcast senden</string>
+                    </property>
+                    <property>
+                        <name>whatsThis</name>
+                        <string>Dies wirkt sich nicht auf das empfangen von Daten aus, da Geräte keine Broadcasts senden können.</string>
+                    </property>
+                </widget>
+            </widget>
+            <widget>
+                <class>QPushButton</class>
+                <property stdset="1">
+                    <name>name</name>
+                    <cstring>QuitButton</cstring>
+                </property>
+                <property stdset="1">
+                    <name>geometry</name>
+                    <rect>
+                        <x>60</x>
+                        <y>110</y>
+                        <width>116</width>
+                        <height>31</height>
+                    </rect>
+                </property>
+                <property stdset="1">
+                    <name>text</name>
+                    <string>Beenden</string>
+                </property>
+                <property>
+                    <name>toolTip</name>
+                    <string>Beendet das Programm</string>
+                </property>
+            </widget>
+        </widget>
+    </widget>
+</widget>
+<connections>
+    <connection>
+        <sender>sendButton</sender>
+        <signal>clicked()</signal>
+        <receiver>DebugTreiberGUI</receiver>
+        <slot>send()</slot>
+    </connection>
+    <connection>
+        <sender>toLength</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>DebugTreiberGUI</receiver>
+        <slot>setNumberOfDataBytes(int)</slot>
+    </connection>
+    <connection>
+        <sender>DeviceID</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>DebugTreiberGUI</receiver>
+        <slot>setID(int)</slot>
+    </connection>
+    <connection>
+        <sender>receiveNumber</sender>
+        <signal>valueChanged(int)</signal>
+        <receiver>DebugTreiberGUI</receiver>
+        <slot>showReceivedWithNumber(int)</slot>
+    </connection>
+    <connection>
+        <sender>broadcast</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>DeviceID</receiver>
+        <slot>setDisabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>QuitButton</sender>
+        <signal>clicked()</signal>
+        <receiver>DebugTreiberGUI</receiver>
+        <slot>quit()</slot>
+    </connection>
+    <slot access="public">newMessage()</slot>
+    <slot access="public">quit()</slot>
+    <slot access="public">send()</slot>
+    <slot access="public">setID(int)</slot>
+    <slot access="public">setNumberOfDataBytes(int)</slot>
+    <slot access="public">showReceivedWithNumber(int)</slot>
+</connections>
+<tabstops>
+    <tabstop>Tab</tabstop>
+    <tabstop>sendButton</tabstop>
+</tabstops>
+</UI>
