@@ -186,7 +186,8 @@ bezieht, oder wenn die Differenz der Sequenznummern modulo 16 grösser
 oder gleich 8 ist. Der Empfänger synchronisiert im Abbruchsfall seine
 Sequenznummer mit der des Senders.
 Dieser Fehlerfall kann unter folgenden Bedingungen auftreten (unter Voraussetzung der Korrektheit des Controllers):
-\begin{enumerate}[a.]
+
+\begin{enumerate} \renewcommand{\theenumi}{\alph{enumi}}
   \item{Ein Client verwendet eine inkorrekte Protokollimplementierung}
   \item{Ein Client hat mehrere asynchrone Pakete verpaßt}
   \item{Ein Client besteht aus mehreren physischen Einheiten, von denen eine echte nichtleere Teilmenge einen Teil der Übertragungen verpaßt hat.}

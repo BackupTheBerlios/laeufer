@@ -5,7 +5,7 @@
 Der Läufer ist kein Monolith. Das wendige Fahrzeug kann kaum mit einem statischen Felsbrocken
 verglichen werden, sondern ist in seinem Aufbau modular. Doch die Module sind nicht
 in isolierten Welten; Kommunikation,
-Datenübertragung zwischen ihnen ist sogar essenziell-- Blinker und Scheibenwischer können nicht, oder jedenfalls
+Datenübertragung zwischen ihnen ist sogar essentiell-- Blinker und Scheibenwischer können nicht, oder jedenfalls
 bestenfalls in beschränktem Umfang, über ihre Zustände entscheiden, zugleich kann und will man diese einzelnen
 Elemente nicht unmittelbar mit dem Fahrer verdrahten, der bei der Fahrt meist besseres zu tun hat, als Blinker
 über DIP-Schalter zu konfigurieren.
@@ -13,7 +13,7 @@ Elemente nicht unmittelbar mit dem Fahrer verdrahten, der bei der Fahrt meist be
 
 Dieser Abschnitt widmet sich der Kommunikation zwischen den Elementen des Läufers, insbesondere zwischen der zentralen
 Steuereinheit, hier durch einen PDA realisiert, und ihren Klienten. Verschiedene Möglichkeiten der Konstruktion
-eines Datenübertragungssysteme werden beschrieben und bewertet werden. Am Schluß erfolgt eine Beschreibung der gewählten
+eines Datenübertragungssystems werden beschrieben und bewertet werden. Am Schluß erfolgt eine Beschreibung der gewählten
 Kommunikations- und Gerätesteuerungsinfrastruktur.
 
 
@@ -34,14 +34,14 @@ als für den Fahrer gedachte Angaben-- Geschwindigkeit, Akkumulatorstand-- und zu
 Geräte vorgesehene Informationen wie Zustände von als Peripherie angeschlossenen Lichtschaltern oder Blinker-Hebeln
 beschreiben\footnote{Das Vorkommen der letztgenannten Informationen ist nicht zwingend erforderlich, falls
 die Peripherie unmittelbar miteinander kommunizieren kann, z.B. durch eine Direktverbindung oder in einem
-Multi-Master-Bussysstem.}.
+Multi-Master-Bussysstem.}(s. \ref{mw_com}).
 
 \newpage
 
 \section{Anforderungen an die Kommunikation}
 
 Um von einer ``guten'' oder ``schlechten''
-Lösung unsres Kommunikationsproblemes sprechen zu können, stellt sich uns somit zunächst die Aufgabe,
+Lösung unseres Kommunikationsproblemes sprechen zu können, stellt sich uns somit zunächst die Aufgabe,
 die zur Bemessung der gesuchten Qualität dienenden Kriterien niederzuschreiben und auszuformulieren,
 nicht zuletzt gegeneinander abzuwägen, denn eine vollständige Ordnung muß sein, jedenfalls für ein
 eindeutiges Urteil.
