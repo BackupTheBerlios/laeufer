@@ -15,7 +15,7 @@
 
 \overlays{3}{%
   \begin{slide}{Kommunikation mit der GUI}
-    \untilSlide*{2}{
+    \untilSlide*{1}{
       Verwendung von Signals und Slots aus QT
       \begin{itemize}
       \item Treiber definiert seine Signale.
@@ -24,7 +24,6 @@
       \item $\to$ Fahrzeuglogik wird durch Routing der Signale
         implementiert.
       \end{itemize}
-      \OnlySlide{2} Drawback: Festlegung auf QT und Präprozessor.
     }
     \fromSlide*{2}{
       Hier: 
@@ -32,6 +31,7 @@
       \item Treiber wirft Signal \texttt{birne\_defekt}
       \item GUI verbindet dies mit Warnelement auf Display
       \end{itemize}
+      \onlySlide{3} {Drawback: Festlegung auf QT und Präprozessor.}
     }
   \end{slide}
   

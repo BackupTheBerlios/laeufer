@@ -1,25 +1,24 @@
 
-\overlays{8}{%
+\overlays{2}{%
   \begin{slide}{Das Fahrerinterface}
       \begin{minipage}{7.0cm}
-        \untilSlide*{4}{%
+        \untilSlide*{1}{%
           Gründe für einen PDA:
           \begin{itemize}
-            \fromSlide{2}{\item Genügend Rechenleistung (Hochsprachen)}%
-            \fromSlide{3}{\item Display (Warnhinweise)}%
-            \fromSlide{4}{\item Interaktion (Einstellungen, Routing, etc.)}%
+          \item Genügend Rechenleistung (Hochsprachen)
+          \item Display (Warnhinweise)
+          \item Interaktion (Einstellungen, Routing, etc.)
           \end{itemize}
         }
-      \fromSlide*{5}{%
+      \fromSlide*{2}{%
         Gründe für \emph{diesen} PDA
         \begin{itemize}
-          \fromSlide{6}{\item Display}%
-          \fromSlide{7}{\item Rechenleistung}%
-          \fromSlide{8}{\item Linux (Multitasking, Programmierung)}%
+          \item Display
+          \item Rechenleistung
+          \item Linux (Multitasking, Programmierung)
         \end{itemize}
       }
     \end{minipage}
-%
     \begin{minipage}{3cm}
       \begin{center}
         \includegraphics[width=3cm]{zaurus.eps}
@@ -32,7 +31,7 @@
 % ============================================================
 
 
-\overlays{5}{
+\overlays{2}{
   \begin{slide}{DPI aus Entwicklersicht}
     \untilSlide*{1}{
       \begin{center}
@@ -44,12 +43,9 @@
     \fromSlide{2}{
       Vaterklasse \texttt{Driver} für alle Treiber
       \begin{itemize}
-        \fromSlide{3}{\item GUI ruft \texttt{Blinken()} des Treibers
-          auf.}
-        \fromSlide{4}{\item \texttt{send(Message)}: Versenden von
-          \emph{Nachrichten}.}
-        \fromSlide{5}{\item \texttt{receive(Message)}: Empfang von
-          Nachrichten.}
+      \item GUI ruft \texttt{Blinken()} des Treibers auf.
+      \item \texttt{send(Message)}: Versenden von \emph{Nachrichten}.
+      \item \texttt{receive(Message)}: Empfang von Nachrichten.
       \end{itemize}
     }
   \end{slide}
@@ -59,14 +55,12 @@
 % ============================================================
 
 
-\overlays{3}{%
   \begin{slide}{Weg der Nachricht durch das DPI}
-    \begin{itemstep}
+    \begin{itemize}
     \item \texttt{Driver.send()} überprüft die Nachricht
     \item \texttt{message\_dispatcher.send()} sendet auf passendem
       \texttt{bus\_manager} heraus $\to$ Indirektion
     \item \texttt{bus\_manager.send()} sendet auf passendem
       \texttt{bus} heraus $\to$ Indirektion
-    \end{itemstep}
+    \end{itemize}
   \end{slide}
-}
