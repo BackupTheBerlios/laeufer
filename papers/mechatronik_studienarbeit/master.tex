@@ -1,21 +1,31 @@
-\documentclass[12pt, a4paper]{report}
+\documentclass[12pt, a4paper, twoside]{report}
 \usepackage{german, palatino}
 \usepackage[latin1]{inputenc}
 \usepackage{epsfig}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{fancyheadings}
+\usepackage[german]{minitoc}
 \bibliographystyle{alphadin}
-\author{Christian Rüdiger 954596\\Christoph Reichenbach \\Markus Weimer 946371\\}
 
-\title{\textbf{Technische Universität Darmstadt}\\Fachbereich Informatik\\Prof. Dr.-Ing. S. A. Huss. \vfill Entwicklung eines Mechatronik-Frameworks für das Projekt Läufer \vfill }
+\author{Christian Rüdiger 954596\\Christoph Reichenbach \\Markus
+  Weimer 946371\\}
 
-\lfoot{Druck vom 4.1. -- Test}
+\title{\textbf{Technische Universität Darmstadt}\\Fachbereich
+  Informatik\\Prof. Dr.-Ing. S. A. Huss. \vfill Entwicklung eines
+  Mechatronik-Frameworks für das Projekt Läufer \vfill }
 
-\pagestyle{fancy}
+\lhead[\chaptername{} \thechapter{}: \chaptermark{}]{}
+\chead[]{}
+\rhead[]{Unterkapitel}
+\lfoot[\thepage]{}
+\cfoot[]{}
+\rfoot[]{\thepage}
+\pagestyle{headings}
 \sloppy 
 
 \begin{document}
+\dominitoc
 \maketitle
 
 \newpage
@@ -116,21 +126,27 @@ Darmstadt, den \today \hfill Christoph Reichenbach
 
 \chapter{Das Projekt Läufer}\label{laeufer_kapitel}
 von: Markus Weimer
+\minitoc
 \include{laeufer}
 
 \chapter{Aufgabenstellung}\label{aufgabe_kapitel}
 von: Markus Weimer
+\minitoc
 \include{aufgabe}
 
 % Markus' Kapitel
 \chapter{Fahrerinterface}\label{mw_kapitel}
 von: Markus Weimer
+\minitoc
 \include{mw}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 % Jamesons Kaptitel
 \chapter{Kommunikation}\label{jameson_kapitel}
 von: Christoph Reichenbach
+\minitoc
+
+
 \include{j}
 
 \newpage
@@ -149,14 +165,17 @@ Protokoll, das wir selbst entworfen hatten. Wir schlossen mit eine Diskussion de
 % Christians Kapitel
 \chapter{Embedded Platinen}\label{cr_kapitel}
 von: Christian Rüdiger
+\minitoc
 \include{cr}
 
 % Schluss
 \chapter{Fazit}\label{fazit_kapitel}
 von: Markus Weimer
+\minitoc
 \include{schluss}
 
 \chapter{Danksagungen}\label{danke_kapitel}
+\minitoc
 \include{danke}
 
 % Das Literaturverzeichnis
