@@ -1,3 +1,88 @@
 \begin{slide}{Die Platine}
-
+\begin{itemize}
+  \item vom Ingenieur implementierte Logik nimmt Nachricht an
+  \item Logik interpretiert Nachricht
+  \item Geräte werden mithilfe des vorgefertigten Codes ($\to$Module) instruiert
+  \item unser Beispiel:
+  \item die Lichtanlage soll Blinken
+  \item d.h. die Low Side Switches werden über SPI aktiviert und geschaltet
+\end{itemize}
 \end{slide}
+
+
+\begin{slide}{Module}
+\begin{itemize}
+  \item  Module sind in Macros gebündelte Programmteile
+  \item  Über Module ist die Peripherie erreichbar
+  \begin{itemize}
+  \item  Beispiel: AD-Converter, serielle Schnittstelle etc.
+  \end{itemize}
+  \item  Module stellen Komfort-Funktionen zu Verfügung
+  \begin{itemize}
+  \item  Beispiel: Puls Weit Modulation
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+\begin{slide}{Module einbinden}
+  \begin{itemize}
+  \item Platzieren des Moduls im Programmspeicher:\newline
+  \begin{verbatim}
+org 400
+SPI_CODE_SEG
+  \end{verbatim}
+  \item Aufruf einer darin definierten Routine
+   \begin{verbatim}
+	MOV	W, # SPI_TLE2
+	CALL 	@SPI_select_device
+	CALL	@SPI_TLE_SO_SI
+  \end{verbatim}
+  \end{itemize}
+\end{slide}
+
+
+
+%\overlays{6}{
+%\begin{slide}{Das Programm als Automat}
+%  \onlySlide*{1}{\includegraphics[width=8cm]{Automat2.eps}}
+%  \onlySlide*{2}{\includegraphics[width=8cm]{Automat3.eps}}
+%  \onlySlide*{3}{\includegraphics[width=8cm]{Automat4.eps}}
+%  \onlySlide*{4}{\includegraphics[width=8cm]{Automat5.eps}} 
+%  \onlySlide*{5}{\includegraphics[width=8cm]{Automat6.eps}}
+%  \onlySlide*{6}{\includegraphics[width=8cm]{Automat7.eps}}
+%\end{slide}
+%}
+
+
+\begin{slide}{Im Kontext Mechatronik}
+\begin{center}
+        \includegraphics[width=8cm]{Mechatronik_sys.eps}
+\end{center}
+\end{slide}
+
+
+
+  \begin{slide}{Sicherheit}
+     % \begin{minipage}{6.0cm}
+	Die Sicherheit liegt in der Hand des Ingenieurs\newline
+	Ein Beispiel wie es sein könnte:
+          \begin{itemize}
+          \item ADC stellt zu niedrigen oder hohen Stromfluss fest
+          \item Übergang in failsafe mode, der alle Geräte ''abschaltet''
+          \item Abgabe einer Warnmeldung an CAN Bus
+          \end{itemize}
+    %\end{minipage}
+    %\begin{minipage}{4cm}
+     % \begin{center}
+      %  \includegraphics[width=4cm]{LightAutomaton.eps}
+      %\end{center}
+    %\end{minipage}
+  \end{slide}
+
+
+
+
+
+
+
+
