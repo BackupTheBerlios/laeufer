@@ -6,16 +6,18 @@
 \usepackage{amsmath}
 \bibliographystyle{alphadin}
 \author{Christian Rüdiger\\Christoph Reichenbach \\Markus Weimer 946371\\}
-\title{Entwicklung eines Mechatronik-Frameworks für das Projekt Läufer}
+
+\title{\textbf{Technische Universität Darmstadt}\\Fachbereich Informatik\\Prof. Dr.-Ing. S. A. Huss. \vfill Entwicklung eines Mechatronik-Frameworks für das Projekt Läufer \vfill }
 
 \pagestyle{headings}
-\sloppy
+\sloppy 
 
 \begin{document}
-\begin{titlepage}
- 
 \maketitle
-Betreuer: Stephan Klaus
+
+\newpage
+
+\noindent
 Verantwortlichkeit der Autoren für die Einzelnen Kapitel:
 \begin{description}
 \item[Markus Weimer] Kapitel
@@ -25,32 +27,79 @@ Verantwortlichkeit der Autoren für die Einzelnen Kapitel:
 \item[Christian Rüdiger] Kapitel \ref{cr_kapitel}
 \end{description}
 
-\end{titlepage}
+\vfill
+
+\noindent
+Die vorliegende Arbeit wurde im Rahmen des Projektes Läufer erstellt.
+Weitergehende Informationen zum Projekt finden sich auf dessen
+Homepage:\\
+http://www.projekt-laeufer.de
+
+\newpage
+
+\section*{Zusicherung}
+
+Ich versichere, meine oben genannten Anteile an dieser Arbeit ohne
+unzulässige fremde Hilfe und nur unter Verwendung der in der Arbeit
+angegebenen Literatur und Hilfsmittel angefertigt zu haben.
+
+\vspace{1cm}
+
+\noindent
+Darmstadt, den \today \hfill Markus Weimer 
+
+\vfill
+
+\noindent
+Ich versichere, meine oben genannten Anteile an dieser Arbeit ohne
+unzulässige fremde Hilfe und nur unter Verwendung der in der Arbeit
+angegebenen Literatur und Hilfsmittel angefertigt zu haben.
+
+\vspace{1cm}
+
+\noindent
+Darmstadt, den \today \hfill Christian Rüdiger
+
+\vfill
+
+\noindent
+Ich versichere, meine oben genannten Anteile an dieser Arbeit ohne
+unzulässige fremde Hilfe und nur unter Verwendung der in der Arbeit
+angegebenen Literatur und Hilfsmittel angefertigt zu haben.
+
+\vspace{1cm}
+
+\noindent
+Darmstadt, den \today \hfill Christoph Reichenbach
+
+
 \begin{abstract}
+  
+  Im Rahmen des Projektes Läufer wurde mit dieser Arbeit ein
+  mechatronisches System für den Läufer entwickelt. Dieses System
+  schliesst drei Komponenten ein: Das Fahrerinformationssystem, eine
+  Platine samt Software für die Entwicklung mechatronischer Systeme
+  sowie eine auf CANBus basierende Kommunikationsstruktur.
 
-Im Rahmen des Projektes Läufer wurde mit dieser Arbeit ein
-mechatronisches System für den Läufer entwickelt. Dieses System
-schliesst drei Komponenten ein: Das Fahrerinformationssystem, eine
-Platine samt Software für die Entwicklung mechatronischer Systeme sowie
-eine auf CANBus basierende Kommunikationsstruktur.
-
-
-Die vorliegende Arbeit beschreibt die dabei getroffenen Design- und
-Produktentscheidungen vor dem Projektkontext. Im ersten Kapitel soll zu
-diesem Zweck zunächst ein Überblick über das Projekt Läufer gegeben
-werden. Darauf folgt im zweiten Kapitel eine sich aus dem Projekt
-ergebende Anforderungsdarstellund an die Mechatronik. Diese beiden
-Kapitel wurden in enger Zusammenarbeit mit den Projektleitern des
-Läufers erstellt.
-
-Die folgenden drei Kapitel beschreiben die drei Komponenten des
-mechatronischen Systems. Dabei wird von der Anwenderschnittstelle über
-die Kommunikation der Geräte bis zu den Geräten selbst vorgegangen.
-
-Im letzten Kapitel wird dann eine kurze Zusammenfassung und ein Ausblick
-gegeben.
+  
+  Die vorliegende Arbeit beschreibt die dabei getroffenen Design- und
+  Produktentscheidungen vor dem Projektkontext. Im ersten Kapitel soll
+  zu diesem Zweck zunächst ein Überblick über das Projekt Läufer
+  gegeben werden. Darauf folgt im zweiten Kapitel eine sich aus dem
+  Projekt ergebende Anforderungsdarstellund an die Mechatronik. Diese
+  beiden Kapitel wurden in enger Zusammenarbeit mit den Projektleitern
+  des Läufers erstellt.
+  
+  Die folgenden drei Kapitel beschreiben die drei Komponenten des
+  mechatronischen Systems. Dabei wird von der Anwenderschnittstelle
+  über die Kommunikation der Geräte bis zu den Geräten selbst
+  vorgegangen.
+  
+  Im letzten Kapitel wird dann eine kurze Zusammenfassung und ein
+  Ausblick gegeben.
 
 \end{abstract}
+
 
 % Inhaltsverzeichnis
 \tableofcontents
@@ -88,7 +137,7 @@ von: Christoph Reichenbach
 
 \include{proto0}\label{llz-proto}
 
-% Christians Kapitel
+Christians Kapitel
 \chapter{Implementierung der Embedded Platinen}\label{cr_kapitel}
 von: Christian Rüdiger
 \include{cr}
