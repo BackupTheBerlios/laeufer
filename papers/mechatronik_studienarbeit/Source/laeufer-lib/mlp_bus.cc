@@ -161,22 +161,6 @@ mlp_bus::init(bool *devices, bool **operations)
 	partial_msg_pos = 0;
 
 
-	fprintf(stderr, "Polling...\n");
-	while (1) {
-		char c;
-		int v = read(fd, &c, 1);
-
-		if (v < 0) {
-			perror ("Polling");
-			exit(1);
-		}
-
-		if (v == 0)
-			fprintf(stderr, "Nothing...\n");
-
-		fprintf(stderr, "%02x\n", c);
-	}
-  
 	return 0; /* success */
 }
 
