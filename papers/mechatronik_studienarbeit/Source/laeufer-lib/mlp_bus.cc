@@ -10,7 +10,7 @@
 #include <cstdio>
 #include "mlp_bus.h"
 
-/*#define IO_DEBUG*/
+#define IO_DEBUG
 
 #define MLP_ORDER (6 << 5)
 #define MLP_REPORT (7 << 5)
@@ -242,14 +242,18 @@ mlp_bus::messages_waiting()
 		}
 	}
 	fprintf(stderr, "Received %d bytes.\n", got_bytes);
+	partial_msg_pos += got_bytes;
 
 	if (start_of_message > (MLP_MAX_BUF_SIZE >> 1)) {
+		fprintf(stderr, "Moving: start_of_message=%d, partial_msg_pos=%d\n",
+			start_of_message, partial_msg_pos);
 		int delta = start_of_message;
 		start_of_message = 0;
 		partial_msg_pos -= delta;
 		if (partial_msg_pos)
 			memmove(partial_message, partial_message + delta, partial_msg_pos);
-	}
+	} else if (start_of_message < 0)
+		partial_msg_pos = 0; /* Restart at beginning of buffer */
 
 	if (got_bytes < 0) {
 		perror("MLP:poll-message");

@@ -216,7 +216,6 @@ INIT_SEG_MLP	MACRO 0
 
 CODE_SEG_MLP	MACRO 0
 
-	_mlp_f_write_escaping EQU	TMPREG.0
 _mlp_writebuf
 	CLR RETVAL
 	;; Phase 1:	Copy to MLP_WRITE_BANK
@@ -236,23 +235,30 @@ _mlp_writebuf
 	CJB RETVAL, PARAM1, :copy_loop
 	;; Phase 2:	Write back, encode special characters
 
-	CLRB _mlp_f_write_escaping
 	CLR RETVAL
 	CLR PARAM2
+
+	;; Write Start Of Block
+	MOV FSR, RETVAL
+	SET_BANK GLO_XCH_BANK
+	MOV IND, #MLP_SOB
+	INC RETVAL
 	
 :translate_loop
 	MOV FSR, PARAM2
-	SET_BANK GLO_XCH_BANK
+	SET_BANK MLP_WRITE_BANK
 	MOV TMPREG, IND
 
 	MOV FSR, RETVAL
-	SET_BANK MLP_WRITE_BANK
+	SET_BANK GLO_XCH_BANK
 	
 	CJB TMPREG, #$f0, :writeb
 	CJAE TMPREG, #$f8, :writeb
 	;; Otherwise, we must escape
 	MOV IND, #MLP_ESC
 	INC RETVAL
+	INC FSR
+	AND TMPREG, #$0f
 :writeb
 	MOV IND, TMPREG
 
@@ -261,10 +267,16 @@ _mlp_writebuf
 	
 	CJB PARAM2, PARAM1, :translate_loop
 
+	;; Loop-postprocess
+	;; Write End Of Block
+	INC FSR
+	INC RETVAL
+	MOV IND, #MLP_EOB
+
 	;; Phase 3:	 Transmit
 	MOV PARAM1, RETVAL
 	CLR PARAM2
-	CALL @SERIAL_sendbuf
+ 	CALL @SERIAL_sendbuf
 
 	;; --- DEBUG CODE ---
 	TEST RETVAL
@@ -298,13 +310,11 @@ _sub_mlp_handle_command
 
 	CJNE PARAM1, #2, :no_echo_version
 	SET_BANK GLO_XCH_BANK
-	MOV $10, #MLP_SOB
-	MOV $11, #$e1		; Reply for this device
-	MOV $12, #2
-	MOV $13, #MLP_VERSION
-	MOV $14, #MLP_EOB
+	MOV $10, #$e1		; Reply for this device
+	MOV $11, #2
+	MOV $12, #MLP_VERSION
 	
-	MOV PARAM1, #5
+	MOV PARAM1, #3
 	MOV PARAM2, #0
 	CALL @MLP_writebuf
 	RETP
@@ -414,7 +424,7 @@ mlp_read_loop_start
 	SET_BANK GLO_XCH_BANK
 	MOV TMPREG, $10
 ;;; --- TESTCODE ---
-	OR $10, #$f0		; REPORT from same device
+	OR $10, #$e0		; REPORT from same device
 ;;; --- ENDE DES TESTCODES ---
 
 	AND TMPREG, #$1f
@@ -427,7 +437,7 @@ mlp_read_loop_start
 	
 :mlp_read_handle_remote
 	MOV PARAM1, #MLP_MAXSIZE
-	MOV PARAM2, 0
+	CLR PARAM2
 	CALL @MLP_writebuf	; TESTCODE!!!
 ;;; 	CALL @CAN_send_mlp
 	JMP mlp_read_loop_start
@@ -710,7 +720,6 @@ _serial_sendbuf
 	MOV RETVAL, #1		; Sufficient space
 
 	;; Now precompute registers for memcpy
-	DEC PARAM1		; Decrement first, since we're using a "do {...} while" loop
 	ADD serial_transmit_ctr, PARAM1	; Fix number of bytes to send
 	
 	;; And enter copy loop
@@ -1102,32 +1111,6 @@ main
 ; Hauptprogramm
 ;--------------------------------------
 ;--------------------------------------
-
-
-		SET_BANK GLO_XCH_BANK
-		MOV $10, #'F'
-		MOV $11, #'r'
-		MOV $12, #'e'
-		MOV $13, #'e'
-		MOV $14, #'S'
-		MOV $15, #'C'
-		MOV $16, #'I'
-		MOV $17, #' '
-		MOV $18, #'r'
-		MOV $19, #'o'
-		MOV $1a, #'c'
-		MOV $1b, #'k'
-		MOV $1c, #'s'
-		MOV $1d, #'!'
-		MOV $1e, #$a
-		MOV $1f, #$d
-
-		MOV PARAM1, #$10
-		MOV PARAM2, #0
-		CALL @SERIAL_sendbuf
-
-	
-; #$41 ist A #$42 ist B
 
  mainloop
 
