@@ -58,20 +58,26 @@ Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe d
 
 \newpage
 \section{Wahl der Komponenten}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Komentar zur interdiszipl. Erörterung der Anforderungen
+
+
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 \subsection{Microcontroller}
 HC-Familie Motorola
 
 8051-Familie 
 -Infineon
 SAB80C35
----------------------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Intels 8-Bit Industriestandard:
 Vom 8008 zu 8080 und 8085, Vergleich mit Zilog Z80 22.4.2002 
 
-Preiswert und leistungsfa"hig:
+Preiswert und leistungsfähig:
 Motorola 6800 und 6809 im Vergleich zu MOS 6502 
 
-Die 16Bit-A"ra
+Die 16Bit-Ära
 Die Konkurrenten:
 Intel 8086/88 vs. Motorola 68K 29.4.2002
 
@@ -79,7 +85,7 @@ Texas Instruments TI9900, Zilog Z8000 und National Semi. NS16016
 
 Von 16 auf 32Bit:
 Intel 80286-486 und Pentium(I) vs. Motorola 68020-060 und NS16032 
--------------------------------------------------
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 SAB80C166
 
@@ -337,10 +343,10 @@ wird ein Register aus der im FSR spezifizierten Bank entnommen.
 Beispiel:
 \begin{verbatim}
 ; W bezeichnet den Akkumulator
-MOV  $1A,W ; schreibt den Inhalt von W in das globale register $1A
-BANK $60   ; stellt FSR auf Bank sechs
+MOV  \$1A,W ; schreibt den Inhalt von W in das globale register \$1A
+BANK \$60   ; stellt FSR auf Bank sechs
 SETB FSR.4 ; stellt FSR auf Bank sieben
-MOV  $0A,W ; schreibtden Inhalt von W in das register Nr.$7A
+MOV  \$0A,W ; schreibtden Inhalt von W in das register Nr.\$7A
 \end{verbatim}
 In der Summe stehen dem Benutzer 256 Register plus 15 globale Register zur Verfügung. Von den globalen Registern sind die ersten fünf Register für
 spezielle Aufgaben vorgesehen (unter anderen FSR und STATUS-Register),dann folgen die fünf I/O-Ports die auch als Register nutzbar sind, und dann
@@ -365,7 +371,7 @@ Mit der EQU-Direktive werden Konstanten oder Registern Namen zugeordnet.
 \begin{verbatim}
 
 LED	EQU 	RB.5        ; sechstes Bit auf Port B wird mit LED benannt
-FOO	EQU 	$0a         ; das Register 0a wird mit FOO benannt
+FOO	EQU 	\$0a         ; das Register 0a wird mit FOO benannt
 BAR	EQU 	#%0000_0011 ; die Konstante BAR hat den Wert drei
 
 \end{verbatim}
@@ -380,7 +386,7 @@ ORG  #000	;der folgende Code wird ab Adresse 000 eingefügt
 
 ORG  #200	;der folgende Code steht ab Adresse 200 (hex)
 CALL FOO	
-MOV  $01, #2	
+MOV  \$01, #2	
 ...
 
 \end{verbatim}
@@ -412,7 +418,7 @@ FOO		; Macro FOO wird bei 200 (hex) eingefügt
 Das Dollarzeichen liefert die aktuelle Bank zurück.
 \begin{verbatim}
 
-FOO EQU $	;FOO enthält die aktuelle Bank
+FOO EQU \$	;FOO enthält die aktuelle Bank
 
 \end{verbatim}
 \subsection{Konzeption}
@@ -460,13 +466,13 @@ entsprechende Modulbank referenzieren ohne schon wissen zu müssen welche Bank er
 Beipiel
 \begin{verbatim}
 MACRO 	  FOO	; Macro namens FOO
-MEINEBANK $     ; Die aktuelle Bank wird referenziert
+MEINEBANK \$     ; Die aktuelle Bank wird referenziert
 VAR1      DS1   ; Ein Register reservieren
 VAR2      DS1   ; ...
 ...
 ENDM
 
-ORG	$20
+ORG	\$20
 FOO		; Macro FOO wird bei 20 (hex) eingefügt
                 ; enspricht der dritten Bank
 \end{verbatim}
@@ -487,7 +493,7 @@ Zusammengefasst könnte ein Programm nach den oben beschriebenen Konventionen dan
 
 ; DATASEGMENT
     MACRO   DATA_MODUL_1
-     MEINEBANK $     ; Die aktuelle Bank wird referenziert
+     MEINEBANK \$     ; Die aktuelle Bank wird referenziert
      VAR1      DS1   ; Ein Register reservieren
      VAR2      DS1   ; ...
     ENDM
@@ -536,14 +542,14 @@ Zusammengefasst könnte ein Programm nach den oben beschriebenen Konventionen dan
 ;P R O G R A M M
 Hier wird jetzt der Programmcode auf den Speicher verteilt
 
-ORG $000
+ORG \$000
 ;Interrupt
 INTERR_MODUL_1
 INTERR_MODUL_2
 INTERR_MODUL_3
 RETI ;aus Interrupt herausspringen
 
-ORG $500 
+ORG \$500 
 main        ;anfängliche Einsprungmarke
 ;Initialisierung
 ;Interrupt abschalten
@@ -562,13 +568,13 @@ mainprog   ; Hauptteil des Programms
 ...
 JMP mainprog
 
-ORG $600
+ORG \$600
 CALL_MODUL_1
 CALL_MODUL_2
 CODE_MODUL_1
 CODE_MODUL_2
 
-ORG $800
+ORG \$800
 CALL_MODUL_3
 CODE_MODUL_3
 
@@ -581,80 +587,60 @@ Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für den Austausc
 
 \subsection{Implemetierungen}
 Im folgenden werden beispielhaft Module für einige Bauelemente beschrieben.
+
 \begin{description}
 \item[Serielle Schnittstelle]
-Die serielle Datenu"bertragung ist in der Norm RS232 festgelegt.
-Danach ko"nnen zwei Computer u"ber die Datenleitungen TxD (Transmit Data) und RxD (Receive Data) miteinander kommunizieren.
+Die serielle Datenübertragung ist in der Norm RS232 festgelegt.
+Danach können zwei Computer über die Datenleitungen TxD (Transmit Data) und RxD (Receive Data) miteinander kommunizieren.
+Ein Byte wird im 8n1 Modus gesendet. Das heißt es werden acht Bits digital gesendet. Zusätzlich wird jedem Datenbyte ein Startbit voran-
+und ein Stopbit nachgestellt. Eine Fehlerüberprüfung (Parity) findet bei der Implementierung in diesem Fall nicht statt.
+Es handelt sich bei der RS232 um eine asysnchrone Übertragung die,
+im Gegensatz zur synchronen Übertragung, ohne separates Taktsignal erfolgt.
+Ein Empfänger muß das eintreffende Signal mit einer mehrfachen Taktferquenz abtasten 
+und so das Taktsignal rückgewinnen. Das setzt ein akkurates Timing voraus.
+Um sicherzustellen, das eine Zustandsänderung am Eingang registriert wird, nimmt man als Abtastrate das vierfache der Zielfrequenz ab.
+Um beispielsweise bei einer Zielfrequenz F von 115.200 Baud eine Änderung der eingehenden Flanke festzustellen, wird der Eingangszustand 
+mit 460,8 kHz abgetastet.
+Um ein genaues Timing zu realisieren nutzt die Implementierung den Rollover Interrupt. Der Rollover Interrupt löst alle 256 Zyklen
+einen Interrupt aus. Dies entspricht bei einer Taktfrequenz $T$ von 50 Mhz einem Takt von 195.312,5 Hz.
+reduziert man nun die Anzahl der Zyklen bis zum nächsten Interrupt, so lässt sich die Interrupt-Frequenz regulieren. Der
+Befehl RETIW macht das möglich. RETIW setzt den Interruptzähler auf den im Akkumulator W übergebenen Wert.
+So lässt sich mit 108 Zyklen pro Interrupt ein Takt von ungefär 115.200 Baud realisieren (vierfache Abtastrate).
+In diesem Beispiel wird davon ausgegangen, das im interrupt keine weiteren Verzögerungen auftreten. Wenn jedoch mehrere Module mit
+Interrupt-Segmenten genutzt werden, so muss die Verzögerung beim setzen des neuen Rollover Interrupt berücksichtigt werden.
+Für eine Anzahl $n$ von Zyklen ergibt sich der zu übergebende Wert $w$ für der Akkumulator wie folgt:
 
+\begin{displaymath}
+w = \left\lfloor \frac{T}{4*F} \right\rfloor - n
+\end{displaymath}
+mit \begin{math}w \gg 0\end{math}.
 
-Ein Byte wird als Folge von Bits digital gesendet. Zusa"tzlich wird jedem Datenbyte ein Startbit vorangestellt.
-Zur U"berpru"fung folgt ein Parita"tsbit und letzlich noch ein Stopbit. Eine Fehleru"berpru"fung (Parity) findet bei der Implementierung in diesem Fall nicht statt.
+\begin{math}w \gg 0\end{math} deutet darauf hin das dei Interruptroutine nicht zu groß ausfallen sollte, da sonst die Ausführung sonstiger
+Programme zu kurz kommt.
+Nutzt man also das Modul, so muss zuvor eine Baudrate für die serielle Übertragung festgelegt werden, und im Interrupt-Segment eingetragen
+werden. Für die Platine ist eine Baudrate größer als 115.200 nicht empfehlenswert, da sonst die eigentlichen Programmteile nicht mehr
+ausreichend zur Ausführung kommen.
+\item[Puls Weit Modulation]
+Mittels Puls-Weit-Modulation läßt sich an digital angeteuerten geräten analogen Verhalten erzeugen.
+Dabei wird die Trägheit der jeweiligen elektromechanischen Gerätes augenutzt um die digitalen Impulse zu einer monoton steigenden Funktion zu
+,,wandeln''. 
+Man unterteilt ein Zeitintervall $I$ äquidistant in $n$ kleinere Zeitintervalle $z_{i}$ mit $i = 0,...,n$. 
+Geht man davon aus das ein Ausgang zwei Zustände $low$ und $high$ einnehmen kann, und das jedes Zeitintervall $z_{i}$
+In jedem Zeitintervall $z_{i}$ wählt man nun ein $t_{i}$ mit $0 < t_{i} < |z_{i}|$ ab welchem .
 
+Jedes der kleinen Zeitintervalle $z_i$ repräsentiert einen 
 
-
-Die Serielle Schnittstelle nutzt den Interrupt um ein korrektes Timing zu erreichen. Der Befehl RETIW kürzt den Zeitraum bis zum nächsten Rollover
-Interrupt um den Betrag im Akkumulator W. So lässt sich die Frequenz relativ genau an den gewünschte Wert anpassen.
-Bei einer Taktfrequenz von 50 MHz benötigt ein Zyklus 20 Nanosekunden (Bis auf Sprungbefehle benötigt jede Instruktion nur einen
-Zyklus).
-Die genaue Taktung erreicht man durch den Interrupt.
-Bei einer Baudrate von 115200 muß alle x ns eine Abtastung auf eine eingehendes Signal erfolgen.
-
-Die UART (Universal Asynchronous Receiver / Transmitter) ist ein Chip (Baustein), die zur Kommunikation u"ber eine serielle Schnittstelle beno"tigt wird. Kommunikation bedeute hier Datenaustausch u"ber Input- bzw. Output-Leitungen.
-Die UART u"bertra"gt im Modus 8n1 8-Bit-Daten serialisiert in einem Rahmen, der aus einem Start-Bit und einem Stop-Bit besteht. 
-
- Daraus ergeben sich die Datenu"bertragungsparameter Parita"tsart (even, none, odd, space, mark), Anzahl der Datenbits (5-8), Anzahl der Stopbits (1-2) und die Anzahl der pro Sekunde folgenden Bits (Baudrate; 300-115200). Diese Parameter werden durch entsprechende Software an den seriellen Ein-Ausgabe-Baustein (UART- Universal Asynchroneous Receive and Transmit) u"bermittelt, der die Datenu"bertragung an der seriellen Schnittstelle (COM) steuert. Die Datenu"bertragung ist im wesentlichen von der Leistungsfa"higkeit des UART-Schaltkreises abha"ngig. Insbesondere wird die Baudrate durch verschiedene Schaltkreistypen beschra"nkt (vgl. Bild 8: z.B. UART 8250 bis 19,2 kBaud). 
-
-
-Die meisten AVR-Typen haben eine Hardware-UART eingebaut. Das Wort UART sagt zuna"chst einmal nur aus, da? 
-es sich um einen universellen Sende-Empfa"nger handelt, der asynchron Daten u"bertra"gt. Die asynchrone Datenu"bertragung erfolgt
- im Gegensatz zur synchronen ohne separates Taktsignal. Deshalb ist nur eine Sende- und eine Empfangsleitung sowie eine Masseleitung
-  erforderlich. Ein UART-Empfa"nger mu? das eintreffende Signal mit einer mehrfachen Taktferquenz abtasten und so das Taktsignal ru"ckgewinnen. Das setzt ein akkurates Timing beim UART-Sender voraus. Man kann eine UART durchaus als reine Software-Lo"sung realisieren und Bascom bietet diese Mo"glichkeit auch. Aber das kostet sehr viel Rechenzeit (und Programmspeicher), bringt Fehler in der Datenu"bertragungsrate mit sich und la"?t logischerweise keine hohen U"bertragungsraten zu. Bitte achten sie in der Bascom-Hilfe genau darauf, ob sich ein bestimmter Befehl auf die Hard- oder Software-UART bezieht und bringen Sie beides nicht durcheinander.
-
-Datenwort: Die gebra"uchlichste U"bertragungsart fu"r ein Datenwort ist 8N1, also 8 Datenbits, kein (N) Parita"tsbit und 1 Stopbit. Die Hardware-UART des AVR bietet mehr Mo"glichkeiten (z.B. auch 9 Datenbits), aber das will ich hier nicht behandeln. Bascom verwendet standardma"?ig 8N1.
-
-
-Um eine Frequenz von 115 Baud zu realisieren benötigt man eine 4 mal so hohe Abtastfrequenz.
-
-Je nach Fre
-
-Der 
-
-
-Abtastung 1/4 der Baudrate
-Um nun ca. alle 0,008695652 Sekunden ein Signal zu senden 
-
-Alle 256 Zyklen wird ein Rollover Interrupt ausgelöst bei einer Taktfrequenz von 50 MHz sind das 50.000.000 Instr/s = 20 Nano Sekunden pro Instr.
-
-1/50000000=0.000 000 020 Sec -> 20 NanoSek;;  50_000_000 Cyc/sec 460800 Cyc/Sec ==> 108,5069444
-
-TaktFrequenz/4*Baudrate = Anzahl der Instruktionen bis Interrupt ausgelöst werden soll.
-
-
-Tabelle
-Baudraten
-von bis 
-max = 
-
-
-
-115200 Baud -> 115200 Bit/s
-
-460800 bit/s ->0.000_002_17  = ca 2,17 mycroSec
-
-1/115200 => alle 0,000_00868 Sec eine Bit setzten
-
-also ca. alle 0,000_00212 Sec einmal Abtasten
-
-\item[PWM]
-Die Puls-Weit-Modulation ist ein Verfahren zur ...
-
-
+Für eine monoton steigende Funktion wie in ------ Abbildung------ wechselt nun der Zustand von logisch 0 auf logisch
+Innerhalb eines Zeitintervalls $z_i$ wechselt der 
 reverse iterations
 
+\begin{figure}
+  \center
+  \includegraphics[width=400pt]{pwm.eps}
+  \caption{Puls Weit Modulation einer linearen Funktion}
+  \label{pwm}
+\end{figure}
 
-----Bild von approximierter Kurve------!!!
-\item[Speicher]
-mini seriell
 \item[SPI]
 mux 
 \item[Sensorik]
@@ -665,8 +651,8 @@ Rückkopplung
 \newpage
 \section{Fazit}
 Die Wahl des Microcontrollers hat sich als gut erwiesen, da sich eine gut handhabbare Programmstruktur erstellen lies. Das dies nicht nur aus der
-Sicht eines Informatikers so ist hat die Schulung des Münchner Projektteams im Mai 2002 gezeigt. Auch in Zukunft wird die Platine dort auch in anderen
-für den mechatronischen Bereich genutzt werden. Ebenso hat die Arbeit gezeigt wie wichtig der Austausch zwischen den Teammitgliedern und den
+Sicht eines Informatikers gilt, hat die Schulung des Münchner Projektteams im Mai 2002 gezeigt. Auch in Zukunft wird die Platine dort in anderen
+mechatronischen Projekten genutzt werden. Ebenso hat die Arbeit gezeigt wie wichtig der Austausch zwischen den Teammitgliedern und den
 beteiligten Disziplinen für eine adäquate Anforderungslösung ist.
 \section{Ausblick}
 Anleitung
