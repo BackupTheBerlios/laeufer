@@ -14,7 +14,7 @@ Elemente nicht unmittelbar mit dem Fahrer verdrahten, der bei der Fahrt meist be
 Dieser Abschnitt widmet der Kommunikation zwischen den Elementen des Läufers, insbesondere zwischen der zentralen
 Steuereinheit, hier durch einen PDA realisiert, und ihren Klienten. Verschiedene Möglichkeiten der Konstruktion
 eines Datenübertragungssysteme werden beschrieben und bewertet werden, mit einer abschließenden Beschreibung der ge-wählten
-Kommunikationsinfrastruktur.
+Kommunikations- und Gerätesteuerungsinfrastruktur.
 
 
 \section{Vorüberlegung}
@@ -183,6 +183,8 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
 	Insbesondere ist, rein komparativ gesehen, eine Unterstützung seitens der Sponsoren, sowohl materiell als auch
 	mit Informationen und praktischer Unterstützung ein relevantes und jedenfalls im Zweifelsfall den Ausschlag gebendes Kriterium.
+	Eine wesentliche Einschränkung ergab sich zudem durch den gewählten Controller der im Läufer verwendeten Mehrzweck-Platinen, der
+	nur eine sehr beschränkte Menge an Speicherplatz für Programme bietet.
 	%
 
 
@@ -315,7 +317,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 	Frames) 111 Bit.\\
 	Das Protokoll selbst läßt die genaue Hardware-Implementierung
 	offen, gängig sind jedoch Raten von 1 Mb/s bei minimalem
-	Verdrahtungsaufwand, was unsere Minimalanforderungen mehr als
+	Verdrahtungsaufwand, was die Minimalanforderungen mehr als
 	abdeckt.
 
 
@@ -338,7 +340,11 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 
 	%
 
-%	\subsection{Konklusion}
+	\subsection{Konklusion}
+Schlussendlich fiel die Wahl auf das CAN-Protokoll, nicht nur aufgrund der guten Feature-Abdeckung, sondern auch
+und insbesondere wegen der Unterstützung bei dessen Verwendung, die seitens der Sponsoren des Läufer-Projektes geleistet wurde und des
+allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
+
 
 %% -- fixme -- %%
 \newpage
@@ -398,8 +404,8 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 
 	\subsection{Verbleibende Anforderungen}
 	Die wesentliche verbleibende Anforderung ist somit die erste Forderung der Korrektheit, die eine Notifikation
-	des Senders im Falle einer fehlgeschlagenen Übertragung voraussetzt. Bevor wir uns über die Bedeutung dieser Forderung
-	klar werden
+	des Senders im Falle einer fehlgeschlagenen Übertragung voraussetzt; weitere Eigenschaften, wie ein verallgemeinertes
+	Initialisierungsprotokoll erscheinen zwar ebenfalls hilfreich, können jedoch auf einer höheren Ebene nachgereicht werden.
 
 
 \newpage
@@ -411,44 +417,54 @@ MCP2510 der Firma Microchip Technology Inc.
 verwenden), war somit gefallen. Diese liefern die bereits zuvor für diverse Abschätzungen verwendete Übertragungsrate
 von 1 Mb/s.
 
-%KILLME%
-Offen stand jedoch noch das zu verwendende Datenprotokoll; verbreitete Protokolle sind, insbesondere in Europa,
-das CANopen-Protokoll, wobei auch DeviceNet und das Smart Distributed System (SDS) sicher Optionen gewesen wären,
-sich jedoch hierzulande durch ihre Verwendung keine unmittelbaren Vorteile ergeben hätten. CANopen jedoch, zu dem
-unter Umständen bereits fertige Komponenten verfügbar gewesen wären, wenn auch deren Verwendbarkeit aufgrund der
-besonderen Konstruktion des Läufers zweifelhaft erscheinen würde, ist ein sehr komplexes Protokoll, dessen
-Implementierung, gerade auch, da die sich ergebenden Vorteile in ihrem Nutzen bestenfalls beschränkt wären,
-unnötigen Aufwand ohne nennenswerten Lerneffekt verursacht hätte.
+Es stand jedoch noch die Wahl des auf CAN aufsetzenden Datenprotokolles offen; zwar lieferte CAN selbst bereits, wie
+beobachtet, die notwendigsten Eigenschaften zur Datenübertragung, doch Übertragung auf reinem CAN ist sehr primitiv, erlaubt
+nur, Datenpakete ``an alle interessierten Zuhörer'' zur Verfügung zu stellen. Zur gerichteten, sequentiellen Datenübertragung
+und zum Geräte-Management bedarf es weiterer Konventionen, in Form von Datenübertragungsprotokollen.\\
+Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommunikationsprotokolles:
 
 
-%	\subsection{CANopen}
-%% -- fixme: Mention it at the very least -- %%
+	\subsection{Smart Distributed System (SDS)}
+	Das Smart Distributed System \ref{SDS}, von Honeywell Inc. entwickelt, ist ein primär zur Automatisierung von
+	Produktionssystemen gedachtes Komplettpaket von Sensoren und Aktuatoren, das bis zu 64 physikalische Einheiten miteinander
+	verknüpfen kann. Aufgrund seiner Propriarität, des geringen Bekanntheitsgrades in Europa und der wenig
+	fahrzeugtechnischen Orientierung wirdmeten wir diesem System keine besondere Aufmerksamkeit.
 
 
-%	\subsection{DeviceNet}
-%% -- fixme: Mention it at the very least -- %%
+	\subsection{CANopen}
+	Das CANopen-Protokoll \ref{CANopen} ist ein Protokoll, das sich durch Reichtum an Features und Umfang auszeichnet und seit 1995
+	von der internationalen
+	{\it Can in Automation}- Gruppe (CiA) gepflegt wird. CANopen bietet verschiedenste Kommunikationsmodelle und selbst erweiterte
+	Funktionalität wie die automatische Konfiguration von Busteilnehmern oder die Synchronisierung von Zeitmessungsgeräten oder
+	synchrone Client-Server-\\Kommunikation ``auf Antrag'' über einen dedizierten Server (den sogenannten Service-Data-Object-Server).\\
+	Zentral für dieses Protokoll ist der Begriff des ``Object dictionary'', eines zentralen Repositoriums, dessen Inhalt
+	durch alle Kommunikationsteilnehmer, ihre konfigurierbaren Felder und deren Typen\footnote{mit einem sehr eingeschränkten, mschinell
+	  orientierten Typbegriff, wie in Laufzeitsystemen verbreitet} gebildet wird.\\
+	Schon angesichts dieser selbstbezüglichen Eigenschaften wird die grosse Mächtigkeit dieses Protokolles klar, zugleich jedoch
+	ist erkennbar, daß es weit mehr bietet als für diesen Bereich nötig und, insbesondere, bei einer manuellen Implementierung
+	auf unsrer beschränkten Hardware unnötigen Overhead in Daten- und Programmspeicher verursachen würde. 
 
-%	\subsection{Smart Distributed System (SDS)}
-%% -- fixme: Mention it at the very least -- %%
+
+	\subsection{DeviceNet}
+	DeviceNet \ref{DeviceNet}, ein mit SDS vergleichbares Protokoll der {\it Open DeviceNet Vendor Association}, ist, wie
+	dieses, primär zu Automationszwecken gedacht. Die Spezifikation dieses Protokolles ist jedoch, wie bei DeviceNet, nur auf
+	Bestellung gegen Entgelt erhältlich; da der Einsatz von DeviceNet-spezifischen Hardwarekomponenten keinen relevanten
+	Vorteil zu versprechen schien, wurde von einer genaueren Evaluierung von DeviceNet abgesehen.
 
 
 	\subsection{Eigenentwicklung}
-%	Zuletzt blieb nun noch die Möglichkeit einer auf die Bedürfnisse des Läufers zugeschnittenen Eigenlösung.
-%KILLME:
-	Daher schien uns die Möglichkeit einer auf die Bedürfnisse des Läufers zugeschnittenen Eigenlösung als die Vielversprechendste.
-%STOP KILLING ME
-
-	Diese
+	Zuletzt blieb noch die Möglichkeit eines selbst entworfenen, auf CAN aufsetzenden Protokolles. Diese
 	hatte zwar zunächst den unmittelbaren Nachteil, noch nicht entworfen worden zu sein, in Anbetracht der Nicht-
-	verfügbarkeit existierender Implementierungen der andren genannten Protokolle für diese Plattform jedoch andererseits
-	den Vorteil, mit moderaten Entwurfsaufwand den Implementierungsaufwand den Bedürfnissen des Läufers gegenüber angemessen
+	verfügbarkeit existierender Implementierungen der andren genannten Protokolle für die von uns gewählte Plattform jedoch andererseits
+	den Vorteil, mit moderaten Entwurfsaufwand den Implementierungsaufwand den\\ Bedürfnissen des Läufers gegenüber angemessen
 	gestaltbar zu sein.
+
 
 	\subsection{Fazit}
 	Schlußendlich fiel unsre Entscheidung schon sehr früh auf eine eigene Entwicklung, da der Aufwand für eine vollständige
 	Implementierung bereits existierender Protokolle (soweit ihre Spezifikationen überhaupt öffentlich verfügbar waren) unseres
 	Ermessens nach wesentlich höher gewesen wäre, wohingegen die Einschränkung eines dieser Protokolle keine
-	merklichen Vorteile gegenüber einem solchen eignen Protokoll erwirkt hätte. 
+	merklichen Vorteile gegenüber einem eigenen solchen erwirkt hätte.
 
 
 \newpage
