@@ -46,7 +46,7 @@ die zur Bemessung der gesuchten Qualität dienenden Kriterien niederzuschreiben u
 nicht zuletzt gegeneinander abzuwägen, denn eine vollständige Ordnung muß sein, jedenfalls für ein
 eindeutiges Urteil.
 
-Das diese Abwägung nicht einfach sein muß, ist einleuchtend, doch führen wir sie trotz dieser
+Da\ss\ diese Abwägung nicht einfach sein muß, ist einleuchtend, doch führen wir sie trotz dieser
 Vorüberlegung zunächst aus, um eine Beurteilungsbasis zu bilden. Was also sind jene Meßlatten,
 die wir unsrer Kommunikationslösung anlegen wollen?
 
@@ -64,7 +64,7 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 	  \item{Nichtrrivialit\"at}
         \end{enumerate}
 
-        Von diesen drei Forderungen ist insbesondere die Nummer \ref{j-correct-2} erläuterungsbedürftig. In Kommunikationssystemen
+        Von diesen vier Forderungen ist insbesondere die Nummer \ref{j-correct-2} erläuterungsbedürftig. In Kommunikationssystemen
         kommt es erfahrungsgemäß vor, daß versandte Pakete aufgrund von unangemessen ausgelösten Fehlerbehandlungen (üblicherweise,
         wenn die Bestätigung der Gegenseite einem unbemerkten Übertragunsfehler zum Opfer fiel) wiederholt versandt werden.
         Unsere obige Forderung ist auf zwei Weisen erfüllbar, nämlich zum Einen, indem verhindert wird, daß
@@ -161,14 +161,14 @@ die wir unsrer Kommunikationslösung anlegen wollen?
         Kommunikation zwischen Peripherie und PDA sollte in beide Richtungen möglich sein.
 
 
-        Diese Forderung ergibt sich unmittelbar aus der Notwendigkeit, Informationen, wie, zum Beispiel, die aktuelle Reisegeschwindigkeit,
+        Diese Forderung ergibt sich unmittelbar aus der Notwendigkeit, Informationen, wie zum Beispiel die aktuelle Reisegeschwindigkeit,
         aus Peripheriegeräten auszulesen, verbunden mit der Notwendigkeit, Ger\"ate auch regulieren zu k\"onnen\footnote{Es ist praktisch nicht
 	  haltbar, die Ger\"ate in Ein- und Ausgabeger\"ate zu separieren; als Beispiel sei ein Scheinwerfer genannt, der ein Durchbrennen
 	  der von ihm gesteuerten Gl\"uhbirne erkennen und dem PDA mitteilen kann.}.
 
         %
 
-        \subsection{Unterstützung für mehr als einen Client}
+        \subsection{Unterstützung für mehr als ein angeschlossenes Ger\"at}
 
         Es sollte möglich sein, mehr als ein Peripheriegerät mit dem PDA kommunizieren zu lassen.
 
@@ -249,7 +249,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         Die einfachsten Dinge sind oft auch die besten, daher wollen wir zunächst die Direktverbindung des PDAs mit der Peripherie über direkte
         Kabelverbindungen betrachten.
 
-        Diese Lösung erfüllt zunächst unsre Minimalanforderungen, erlaubt beliebig viele Peripheriegeräte und ist an Bandbreite und Latenz nur durch
+        Diese Lösung erfüllt zunächst unsere Minimalanforderungen, erlaubt beliebig viele Peripheriegeräte und ist an Bandbreite und Latenz nur durch
         den Systembus des SX-Controllers begrenzt. Doch schon hier stellt sich die erste Frage: Wie verbindet man die Controller direkt an ihrem
         Systembus? Ein Arbitrierungsmechanismus müßte herbei, um den Verlust von \"Ubertragungen zu verhindern\footnote{Dritte Forderung
 	  der Korrektheit}. Aber
@@ -312,10 +312,10 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         \subsection{Controller Area Network (CAN)}
 
         Das Controller Area Network, 1986 von der Robert Bosch AG zur
-        Multi-Master-Kommunikation im Auftrag von Mercedes entwickelt,
+        Multi-Master-Kommunikation im Auftrag von Mercedes-Benz entwickelt,
         erfreut sich heutzutage einer wachsenden Beliebtheit auch bei
         anderen KFZ-Her-\\stellern wie BMW, Porsche, Fiat etc., wird
-        auch außerhalb der Automobilbranche genutzt.
+        aber auch außerhalb der Automobilbranche genutzt.
 
 
         Das CAN-Protokoll ist ein reines Kommunikationsprotokoll
@@ -378,8 +378,12 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
 	CAN selbst abgedeckt werden:
 
         \begin{enumerate}
-          \item{{\bf Korrektheit}: Wir erinnern uns an die drei geforderten Eigenschaften:
+          \item{{\bf Korrektheit}: Wir erinnern uns an die vier geforderten Eigenschaften:
             \begin{enumerate}
+            \item{{\it Wenn ein Datum den Empfänger erreicht, muß es zuvor versandt worden sein}:
+              Wird trivial von CAN erfüllt.}
+            \item{{\it Wenn ein Datum den Empfänger mehrfach erreicht, muß seine Semantik idempotent sein}:
+              Die Prämisse gilt in CAN nicht, somit muß die Konklusion nicht erfüllt werden.}
             \item{{\it Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}:
               Diese Implikation wird von CAN nicht selbst erfüllt; ein erweiterndes Protokoll müßte
               sie sich zur Aufgabe setzen. In unmittelbarem Zusammenhang damit ergibt sich ein praktisch
@@ -387,11 +391,8 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
               Folge haben, ohne, daß die Kommunkation unbedingt zusammengebrochen wäre. Diese Situation
               erfordert Neuversendungen der alten Daten, wird jedoch nicht von CAN abgedeckt, da dieses
               Protokoll keine empfangenen Sendungen quittiert.
+	    \item{Daten\"ubertragung mu\ss\ nichttrivial sein}
             }
-            \item{{\it Wenn ein Datum den Empfänger erreicht, muß es zuvor versandt worden sein}:
-              Wird trivial von CAN erfüllt.}
-            \item{{\it Wenn ein Datum den Empfänger mehrfach erreicht, muß seine Semantik idempotent sein}:
-              Die Prämisse gilt in CAN nicht, somit muß die Konklusion nicht erfüllt werden.}
             \end{enumerate}
           }
           \item{{\bf Hinreichende Transferrate}: Marktübliche Implementierungen liefern 1 Mb/s; bei Wahl eines hinreichend
@@ -403,8 +404,8 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
             als gefordert.
           }
           \item{{\bf Geringe Latenzzeiten}:
-            Die Latenzen in CAN sind, wie allgemein in Bus-Systemen üblich, minimal. Bei 111 für schlechtest
-            mögliche Frames liegt die Latenz unter 0.00012s, was darüberliegenden Protokollen viel
+            Die Latenzen in CAN sind, wie allgemein in Bus-Systemen üblich, minimal. Bei schlechtest
+            möglichen Frames liegt die Latenz unter 0.00012s, was darüberliegenden Protokollen viel
             Freiraum einräumt.
           }
 
@@ -426,7 +427,7 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
         \end{enumerate}
 
         \subsection{Verbleibende Anforderungen}
-        Die wesentliche verbleibende Anforderung ist somit die erste Forderung der Korrektheit, die eine Notifikation
+        Die wesentliche verbleibende Anforderung ist somit die dritte Forderung der Korrektheit, die eine Notifikation
         des Senders im Falle einer fehlgeschlagenen Übertragung voraussetzt; weitere Eigenschaften, wie ein verallgemeinertes
         Initialisierungsprotokoll erscheinen zwar ebenfalls hilfreich, können jedoch auf einer höheren Ebene nachgereicht werden.
 
@@ -442,7 +443,9 @@ von 1 Mb/s.
 
 Es stand jedoch noch die Wahl des auf CAN aufsetzenden Datenprotokolles offen; zwar lieferte CAN selbst bereits, wie
 beobachtet, die notwendigsten Eigenschaften zur Datenübertragung, doch Übertragung auf reinem CAN ist sehr primitiv, erlaubt
-nur, Datenpakete ``an alle interessierten Zuhörer'' zur Verfügung zu stellen. Zur gerichteten, sequentiellen Datenübertragung
+nur, Datenpakete ``an alle interessierten Zuhörer'' zur Verfügung zu stellen\footnote{
+Die zuvor erw\"ahnten ``Adressierungsmechanismen'' sind somit nur Konventionen des Auslesens.
+}. Zur gerichteten, sequentiellen Datenübertragung
 und zum Geräte-Management bedarf es weiterer Konventionen, in Form von Datenübertragungsprotokollen.\\
 Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommunikationsprotokolles:
 
@@ -461,7 +464,7 @@ Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommu
         Funktionalität wie die automatische Konfiguration von Busteilnehmern oder die Synchronisierung von Zeitmessungsgeräten oder
         synchrone Client-Server-\\Kommunikation ``auf Antrag'' über einen dedizierten Server (den sogenannten Service-Data-Object-Server).\\
         Zentral für dieses Protokoll ist der Begriff des ``Object dictionary'', eines zentralen Repositoriums, dessen Inhalt
-        durch alle Kommunikationsteilnehmer, ihre konfigurierbaren Felder und deren Typen\footnote{mit einem sehr eingeschränkten, mschinell
+        durch alle Kommunikationsteilnehmer, ihre konfigurierbaren Felder und deren Typen\footnote{mit einem sehr eingeschränkten, maschinell
           orientierten Typbegriff, wie in Laufzeitsystemen verbreitet} gebildet wird.\\
         Schon angesichts dieser selbstbezüglichen Eigenschaften wird die grosse Mächtigkeit dieses Protokolles klar, zugleich jedoch
         ist erkennbar, daß es weit mehr bietet als für diesen Bereich nötig und, insbesondere, bei einer manuellen Implementierung
@@ -470,7 +473,7 @@ Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommu
 
         \subsection{DeviceNet}
         DeviceNet \cite{DeviceNet}, ein mit SDS vergleichbares Protokoll der {\it Open DeviceNet Vendor Association}, ist, wie
-        dieses, primär zu Automationszwecken gedacht. Die Spezifikation dieses Protokolles ist jedoch, wie bei DeviceNet, nur auf
+        dieses, primär zu Automationszwecken gedacht. Die Spezifikation dieses Protokolles ist jedoch nur auf
         Bestellung gegen Entgelt erhältlich; da der Einsatz von DeviceNet-spezifischen Hardwarekomponenten keinen relevanten
         Vorteil zu versprechen schien, wurde von einer genaueren Evaluierung von DeviceNet abgesehen.
 
@@ -478,7 +481,7 @@ Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommu
         \subsection{Eigenentwicklung}
         Zuletzt blieb noch die Möglichkeit eines selbst entworfenen, auf CAN aufsetzenden Protokolles. Diese
         hatte zwar zunächst den unmittelbaren Nachteil, noch nicht entworfen worden zu sein, in Anbetracht der Nicht-
-        verfügbarkeit existierender Implementierungen der andren genannten Protokolle für die von uns gewählte Plattform jedoch andererseits
+        verfügbarkeit existierender Implementierungen der anderen genannten Protokolle für die von uns gewählte Plattform jedoch andererseits
         den Vorteil, mit moderaten Entwurfsaufwand den Implementierungsaufwand den\\ Bedürfnissen des Läufers gegenüber angemessen
         gestaltbar zu sein. Die wesentlichste Schwachstelle dieser Vorgehensweise war die h\"ohere Fehleranf\"alligkeit einer
 	Eigenimplementierung.
@@ -487,10 +490,10 @@ Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommu
         \subsection{Fazit}
         Schlußendlich fiel unsre Entscheidung schon sehr früh auf eine eigene Entwicklung, da der Aufwand für eine vollständige
         Implementierung bereits existierender Protokolle (soweit ihre Spezifikationen überhaupt öffentlich verfügbar waren) unseres
-        Ermessens nach wesentlich höher gewesen wäre, wohingegen die Einschränkung eines dieser Protokolle keine
+        Ermessens nach wesentlich höher gewesen wäre, wohingegen die Verwendung einer eingeschr\"ankten Version eines dieser Protokolle keine
         merklichen Vorteile gegenüber einem eigenen solchen erwirkt hätte. Eine (entsprechend fehlertr\"achtige) Eigenimplementierung
-	w\"are in jedem Fall n\"otig; es war uns nicht m\"oglich, frei verf\"ugbare Implementierungen der genannten Protokolle f\"ur den
-	SX-Prozessor aufzutreiben.
+	w\"are in jedem Fall n\"otig, auch, da nach unserem Kenntnisstand keine frei verf\"ugbare Implementierungen der genannten Protokolle f\"ur den
+	SX-Prozessor verf\"ugbar sind.
 
 
 \newpage
@@ -568,9 +571,9 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 \begin{itemize}
   \item {{\bf Schicht 1: Physical Layer}: Diese Schicht findet sich in Verdrahtung, dem MCP2510, dem SX-Microcontroller, und den
     dazwischenliegenden Verbindungen.}
-  \item {{\bf Schicht 2: Data Link Layer}: Die Fehlererkennung dieser Schicht ist im CAN-Protokoll spezifiziert, findet sich ent-
-    sprechend physikalisch auf dem MCP2510.}
-  \item {{\bf Schicht 3: Network Layer}: Ansteuerung der Komponenten wird, im Rahmen der CAN-spezifizierten Vorgaben, von einem
+  \item {{\bf Schicht 2: Data Link Layer}: Die Fehlererkennung dieser Schicht ist im CAN-Protokoll spezifiziert, findet sich entsprechend
+    physikalisch auf dem MCP2510.}
+  \item {{\bf Schicht 3: Network Layer}: Ansteuerung der Komponenten wird, im Rahmen der CAN-spezifizierten Adresskonventionen,
     von einer Implementierung des LLO-Protokolls realisiert. Die wesentliche Arbeit dabei wird durch Filtermechanismen im MCP2510
     implementiert.}
   \item {{\bf Schicht 4: Transport Layer}: Die Zerteilung in einzelne Pakete führt die LLO-Implementierung durch.}
@@ -587,14 +590,14 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 \newpage
 
 \section{Das LLO-Protokoll}
-Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unsren Korrektheitsforderungen
+Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unseren Korrektheitsforderungen
 (die ja zu zwei Dritteln schon von CAN erfüllt wurden). In diesem Rahmen stellt es zusätzliche Sicherheitsmechanismen
 und ein Multi-Master-Protokoll, das sich auf CAN implementieren
 läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref{llo-proto}}).}.
 
         \subsection{Struktur des Protokolls}
 
-        Das LLO-Protokoll ist ein prinzipiell multi-Masterfähiges Protokoll, das die Nutzung der Möglichkeiten von Multi-Master-
+        Das LLO-Protokoll ist ein prinzipiell Multi-Masterfähiges Protokoll, das die Nutzung der Möglichkeiten von Multi-Master-
         Sendungen jedoch auf asynchrone Notifikationen einschränkt. Somit existiert ein tatsächlicher Master in diesem Netzwerk,
         der als Controller bezeichnet wird; er erhält zugleich eine der 32 im Bus verfügbaren Adressen (1) fest zugewiesen.
         Eine weitere Adresse ist für explizite Broadcasts (z.B. für eine totale Systemabschaltung im Falle der Entfernung des
@@ -659,11 +662,11 @@ läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Se
 
 	Tats\"achlich treten in der Praxis jedoch oft sequentielle Ausf\"alle auf, in denen ein vorheriger Ausfall
 	die Wahrscheinlichkeit f\"ur einen erneuten Ausfall erh\"oht. Die Berechnung der Ausfallwahrscheinlichkeit
-	hierf\"ur ist aufwendiger, da die Wahrscheinlichkeitsfunktion selbst wesentlich komplexer ist; die
-	prinzipielle Vorgehensweise ist jedoch identisch.
+	hierf\"ur ist aufwendiger, im Allgemeinfall jedoch aufgrund des stochastischen Zusammenhanges aller relevanten
+	Zufallsvariablen nicht m\"oglich.
 
 	F\"ur allgemein geringe Fehlerwahrscheinlichkeiten ist eine solche Steigerung der Fehlerwahrscheinlichkeit aufgrund
-	eines vorhergehenden Fehlers mit einer Verschlechterung des Verhaltens verbunden, die mit gr\"o\ss\ eren Sequenznummermengen
+	eines vorhergehenden Fehlers mit einer Verschlechterung des Verhaltens verbunden, die mit gr\"o\ss eren Sequenznummermengen
 	besser aufgefangen werden k\"onnte.
 
         \subsubsection{Keep-Alive}\label{jd-llo-kal}
@@ -710,14 +713,14 @@ läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Se
 
 Das LLZ-Protokoll ist ein zustandsbasiertes Protokoll, das eine feste Maximallänge von Botschaften vorsieht (16 Bytes, mit einer Minimallänge von einem Byte) und
 eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch fehlenden Aspekt des
-Korrektheitskriteriums\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion \ref{llz-proto}).}.
+Korrektheitskriteriums, die Erkennung der Nichterreichung ihres Ziels durch eine Nachricht\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion \ref{llz-proto}).}.
 
         \subsection{Struktur des Protokolls}
 
         LLZ definiert Kommunikation zwischen genau zwei Teilnehmern, von denen einer dedizierter Sender und der andere Empfänger ist (somit
 	\"uberl\"a\ss t es die Handhabung gr\"o\ss erer Mengen von Teilnehmern dem darunterliegenden LLO-Protokoll).
         Beide können Kommunikation initiieren, aber nur der Sender kann eine Antwort ``erzwingen'' lassen; zudem
-        ist er auch derjenige, der den Zustand des\\ Empfängers kontrolliert.\\
+        ist er auch derjenige, der den Zustand des Empfängers kontrolliert.\\
         Das LLZ-Protokoll wird in mehreren Instanzen verwendet, wobei maximal eine pro Kanal des unterliegenden Protokolles angeboten wird
         (bei LLO werden aufgrund der maximal 30 verwendeten nicht-Controller-\newline Adressen also höchstens 30 Instanzen des Protokolls zugleich ausgeführt).
 
@@ -741,7 +744,7 @@ Korrektheitskriteriums\footnote{Die vollständige Protokollspezifikation findet s
         Bei der Bestätigung der erfolgreichen Initialisierung vermittels des {\tt IOK}-Blockes wird eine Tabelle der von diesem
         Gerät unterstützten Befehle mitverschickt; diese Tabelle ist bitweise kodiert, wobei in 16 Bytes Raum für 128 Befehle geschaffen wurde.
         Eine spezifische Wahl der Befehlscodes wurde im Rahmen dieser Studienarbeit nur zu Testzwecken durchgeführt und wird späteren
-        Implementierern überlassen, um nach genauerer Auswahl der zu verendenden Peripherie eine Abstimmung deren Priorit\"aten untereinander
+        Implementierern überlassen, um nach genauerer Auswahl der zu verwendenden Peripherie eine Abstimmung deren Priorit\"aten untereinander
 	den mit der tats\"achlichen Betriebsweise vertrauteren Entwicklern zu \"uberlassen.\\
         Der Vorteil einer derart versandten Tabelle ist eine eingeschränkte ``Plug-and-Play''- Nachrüstbarkeit der Peripherie, sowie
 	die M\"oglichkeit f\"ur
@@ -770,7 +773,7 @@ Korrektheitskriteriums\footnote{Die vollständige Protokollspezifikation findet s
 	  \item{Das Designprinzip des doppelten Zustandsautomaten wird erzwungen, da alle ``relevanten'' Zust\"ande nun
 	    PDA-seitig dupliziert werden. Dies nimmt den Entwicklern Designfreiraum, ohne ihnen Funktionalit\"at vorzuenthalten,
 	    was uns aufgrund der Wahl der endg\"ultigen Entwickler sinnvoll erschien.}
-	  \item{Im Fehlerfall k\"onnen neuere Botschaften \"altere auch serverseitig \"uberschreiben und unn\"otigen Neuversand
+	  \item{Im Fehlerfall k\"onnen neuere Botschaften \"altere auch Senderseitig \"uberschreiben und unn\"otigen Neuversand
 	    verhindern (nach explizitem \"Ubertragungsabbruch)}
 	\end{enumerate}
 

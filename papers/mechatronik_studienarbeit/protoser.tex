@@ -1,0 +1,64 @@
+\chapter{Serielle Protokollschicht: LSP-Protokoll, Version 0}
+
+Alle folgenden Aussagen beziehen sich auf Version 0 des Protokolls, mit Ausnahme
+explizit gekennzeichneter Stellen.\\
+
+Das LSP-Protokoll transferiert ``namenlose'' Datenbl\"ocke unspezifizierter
+L\"ange \"uber eine serielle Verbindung. Es spezifiziert ``Blocks'', die die
+atomaren Einheiten der \"Ubertragung darstellen (und deren Semantik dar\"uberliegenden
+Protokollschichten \"uberl\"a\ss t) und stellt sicher, da\ss\ f\"ur eine fehlerfreie
+Leitung die eintreffenden Bl\"ocke eindeutig erkannt werden k\"onnen.
+
+Zur \"Ubertragung wird auf 8-Bit-Zeichen zur\"uckgegriffen.
+
+\section{Zeichenvorrat}
+\begin{tabular}{l|c|l}
+{\bf Code} & {\bf Name} & {\bf Bedeutung} \\
+\hline
+{\tt 0x00--0xef} & & Freie Zeichen \\
+{\tt 0xf0} & {\tt SOB} & Blockstart \\
+{\tt 0xf1} & {\tt EOB} & Blockende \\
+{\tt 0xf2} & {\tt ESC} & Escape \\
+{\tt 0xf3--0xf7} & -- & {\it reserviert} \\
+{\tt 0xf8--0xff} & & Freie Zeichen \\
+\end{tabular}
+
+Der Zeichenvorrat teilt sich in die Menge der Freien Zeichen, und in
+die Menge der Kontrollzeichen $\{${\tt 0xf0 \ldots 0xf7}$\}$.
+
+\section{Block}
+Ein {\it Block} ist eine Sequenz von Zeichen aus dem Zeichenvorrat, deren erstes
+Zeichen ein {\tt SOB} und deren letztes Zeichen ein {\tt EOB} ist, und f\"ur die
+gilt, da\ss\ sie ansonsten keine weiteren Vorkommnisse von Kontrollzeichen mit Ausnahme
+von {\tt ESC} wie in \ref{j-lsp-encoding} angegeben.
+
+Blocks werden in der Reihenfolge, in der sie definiert sind, sequentiell uebertragen und
+empfangen.
+
+\section{Nachrichtenkodierung}\label{j-lsp-encoding}
+Um eine beliebige Folge auf dem kompletten Zeichenvorrat in einen Block
+zu kodieren, wird vorgegangen wie folgt:
+
+\subsection{Blockbeginn}
+Zu Beginn der  Folge wird ein {\tt SOB} angegeben.
+
+\subsection{Elemente des Zeichenvorrates}
+F\"ur alle Zeichen aus der Sequenz wird in der gegebenen Reihenfolge folgendes
+in den Block eingetragen:
+\begin{itemize}
+  \item{{\tt b}, falls das zu \"ubertragende Zeichen {\tt b} und ein Element der
+    Freien Zeichen ist.}
+  \item{{\tt ESC $\text{\tt b}^\prime$}, falls das \"ubertragende Zeichen {\tt b} kein
+    Element der Freien Zeichen ist und $\text{\tt b}^\prime = b \mod \text{\tt 0x10}$.
+  }
+\end{itemize}
+
+\subsection{Blockende}
+Nachdem alle Elemente der Folge eingetragen wurden, wird {\tt EOB} eingetragen.
+
+
+\section{Nachrichtendekodierung}
+Um einen Block in die urspruengliche Folge zu dekodieren, wird invers zu \ref{j-lsp-encoding}
+vorgegangen. Bei allen Zeichen, die einem {\tt ESC} folgen, werden dabei die h\"ochstwertigen
+vier Bit gesetzt, um das urspr\"ungliche Zeichen wiederherzustellen.
+

@@ -1,5 +1,5 @@
 
-\section{Protokoll-Layer 0: LLZ-Protokoll, Version 0}
+\chapter{Protokoll-Layer 0: LLZ-Protokoll, Version 0}
 %-------------------------------------------
 Alle folgenden Aussagen beziehen sich auf Version 0 des Protokolls, mit
 Ausnahme explizit gekennzeichneter Stellen.\\
@@ -18,15 +18,15 @@ Im folgenden bezeichnet $\prec X$ das Ereignis, daß die Botschaft X empfangen
 wurde, und $X \succ$ das vollständige und erfolgreiche Versenden der Botschaft X,
 ebenso wie $\rightarrow X$ (Senden) und $\leftarrow X$ (Empfangen).\\
 
-\subsection{Kommunikation}
+\section{Kommunikation}
 %----------------
 Jegliche Kommunikation, mit Ausnahme einer Notifikation, wird von einem
 Sender ausgelöst.\\
 
-\subsubsection{Synchrone Kommunikation}
+\subsection{Synchrone Kommunikation}
 %---------------------------
 
-\paragraph{Operationen und Semantik\\}
+\subsubsection{Operationen und Semantik}
 F\"ur jedes Ger\"at ist eine Menge von Operationen definiert. Diese
 Operationen d\"urfen durch eine bestimmte Anzahl von Bytes parameterisiert sein.
 F\"ur jede mit $\overline{x}$ parametrisierte Operation $p(\overline{x})$ gilt,
@@ -36,7 +36,7 @@ Operationen nur Zustand {\it setzen} und {\it keine relativen Modifikationen} an
 durchf\"uhren.
  
 
-\paragraph{Request\\}
+\subsubsection{Request}
 %-------------
 Eine synchrone Kommunikation beginnt mit einem Request, der vom Sender
 ausgelöst wird. Die Notation hierfür ist (aus Sender-Sicht)\\
@@ -56,7 +56,7 @@ $\rightarrow$ {\tt REQ(2) SET-STATE 7}\\
 Auf einen Request muß ein Response folgen. Protokollimplementierungen
 müssen also eventuell vorher eingehende Notifikationen zurückstellen.\\
 
-\paragraph{Response\\}
+\subsubsection{Response}
 %--------------
 Aus Sender-Sicht ist die Notation hierfür wie folgt:
 
@@ -66,13 +66,13 @@ $\leftarrow$ & {\tt RES(n) <OP> [Value]*}\\
 
 Wobei {\tt <OP>} eine Wiederholung des Operationscodes aus dem Request ist.
 
-\paragraph{Kommando\\}
+\subsubsection{Kommando}
 %--------------
 Statt einem Request kann auch ein Kommando ({\tt CMD} statt {\tt REQ}) abgesetzt werden.
 Der einzige Unterschied ist, daß keine Response hierauf generiert wird.
 
 
-\subsubsection{Asynchrone Notifikation}
+\subsection{Asynchrone Notifikation}
 %---------------------------
 Der Empfänger kann asynchron Notifikationen absetzen. Diese Notifikationen
 sind wie Responses aufgebaut, haben als Transmissionsoperation (s. 1.3) jedoch
@@ -84,7 +84,7 @@ unangemessen mißbrauchen, per {\tt SDN} zu deaktivieren.
 Jeder Einheit ist jedoch eine Notifikation pro Sekunde zuzugestehen.
 
 
-\subsubsection{Spezifikation der Transmissionspakete}
+\subsection{Spezifikation der Transmissionspakete}
 %-----------------------------------------
 Alle Übertragungen sind Byte-basiert. Ein Transmissionspaket mit einem
 Payload der Länge n+1 sieht aus wie folgt:
@@ -111,7 +111,7 @@ Der Präfix hat folgende Form:
 \end{tabular}
 
 
-\subsubsection{Transmissionsoperationen}\label{j-app-1.3.1}
+\subsection{Transmissionsoperationen}\label{j-app-1.3.1}
 %------------------------------
 \ \vspace{0.3cm}\\
 
@@ -138,7 +138,7 @@ Der Präfix hat folgende Form:
 \end{tabular}
 
 
-\paragraph{Protokollfehler\\}\label{j-app-1.3.2}
+\subsubsection{Protokollfehler}\label{j-app-1.3.2}
 %---------------------
 Falls ein Sender eine ungültige Übertragung absetzt, muß der Empfänger
 ihn darüber benachrichtigen. Zu diesem Zweck ist {\tt TOP ERR} definiert. 
@@ -159,21 +159,21 @@ Die folgenden Werte für {\tt ERC} sind definiert:
 \end{tabular}
 \ \vspace{0.3cm}\\
 
-\subsection{Payload}
+\section{Payload}
 %----------
 LLZ v0 überträgt Datenpakete einer Größe von 1 bis 16 Bytes. Das erste
 Byte, als ``Operation'' bezeichnet, muß immer vorhanden sein. 
 
 
-\subsection{Lebenslauf von Kommunikationsteilnehmern}\label{j-app-3}
+\section{Lebenslauf von Kommunikationsteilnehmern}\label{j-app-3}
 %-------------------------------------------
 
 Der Lebenslauf von Sendern wird in dieser Spezifikation nicht behandelt.
 Empfänger jedoch werden von Sendern initialisiert und, bei Bedarf, deaktiviert;
-die entsprechenden Zustände und Übergänge finden sich in 3.1.
+die entsprechenden Zustände und Übergänge finden sich in \ref{j-app-3.1}.
 
 
-\subsubsection{Empfänger}
+\subsection{Empfänger}\label{j-app-3.1}
 %--------------
 Das LLZ-Protokoll definiert folgende Zustände eines Empfängers:
 \ \vspace{0.3cm}\\
@@ -202,18 +202,18 @@ Das LLZ-Protokoll definiert folgende Zustände eines Empfängers:
 %	+--------+
 
 
-In Zusatenden {\bf S0}, {\bf S1} und {\bf S3} werden alle Messages ignoriert, die nicht
+In Zust\"anden {\bf S0}, {\bf S1} und {\bf S3} werden alle Messages ignoriert, die nicht
 zu einem Zustandsübergang führen.
 
 
-\subsubsection{Shutdown}
+\subsection{Shutdown}
 %------------
 Beim Erreichen des {\tt DOWN}-Zustandes sollte das Kommunikationsprotokoll, soweit
 möglich, das zugrundeliegende System informieren, so daß dies einen
-gesicherten "Failsafe"-Betriebszustand einnehmen kann.
+gesicherten ``Failsafe''-Betriebszustand einnehmen kann.
 
 
-\subsubsection{Initialisierung des Empfängers}
+\subsection{Initialisierung des Empfängers}
 %-----------------------------------
 Die korrekte Sequenz zur Initialisierung eines Empfängers verläuft aus
 Sicht des SENDERS wie folgt:
@@ -239,7 +239,7 @@ x (für x $>$ 7) ist also in Hochsprachensemantik wie folgt:
 Dies erlaubt die Deklaration der Operationen 0-127. Die Deklaration dient
 Debugzwecken und ist in dieser Protokollversion nicht verbindlich.
 
-\paragraph{Versionsunterschiede\\}\label{j-app-3.3.1}
+\subsubsection{Versionsunterschiede}\label{j-app-3.3.1}
 %--------------------------
 Falls die Protokollversion des Senders vom Empfänger nicht unterstützt
 wird, muß er mit {\tt ERR(1)} antworten. Der
