@@ -1,27 +1,69 @@
 
-\section{Problemstellung}
+\section{Problemstellung}\label{mw_problem}
 
 Nach den im vorangegangenen Kapitel beschriebenen großen Erfolgen des
 Projektes im Bereich der bisherigen Schwerpunkte stellte sich für das
 Projekt die Frage nach der Steuerung der vielen geplanten Komponenten
-des Läufers. Eine Einzelverdrahtung der Komponenten ist nicht
-gewünscht, da die dabei verwendeten Kabel zusätliches Gewicht bedeuten
-würden und ein solches System auch wenig systematisch Erweiterbar ist.
+des Läufers.
 
-Aufgrund dieser Überlegungen kam ein erster Prototyp zustande, der im
-Rahmen einer Studienarbeit am Fachbereich Maschinenbau \cite{Schlinge}
-entwicklet wurde.  Basis dieses Entwurfs ist die Idee, 
+Steuerung meint in diesem Zusammenhang sowohl die automatische
+Steuerung und Regelung der Komponenten als auch die Einflußnahme des
+Fahrers auf diesen Regelungsprozess. Die Einflußnahme des Fahrers
+kann z.B. durch das Betätigen von Schaltern und Knöpfen, aber auch
+durch die Art und Weise, wie er in die Pedale tritt, zum Ausdruck
+kommen.  Das zu entwickelnde System muß also sowohl offensichtliche
+Interaktion mit dem Fahrer als auch eine umfassende Sensorik
+unterstützen.
+
+Die Problemstellung des Projektes geht jedoch über diese Anforderungen
+an die Funktionalität eines zu entwickelnden Systems hinaus.  Im
+Projekt sind zusätzliche Randbedingungen zu beachten.  So stand zu
+Beginn dieser Arbeit noch nicht fest, welche Komponenten denn nun
+tatsächlich ihren Weg in die Produktion der geplanten zehn Fahrzeuge
+finden wird.  Auch war nicht auszuschließen, daß sich zu den bereits
+angedachten Systemen weitere gesellen werden.  Eine solche Lage
+fordert eine große Flexibilität des im Rahmen dieser Arbeit
+entworfenen und entwickelten Systems.
+
+Eine weitere spezifische Problemstellung ist die Zusammenarbeit der
+verschiedenen Fachrichtungen.  Im Bereich der Zusammenarbeit zwischen
+Maschinenbau und Informatik reicht es eben nicht, eine gemeinsame
+Sprache zu finden, wie in \cite{Ortner} für die Zusammenarbeit
+zwischen Wirtschaftswissenschaftlern und der Informatik gefordert.
+
+Vielmehr ist es im Rahmen einer solchen Zusammenarbeit zusätzlich
+erforderlich, eine Schnittstelle zu definieren.  Diese Schnittstelle
+wird von der Informatik zur Verfügung gestellt und auf dieser
+Schnittstelle können dann die anderen beteiligten Fachgebiete ihr
+individuelles Wissen einbringen.  So ist es wohl wenig sinnvoll, wenn
+ein Informatiker die Entscheidungen über die zukünftige Fahrdynamik
+des Läufers trifft.  Der Maschinenbauer, bei dem diese Entscheidung
+natürlich sinnvoll angesiedelt ist, benötigt zur Umsetzung solcher
+Entscheidungen allerdings Zugriff auf die wesentlichen Systeme des
+Läufers.
+
+Vor dem Hintergrund all dieser Überlegungen ist in enger
+Zusammenarbeit mit den anderen am Projekt beteiligten der folgende
+Entwicklungsauftrag entworfen worden.
 
 
 
 \newpage
 \section{Entwicklungsauftrag}
 
-Gemeinsam mit den Projektleitern haben die Autoren dieser Arbeit die
-folgenden Aufgaben einer Mechatronik im Läufer zusammen gestellt.  Das
-es sich um ein mechatronisches System handeln sollte, war recht früh
-klar, da nur dies dem hohen technischen Niveau der restlichen
-Komponenten des Läufers gerecht werden würde.
+
+Die im vorangegangenen Abschnitt beschriebene Problemstellung läßt
+sich am sinnvollsten mittels eines mechatronischen Systems
+bearbeiten.  [DEF MECHATRONIK]
+
+Nur mit Hilfe der programmierbaren Elektronik läßt sich die große
+Flexibilität und Erweiterbarkeit praktisch umsetzen.  Auch bietet eine
+Mechatronik die Möglichkeit, eine (Software-)Schnittstelle anzubieten,
+auf der die anderen Projektteilnehmer dann arbeiten können.
+
+Eine Gliederung des Auftrags hat die folgenden Arbeitsgebiete ergeben,
+die auch in Abbildung \ref{mw_einteilung} noch einmal gezeigt
+werden:
 
 \begin{description}
 \item [Fahrerinterface] Der Läufer wird wie im vorangegangenen Kapitel
@@ -46,13 +88,16 @@ Komponenten des Läufers gerecht werden würde.
   
 \item [Mechatronische Komponenten] Im Bereich der mechatronischen
   Komponenten soll den Entwicklern aus dem Projekt ein Rahmen
-  geschaffen werden, den sie dann ausfüllen können.  Ziel ist es, eine
-  Steuerplatine zu entwickeln, die allen möglichen Einsatzszenarien
-  innerhalb des Läufers gerecht wird.  Zusätzlich soll durch die
-  Bereitstellung einer Code-Bibliothek der Zugriff auf die Funktionen
-  der Platine weitestgehend vereinfacht werden.  Details zu diesem
-  Teil des mechatronischen Systems werden in Kapitel \ref{cr_kapitel}
-  beleuchtet.
+  geschaffen werden, den sie dann ausfüllen können.  Dieser Rahmen ist
+  eine Platine, die allen möglichen Einsatzszenarien innerhalb des
+  Läufers gerecht wird.  Ergänzt wird die Entwicklung der Platine
+  durch durch die Bereitstellung einer Code-Bibliothek. durch die der
+  Zugriff auf die Funktionen der Platine weitestgehend vereinfacht
+  wird.  Diesen Rahmen aus Soft- und Hardware können die anderen
+  Projektteilnehmer dann mit Ihrem spezifischen Wissen ausfüllen,
+  indem sie z.B. Eingaben aus den Sensoren mit Aktionen der Platine
+  verknüpfen.  Details zu diesem Teil des mechatronischen Systems
+  werden in Kapitel \ref{cr_kapitel} beleuchtet.
 \end{description}
 
 Zusammengefaßt läßt sich somit sagen, daß eine Art Framework für die
@@ -89,7 +134,7 @@ geplanten weiteren Projektverlauf. Im einzelnen sind dies die
 folgenden Anforderungen:
 
 \begin{description}
-\item [Design] Der Läufer lebt von seinem außergewöhnlichen Design.
+\item [Design:] Der Läufer lebt von seinem außergewöhnlichen Design.
   In dieses muß sich folglich eine Mechatronik mit all ihren
   Komponenten integrieren.  Dies hat offensichtliche Implikationen
   beim Fahrer-Interface aber auch weitaus subtilere bei der Wahl des
@@ -97,13 +142,13 @@ folgenden Anforderungen:
   Kabelbäume, die für den Benutzer sichtbar im Fahrzeug verlegt sind,
   sind im Läufer ganz offensichtlich fehl am Platz.
   
-\item [Energieeffizienz] In einem Fahrzeug, dessen gesamtes
+\item [Energieeffizienz:] In einem Fahrzeug, dessen gesamtes
   Energiesystem aus den Muskeln der Fahrer gespeist wird, ist der
   sinnvolle Umgang mit der Energie natürlich sehr wichtig.  Auch dies
   hat Implikationen im gesamten Mechatronik-System, da jedes
   elektronische System elektrische Energie verbraucht.
   
-\item [Attraktivität für Industriepartner] Das Projekt Läufer
+\item [Attraktivität für Industriepartner:] Das Projekt Läufer
   finanziert sich zu weiten Teilen aus Industriepartnern.  Um das vom
   Projekt angestrebte Ziel einer Kleinserie von zehn Fahrzeugen
   erreichen zu können, muß dies auch für die mechatronischen
@@ -112,26 +157,26 @@ folgenden Anforderungen:
   übersteigt ihr Wert doch mit Sicherheit die normalen Finanzmittel
   eines studentischen Projektes.  Bei den Entscheidungen, die im
   Rahmen der Entwicklung der Mechatronik zu treffen sind, muß dieser
-  Gesichtspunkt also ebenfalls Berücksichtigt werden.
+  Gesichtspunkt also ebenfalls berücksichtigt werden.
   
-\item [Verfügbarkeit] Die verwendeten Produkte und Tools sollen auf
-  jeden Fall in Stückzahlen verfügbar sein, da sie direkt in die
+\item [Verfügbarkeit:] Die verwendeten Produkte und Tools sollen auf
+  jeden Fall in großen Stückzahlen verfügbar sein, da sie direkt in die
   Fertigung der Nullserie übernommen werden sollen.
   
-\item [Handhabbarkeit durch Ingenieure] Das entwickelte
+\item [Handhabbarkeit durch Ingenieure:] Das entwickelte
   Mechatronik-Framework soll durch die Ingenieure des Projektes Läufer
   genutzt werden, um ihre mechatronischen Anwendungen zu realisieren.
   Bei den Schnittstellen, die diese Entwickler verwenden sollen, ist
   also darauf zu achten, sie verständlich und kompakt zu halten.
   Außerdem ist eine regelmäßige Rücksprache mit den Ingenieuren
-  geboten, um Ihre Anforderungen möglichst exakt zu erfüllen.
+  geboten, um ihre Anforderungen möglichst exakt zu erfüllen.
   
-\item [Erweiterbarkeit] Zum Zeitpunkt des Erstellens dieser Arbeit
+\item [Erweiterbarkeit:] Zum Zeitpunkt des Erstellens dieser Arbeit
   steht noch nicht fest, welche mechatronischen Systeme der Läufer
   erhalten soll.  Es muß also sichergestellt sein, daß das entwickelte
   Framework erweiterbar ausgelegt ist.
 
-\item [Sicherheit und Fehlertoleranz] Diese Anforderung ist nahezu
+\item [Sicherheit und Fehlertoleranz:] Diese Anforderung ist nahezu
   selbsterklärend.  Beim mechatronischen System eines Fahrzeugs spielt
   die Sicherheit natürlich eine sehr große Rolle.  Gemeint ist hier
   nicht unbedingt die Sicherheit vor Manipulation durch dritte, wie in
@@ -152,3 +197,33 @@ folgenden Anforderungen:
 \end{description}
 
 \section{Aufteilung der Gesamtaufgabe in Einzelaufgaben}
+Die weiter oben schon beschriebene und auch in Abbildung
+\ref{mw_einteilung} dargestellte Einteilung des Auftrags folgt nicht
+nur technischen Überlegungen.  Ebenfalls berücksichtigt wurde eine
+sinnvolle Aufteilung der Arbeit auf die drei Autoren.
+
+Besonders wichtig ist in diesem Zusammenhang der Zuschnitt des
+Bereichs ,,Kommunikation''; Dieser wurde so gewählt, obwohl damit eine
+Implementierung auf beiden Seiten (Platine und PDA) einhergeht.  Grund
+hierfür ist, daß eine Entwicklung von Kommunikation nur in einer Hand
+funktionieren kann.  Zu dieser Überlegung führten intensive Gespräche
+auch mit unseren Industriepartnern.  Eine Aufteilung dieses Bereichs
+anhand der Kommunikationsteilnehmer bereitet viel größeren Aufwand, da
+sich die auf beiden Seiten beteiligten viel häufiger abgleichen
+müssen. Zusätzlich steigt die Gefahr von Missverständnissen.
+
+
+Die Bereiche wurden schliesslich unter den Autoren wie folgt verteilt:
+
+\begin{description}
+\item [Fahrerinterface] Markus Weimer
+\item [Kommunikation] Christoph Reichenbach
+\item [Mechatronische Komponenten] Christian Rüdiger
+\end{description}
+
+\begin{figure}
+  \center
+  \includegraphics[width=13.5cm]{mw/bilder/einteilung.eps}
+  \caption{Schema des zu entwickelnden Gesamtsystems}
+  \label{mw_einteilung}
+\end{figure}
