@@ -24,7 +24,8 @@ Busteilnehmer als LLO-Clients (kurz: Clients) bezeichnet, auch, wenn diese
 Bezeichnung ihre Möglichkeiten nicht voll würdigt.\\
 
 In dieser Spezifikation wird Bezug auf Timeouts genommen. Diese Timeouts
-werden nicht explizit spezifiziert, mit Ausnahme des Keep-Alive-Timeouts.\\
+werden nicht explizit spezifiziert, mit Ausnahme des Keep-Alive-Timeouts,
+um Implementierern die Wahl Bus-spezifische angemessene Timeouts zu erlauben.\\
 
 
 \subsubsection{Clients}
@@ -49,7 +50,7 @@ des Gerätes auf einer untergeordneten Ebene möglich (z.B. Hardware-Reset).\\
 \subsubsection{Controller zu Client-\"Ubertragungen}
 %---------------------------------------
 
-\paragraph{Synchrone \"Ubertragungen}
+\paragraph{Synchrone \"Ubertragungen\\}
 %------------------------------
 Eine Übertragung von einem Controller zu einem Client erfolgt unangekündigt
 mit einer Sequenz von STX-Paketen (Synchronous Transfer); aus Sicht des
@@ -60,17 +61,45 @@ Masters:
   $\rightarrow$	& {\tt ACK(id, more)}\\
 \end{tabular}
 
+Graphisch dargestellt:
+
+\vspace{0.3cm}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\hline
+{\tt 010IIIII } & {\tt X00MSSSS } & {\tt LLLLLLLL} & \hspace{1cm} $\cdots$ {\tt SIZE} bytes $\cdots$ \hspace{1cm} \\
+\hline
+\hline
+\end{tabular}
+
+\vspace{0.3cm}
+
+\begin{tabular}{|c|c|}
+\hline
+\hline
+	  {\tt 011IIIII }
+	  &
+	  {\tt X00MSSSS } \\
+\hline
+\hline
+\end{tabular}
+
+\vspace{0.3cm}
+
 Wobei die Bedeutungen wie folgt sind:\vspace{0.3cm}\\
 
-\begin{tabular}{lp{10cm}}
-{\bf Name}	& {\bf Bedeutung}\\
+\begin{tabular}{lcp{8cm}}
+{\bf Name}	& {\bf K\"urzel} & {\bf Bedeutung}\\
 \hline
 
-{\tt STX}	& Synchronous Transfer: Operationscode\\
-{\tt ACK}	& Acknowledgement: Operationscode\\
-{\tt more}	& Flag, welches indiziert, ob noch mehr Daten in diesem	Kommunikationsstrom folgen\\
-{\tt size}	& Menge an folgenden Datenbytes\\
-{\tt data}	& Sequenz von {\it size} Bytes an Daten\\
+{\tt STX}	& {\tt 010}	& Synchronous Transfer: Operationscode\\
+{\tt ACK}	& {\tt 011}	& Acknowledgement: Operationscode\\
+{\tt more}	& {\tt M}	& Flag, welches indiziert, ob noch mehr Daten in diesem	Kommunikationsstrom folgen\\
+{\tt size}	& {\tt L}	& Menge an folgenden Datenbytes\\
+{\tt id}	& {\tt I}	& Identit\"at des Clients (Client-Kanals)\\
+{\tt seqnr}	& {\tt S}	& Sequenznummer (s. \ref{j:p1:ferr})\\
+{\tt reserviert}	& {\tt X}	& Reserviertes Bit\\
+{\tt data}	& 	& Sequenz von {\it size} Bytes an Daten\\
 \end{tabular}
 \vspace{0.3cm}\\
 
@@ -88,7 +117,7 @@ Nach einer angemessenen Anzahl von versuchten Neuübertragungen wird
 schliesslich eine Fehlermeldung an die aussendende Stelle ausgegeben oder
 (falls keine solche Stelle existiert) intern behandelt werden.\\
 
-\paragraph{Broadcast-Übertragung}
+\paragraph{Broadcast-Übertragung\\}
 %----------------------------
 
 Broadcast-Übertratungen entsprechen Übertragungen, bei denen die
@@ -108,33 +137,36 @@ $\leftarrow$  & {\tt ACK(id, more)}\\
 \end {tabular}
 
 Die Übetragungen finden statt, sobald der Controller explizit mit einer
-NOP-Anweisung den Bus freigibt. In diesem Fall werden R-Übertragungen von
+NOP-Anweisung den Bus freigibt oder pausiert. In diesem Fall werden R-Übertragungen von
 dem ausgewiesenen Sender akzeptiert, bis eine Übertragung nicht mehr das
 'more'-Flag gesetzt hat oder ein unbehebbarer Fehler auftrat.
 Jede erfolgreiche Übertragung wird mit einem {\tt ACK} bestätigt.
 
 
-\subsubsection{Fehlererkennung und -behandlung}
+\subsubsection{Fehlererkennung und -behandlung}\label{j:p1:ferr}
 %-----------------------------------
 Das LLO-Protokoll geht von einem selbst fehlererkennenden Protokoll aus,
 daher testet es nur auf Fehler, die eine Netz-Trennung zwischen Controller
 und Client indizieren.
 
 
-\paragraph{Sequenznummern}
+\paragraph{Sequenznummern\\}
 Jede synchrone und asynchrone Übertragung erhöht einen Sequenzzähler
 sowohl auf der Seite des Clients wie auch des Controllers; dieser Zähler
 hat den initialen Zustand 0 und zählt aufwärts, in Schritten der Grösse
 1, Modulo 16. Sein Zustand wird in jeder Übertragung mitgesandt und danach
 erhöht, mit der expliziten Ausnahme von {\tt SYS}-,
 {\tt KAL}- und {\tt NOP}-Übertragung (bei denen er nur
-mitgesandt, aber nicht erhöht wird) sowie Broadcasts.\\
+mitgesandt, aber nicht erhöht wird) sowie Broadcasts\footnote{Da die Sequenznummern von
+Broadcasts nicht definierbar sind. Der Nichterfolg eines Broadcasts kann somit
+nur durch Timeout der Best\"atigung erkannt werden. Dies bedeutet, dass die Empfangsreihenfolge
+f\"ur Broadcasts nicht garantiert ist und reduziert deren Nutzen auf globale Fehlermeldungen.}.\\
 Für {\tt STX} und {\tt RTX} werden hierbei zwei getrennte Zähler verwendet, um
 bei gepipelinetem Versandt eine eindeutige Zuordnungsfähigkeit der Nummern
 zu gewährleisten.
 
 
-\paragraph{Übertragungen im Fehlerfall}
+\paragraph{Übertragungen im Fehlerfall\\}
 Falls bei einer Übertragung ein Fehlerfall diagnostiziert wird, wird diese
 Übertragung entweder entweder erneut durchgeführt (wenn der Fehler vom
 Sender diagnostiziert wurde), oder es wird- entweder anstelle eines {\tt ACK}
@@ -170,7 +202,7 @@ Im Falle eines Übertragungsabbruches müssen auch die Einheiten, die
 die Nachricht korrekt erhalten haben, die aktuelle Übertragung abbrechen,
 um Konsistenz zu gewährleisten.
 
-\paragraph{SYN-Request}
+\paragraph{SYN-Request\\}
 %-----------------
 Ein {\tt SYN}-Request ist eine synchrone {\tt STX}-Übertragung, die eine size von 0
 hat. Sie dient der Synchronisierung der Sequenznummern und ist wie eine
@@ -181,7 +213,7 @@ ein {\tt SYN}-Paket schicken, um die Synchronität der Sequenzzähler zu
 gewährleisten.
 
 
-\paragraph{Systemcodes}
+\paragraph{Systemcodes\\}
 %-----------------
 Bei einem SYS werden Systemcodes (meist Fehlercodes) mitversandt.
 Sie sind definiert wie folgt:
@@ -205,7 +237,7 @@ Geräte in den sicheren Betriebszustand zurückzufahren (und damit den Bus
 effektiv zu deaktivieren).
 
 
-\paragraph{Timeout}
+\paragraph{Timeout\\}
 %-------------
 Bei synchronen Versendungen wird ggf. in einem spezifizierten Zeitraum kein {\tt ACK}
 vom Empfänger erhalten. In diesem Fall wird das Paket erneut versandt
@@ -223,6 +255,36 @@ so müssen sich alle Clients in einen sicheren Betriebszustand zurückfahren.
 %------------------------------------
 Dieses Kapitel dokumentiert die Standardkodierung der Pakete; implementierende
 Systeme können eine eigene, angemessenere Kodierung verwenden.
+
+
+Graphisch pr\"asentiert sich die Kodierung wie folgt:
+
+\vspace{0.3cm}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\hline
+{\tt OOOIIIII } & {\tt XVVMSSSS } & {\tt LLLLLLLL} & \hspace{1.5cm} $\cdots$ {\tt SIZE} bytes $\cdots$ \hspace{1.5cm} \\
+\hline
+\hline
+\end{tabular}\\
+\vspace{0.3cm}
+
+
+{wobei manche Befehle nur zwei Bytes verwenden und die Bedeutung der Abk\"urzungen wie folgt ist:}
+
+
+\begin{tabular}{cp{10cm}}
+{\bf K\"urzel} & {\bf Bedeutung}\\
+\hline
+
+{\tt O}	& Synchronous Transfer: Operationscode\\
+{\tt I}	& Identit\"at des Clients (Client-Kanals)\\
+{\tt X}	& Reserviertes Bit\\
+{\tt V}	& Versionsnummer\\
+{\tt M}	& Flag, welches indiziert, ob noch mehr Daten in diesem	Kommunikationsstrom folgen\\
+{\tt S}	& Sequenznummer (s. \ref{j:p1:ferr})\\
+{\tt L}	& Menge an folgenden Datenbytes\\
+\end{tabular}
 
 
 \subsubsection{Erstes Präfixbyte}

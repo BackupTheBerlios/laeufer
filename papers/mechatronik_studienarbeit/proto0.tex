@@ -7,7 +7,8 @@ Ausnahme explizit gekennzeichneter Stellen.\\
 Das LLZ (Läufer Layer Zero)- Protokoll realisiert eine asynchrone
 und synchrone Kommunikation über einen existierenden sicheren Transferkanal.
 'Sicher' hat hierbei die Bedeutung, daß die erfolgreiche Übertragung
-garantiert wird. Kommt die Übertragung nicht zustande, muß ein Fehler auf
+mit hoher Sicherheit ``garantiert'' wird; kommt die Übertragung nicht zustande,
+tritt der Garantiefall ein und es muß ein Fehler auf
 der darunterliegenden Protokollebene ausgelöst werden.
 Das Protokoll unterscheidet zwischen Empfänger- und Senderstationen, die
 verschiedene Rechte und Pflichten haben.\\
@@ -25,7 +26,17 @@ Sender ausgelöst.\\
 \subsubsection{Synchrone Kommunikation}
 %---------------------------
 
-\paragraph{Request}
+\paragraph{Operationen und Semantik\\}
+F\"ur jedes Ger\"at ist eine Menge von Operationen definiert. Diese
+Operationen d\"urfen durch eine bestimmte Anzahl von Bytes parameterisiert sein.
+F\"ur jede mit $\overline{x}$ parametrisierte Operation $p(\overline{x})$ gilt,
+da\ss\ die Semantik des Empfangs von $p{\overline{x}^\prime}$ nach $p{\overline{x}}$
+gleich der Semantik des Empfangs von $p{\overline{x}^\prime}$ ist, also, da\ss\ alle
+Operationen nur Zustand {\it setzen} und {\it keine relativen Modifikationen} an ihm
+durchf\"uhren.
+ 
+
+\paragraph{Request\\}
 %-------------
 Eine synchrone Kommunikation beginnt mit einem Request, der vom Sender
 ausgelöst wird. Die Notation hierfür ist (aus Sender-Sicht)\\
@@ -45,7 +56,7 @@ $\rightarrow$ {\tt REQ(2) SET-STATE 7}\\
 Auf einen Request muß ein Response folgen. Protokollimplementierungen
 müssen also eventuell vorher eingehende Notifikationen zurückstellen.\\
 
-\paragraph{Response}
+\paragraph{Response\\}
 %--------------
 Aus Sender-Sicht ist die Notation hierfür wie folgt:
 
@@ -55,7 +66,7 @@ $\leftarrow$ & {\tt RES(n) <OP> [Value]*}\\
 
 Wobei {\tt <OP>} eine Wiederholung des Operationscodes aus dem Request ist.
 
-\paragraph{Kommando}
+\paragraph{Kommando\\}
 %--------------
 Statt einem Request kann auch ein Kommando ({\tt CMD} statt {\tt REQ}) abgesetzt werden.
 Der einzige Unterschied ist, daß keine Response hierauf generiert wird.
@@ -64,7 +75,7 @@ Der einzige Unterschied ist, daß keine Response hierauf generiert wird.
 \subsubsection{Asynchrone Notifikation}
 %---------------------------
 Der Empfänger kann asynchron Notifikationen absetzen. Diese Notifikationen
-sind wie Responses aufgebaut, habenals Transmissionsoperation (s. 1.3) jedoch
+sind wie Responses aufgebaut, haben als Transmissionsoperation (s. 1.3) jedoch
 {\tt NTF} statt {\tt RES}. Insbesondere beinhalten sie auch eine Operation.
 Notifikationen dürfen nur bei außergewönlichen Situationen verwendet werden.
 Es bleibt Senderimplementierungen vorbehalten, Empfänger, die Notifikationen
@@ -127,7 +138,7 @@ Der Präfix hat folgende Form:
 \end{tabular}
 
 
-\paragraph{Protokollfehler}\label{j-app-1.3.2}
+\paragraph{Protokollfehler\\}\label{j-app-1.3.2}
 %---------------------
 Falls ein Sender eine ungültige Übertragung absetzt, muß der Empfänger
 ihn darüber benachrichtigen. Zu diesem Zweck ist {\tt TOP ERR} definiert. 
@@ -228,7 +239,7 @@ x (für x $>$ 7) ist also in Hochsprachensemantik wie folgt:
 Dies erlaubt die Deklaration der Operationen 0-127. Die Deklaration dient
 Debugzwecken und ist in dieser Protokollversion nicht verbindlich.
 
-\paragraph{Versionsunterschiede}\label{j-app-3.3.1}
+\paragraph{Versionsunterschiede\\}\label{j-app-3.3.1}
 %--------------------------
 Falls die Protokollversion des Senders vom Empfänger nicht unterstützt
 wird, muß er mit {\tt ERR(1)} antworten. Der

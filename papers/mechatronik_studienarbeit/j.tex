@@ -2,25 +2,25 @@
 
 \section{Einleitung}
 
-Der Läufer ist kein Monolith. Nicht nur kann das wendige Fahrzeug kaum mit einem statischen Felsbrocken
-verglichen werden, sondern auch-- und insbesondere-- ist sein Aufbau modular. Doch die Module schweben, wie
-das im Reich der Hard- und Software nun einmal Sitte ist, nicht in isolierten Welten; Kommunikation,
-Datenübertragung zwischen ihnen ist essenziell, denn Blinker und Scheibenwischer können nicht, oder jedenfalls
-bestenfalls in beschränktem Umfang, über ihre Zustände entscheiden, und zugleich kann und will man diese einzelnen
+Der Läufer ist kein Monolith. Das wendige Fahrzeug kann kaum mit einem statischen Felsbrocken
+verglichen werden, sondern ist in seinem Aufbau modular. Doch die Module sind nicht
+in isolierten Welten; Kommunikation,
+Datenübertragung zwischen ihnen ist sogar essenziell-- Blinker und Scheibenwischer können nicht, oder jedenfalls
+bestenfalls in beschränktem Umfang, über ihre Zustände entscheiden, zugleich kann und will man diese einzelnen
 Elemente nicht unmittelbar mit dem Fahrer verdrahten, der bei der Fahrt meist besseres zu tun hat, als Blinker
 über DIP-Schalter zu konfigurieren.
 
 
-Dieser Abschnitt widmet der Kommunikation zwischen den Elementen des Läufers, insbesondere zwischen der zentralen
+Dieser Abschnitt widmet sich der Kommunikation zwischen den Elementen des Läufers, insbesondere zwischen der zentralen
 Steuereinheit, hier durch einen PDA realisiert, und ihren Klienten. Verschiedene Möglichkeiten der Konstruktion
-eines Datenübertragungssysteme werden beschrieben und bewertet werden, mit einer abschließenden Beschreibung der ge-wählten
+eines Datenübertragungssysteme werden beschrieben und bewertet werden. Am Schluß erfolgt eine Beschreibung der gewählten
 Kommunikations- und Gerätesteuerungsinfrastruktur.
 
 
 \section{Vorüberlegung}
 
-Bevor wir uns in die faszinierende Welt der Datenübertragung stürzen, sollten wir, jedenfalls
-für dieses spezielle Projekt, eine Grundsatzentscheidung treffen: Wollen wir ein möglich
+Bevor wir uns in die faszinierende Welt der Datenübertragung stürzen, sollten wir
+für dieses Projekt eine Grundsatzentscheidung treffen: Wollen wir ein möglichst
 zentral gesteuertes Netzwerk verwenden, in dem das Maximum an Entscheidungen vom PDA
 getroffen wird, oder diese Entscheidungen, soweit möglich, den zu verwenden vorgesehenen SX-Platinen überlassen?
 
@@ -40,8 +40,7 @@ Multi-Master-Bussysstem.}.
 
 \section{Anforderungen an die Kommunikation}
 
-Kommunikation, wenn nicht Selbstzweck-- wie bei allen Dingen-- muß an der Meßlatte
-dessen beurteilt werden, was ihr Ziel und Zweck ist. Um von einer ``guten'' oder ``schlechten''
+Um von einer ``guten'' oder ``schlechten''
 Lösung unsres Kommunikationsproblemes sprechen zu können, stellt sich uns somit zunächst die Aufgabe,
 die zur Bemessung der gesuchten Qualität dienenden Kriterien niederzuschreiben und auszuformulieren,
 nicht zuletzt gegeneinander abzuwägen, denn eine vollständige Ordnung muß sein, jedenfalls für ein
@@ -53,41 +52,47 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
         \subsection{Korrektheit}
 
-        Alle übertragenen Daten müssen korrekt sein.
+        Zun\"achst wollen wir die folgende Forderung stellen:
+	$$\text{\it Alle übertragenen Daten müssen korrekt sein.}$$
 
-
-        Zu diesem Punkt muß mehr gesagt werden, als sein Name hergibt. Korrektheit findet sich auf mehrere
-        Arten und Weisen in unseren Forderungen wieder, die wir hier, milde axiomatisiert, auflisten wollen:
+	Diese Forderung bedarf einer Konkretisierung, die wir f\"ur einzelne \"Ubertragungen wie folgt gestalten:
 
         \begin{enumerate}
-          \item{Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}\label{j-correct-0}
           \item{Wenn ein Datum den Empfänger erreicht, muß es zuvor versandt worden sein}\label{j-correct-1}
           \item{Wenn ein Datum den Empfänger mehrfach erreicht, muß seine Semantik idempotent sein}\label{j-correct-2}
+          \item{Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}\label{j-correct-0}
+	  \item{Nichtrrivialit\"at}
         \end{enumerate}
 
         Von diesen drei Forderungen ist insbesondere die Nummer \ref{j-correct-2} erläuterungsbedürftig. In Kommunikationssystemen
         kommt es erfahrungsgemäß vor, daß versandte Pakete aufgrund von unangemessen ausgelösten Fehlerbehandlungen (üblicherweise,
         wenn die Bestätigung der Gegenseite einem unbemerkten Übertragunsfehler zum Opfer fiel) wiederholt versandt werden.
-        Unsre obige Forderung ist nun auf zwei Weisen erfüllbar, nämlich zum Einen, indem verhindert wird, daß
+        Unsere obige Forderung ist auf zwei Weisen erfüllbar, nämlich zum Einen, indem verhindert wird, daß
         der Empfänger die Botschaft mehrfach erhält, oder zum Anderen, indem auf einer höhergelegenen Interpretationsebene (auf die
-        somit diese Fehlerbehandlung verschoben wird) der Doppelempfang ohne Folgen bleibt.
+        somit diese Fehlerbehandlung verschoben wird) der mehrfache Empfang der gleichen Botschaft-- sofern nicht durch eine
+	andere Botschaft unterbrochen-- ohne Folgen bleibt.
 
-        Die erste Forderung ist in der Praxis auf eine sehr hohe Protokollebene verschiebbar, insbesondere, da wir Bidirektionalität fordern, ihr
-        wesentlicher Vorteil, die Erkennung einer Situation, in der ein bestimmtes Gerät vom Netz abgetrennt wurde, jedoch in
-        genau dieser Situation für dessen bedürfende Geräte durch erzwungene Antworten auf alle an den Empfänger gerichteten
-        Anfragen erreicht werden kann.
+	\subsubsection{Erkennung von Nicht\"ubertragungen}
 
-        Diese drei Implikationen werden unsre Grundforderungen bilden. Da wir jedoch jenseits der Wunderbaren Welt der
-        theoretischen Informatik operieren, werden sie natürlich nur ``in den allermeisten Fällen'' erfüllbar sein,
-        aber diese Aussage bezieht sich natürlich auf alle unsre Forderungen. Diese speziellen Forderungen jedoch sind von der
-        Art, in der sich wenig Verhandlungsspielraum-- im Gegensatz, zum Beispiel, zur Übertragungs-geschwindigkeit-- ergibt, somit
-        müssen wir bei von uns gewählten Technologien stets auf ihre Erfüllung oder Erfüllbarkeit achten.
+        Die erste Forderung ist in der Praxis auf eine sehr hohe Protokollebene verschiebbar, da wir Bidirektionalität des
+	unterliegenden Kommunikationsmechanismusses fordern m\"ussen, indem wir f\"ur jede versandte Anfrage eine explizite
+	Empfangsbest\"atigung verlangen (und zugleich uns versichern, da\ss\ Empfangsbest\'atigungen eindeutig sind). Zwar
+	kann in der Praxis auch die Best\"atigung einer \"Ubertragung verloren gehen, obwohl die \"Ubertragung selbst erfolgreich war,
+	aber eben aus diesem Grund stellten wir die dritte Forderung.
 
-        \subsubsection{Bedeutung der Forderungen}
+        \subsubsection{Nichttrivialit\"at}
 
-        Die Forderungen selbst sind übrigens durch ein triviales Modell bereits erfüllbar, einen {\it wissentlichen Nichtverschicker},
+        Die ersten drei Forderungen sind durch ein triviales Modell bereits erfüllbar, einen {\it wissentlichen Nichtverschicker},
         der kein Datum versendet und den Sender davon in Kenntnis setzt (was die erste Forderung unmittelbar und die beiden anderen
-        trivial erfüllt). Die Forderung, daß überhaupt Daten übertragen werden können, müssen wir somit auch ausdrük-ken.
+        trivial erfüllt). Die Forderung, daß überhaupt Daten übertragen werden können, müssen wir somit auch ausdrücken.
+
+
+        Diese vier Forderungen \"ubernehmen wir nun als Grundforderungen. Da wir jenseits der Wunderbaren Welt der
+        theoretischen Informatik operieren, werden sie natürlich nur ``in den allermeisten Fällen'' erfüllbar sein,
+	da die (verschwindend geringe) Wahrscheinlichkeit eines Bitfehlers auf bearbeitenden Prozessoren jenseits
+	realistischer Kontrollm\"oglichkeiten liegt,
+        aber diese Aussage bezieht sich natürlich auf alle Forderungen, die wir im Verlauf der Anforderungsanalyse
+	stellen werden. Zur Erf\"ullung dieser speziellen Forderungen jedoch wollen wir so geringen Spielraum wie m\"oglich lassen.
 
         %
 
@@ -101,20 +106,23 @@ die wir unsrer Kommunikationslösung anlegen wollen?
         da die Menge der anzuschließenden Geräte nicht fest gegeben ist und somit nur eine Abschätzung gemacht werden kann,
         wieviel diese dann schließlich an ``laufenden'' Informationen benötigen beziehungsweise versenden.
 
-        Unsre Vorüberlegung jedoch, den Geräten größtmögliche Autonomie zu gewähren, legt nahe, daß die Bandbreite überschaubar
-        bleiben kann; betrachten wir dazu einen typischen Extremfall:
+        Unsere Vorüberlegung jedoch, den Geräten größtmögliche Autonomie zu gewähren (also die Kommunikation auf das n\"otige
+	Minimum zu reduzieren), legt nahe, daß die Bandbreite überschaubar
+        bleiben kann; betrachten wir dazu als typischen Extremfall ein oft sendendes Peripherieger\"at (Aufgrund der Autonomie
+	wird die Kontrolleinheit eher selten Daten versenden, da deren Versand erst vom-- im Vergleich sehr tr\"agen-- Benutzer
+	angesto\ss en werden mu\ss ).
 
         \subsubsection{Schnelles Tachyometer}
 
-        Typische Geschwindigkeitsmesser in verwandten Fahrzeugen werden oft nicht häufiger als zwei Mal pro Sekunde mit neuen
-        Informationen versorgt; ein genauer auflösendes Tachyometer könnte zum Beispiel mit der Fernseh-typischen Rate von 25 Hz eine
-        als ständig aktuell erscheinendende Qualität erreichen; bei 24 Bit Datenlast (8 Bit Kennziffer, 16 Bit Information)
+        Typische Geschwindigkeitsmesser in \"ahnlichen Fahrzeugen werden oft nicht häufiger als zwei Mal pro Sekunde mit neuen
+        Informationen versorgt. Ein auf der Zeitachse h\"oher aufl\"osendes Tachyometer k\"onnte jedoch z.B. mit der Fernseh-typischen Rate von 25 Hz
+	diese Informationen versenden; h\"ohere \"Ubertragungsraten sind erfahrungsgem\"ass mit nur geringem praktischem Gewinn verbunden.
+        Bei 24 Bit Datenlast (8 Bit Kennziffer, 16 Bit Information)
         wären dies folglich, in diesem Beispiel, 600 bps für dieses eine Gerät.
 
 
-        Auf die nächsthöhere glatte Zahl aufgerundet (um eventuellen Un-wägsamkeiten, wie Datenverlust, zumindest in einem bescheidenen Maße
-        vorzubeugen) wären dies 1024, für eine geschätzte Obergrenze von 16 Geräten also
-        16384 bps im auf Datenlast eingeschränkten Übertragungs-verkehr-- also Kontrolldaten ignorierend-- als theoretisches Minimum.
+        Auf eine glatte Zahl aufrundend (und sehr grob nach oben absch\"atzend) erhalten wir z.B. 1024, für eine geschätzte Obergrenze von 16 Geräten also
+        16384 bps im auf Datenlast eingeschränkten Übertragungs-verkehr-- Kontrolldaten ignorierend-- als theoretisches Minimum.
         Das ist, aus heutiger Sicht, nicht sehr viel, was aber, nach der Vorüberlegung, unsren Erwartungen grob entspricht.
 
 
@@ -123,9 +131,9 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
         %
 
-        \subsection{Geringe Latenzzeiten}
+        \subsection{Geringe Latenzzeiten und Prioritisierung von Nachrichten}
 
-        Die Zeit, die zwischen dem Versand und dem Eintreffen eines Datenpaketes vergeht, sollte minimal sein.
+        Die Zeit, die zwischen dem Versand und dem Eintreffen eines Datenpaketes vergeht, sollte den gestellten Anforderungen gen\"ugen.
 
 
         Erneut eine eher vage Forderung, die an unsere Argumentation zur nicht-Zentralisiertheit erinnert. Wie 'minimal' die Verzögerung sein
@@ -138,8 +146,13 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
         Eine gute Latenzzeit für diesen Kommunikationsschritt wäre, wie im letzten Kriterium erwähnt, 0.04s; praktisch ausreichend
         wäre jedoch auch eine schlechtere Zeit von 0.1s, da, wie erwähnt, zu guter Letzt doch ``nur'' wieder das Empfinden des Fahrers bedient wird.
+	Im Falle sicherheitskritischer Kommunikation jedoch, wie z.B. busgesteuerten Bremsen, sind im Allgemeinen wesentlich geringere
+	Zeiten n\"otig; dies impliziert die M\"oglichkeit einer Prioritisierung von Nachrichten anhand des angesteuerten Ger\"ates.
+	Da sicherheitskritische Systeme im L\"aufer entweder autark (Getriebe) oder nicht busgesteuert (Bremsen) arbeiten, werden wir
+	f\"ur diese an dieser Stelle keine konkreten Forderungen einbringen. 
 
-        Gerade an diesem Beispiel sieht man natürlich eine zuvor schon oft implizit erwähnte notwendige Anforderung, die als nächstes ausgeführt werden soll.
+        Gerade an diesem Beispiel sieht man natürlich eine zuvor schon oft implizit erwähnte notwendige Anforderung, die als nächstes ausgeführt
+	werden soll.
 
         %
 
@@ -149,7 +162,9 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
 
         Diese Forderung ergibt sich unmittelbar aus der Notwendigkeit, Informationen, wie, zum Beispiel, die aktuelle Reisegeschwindigkeit,
-        aus Peripheriegeräten auszulesen.
+        aus Peripheriegeräten auszulesen, verbunden mit der Notwendigkeit, Ger\"ate auch regulieren zu k\"onnen\footnote{Es ist praktisch nicht
+	  haltbar, die Ger\"ate in Ein- und Ausgabeger\"ate zu separieren; als Beispiel sei ein Scheinwerfer genannt, der ein Durchbrennen
+	  der von ihm gesteuerten Gl\"uhbirne erkennen und dem PDA mitteilen kann.}.
 
         %
 
@@ -158,11 +173,16 @@ die wir unsrer Kommunikationslösung anlegen wollen?
         Es sollte möglich sein, mehr als ein Peripheriegerät mit dem PDA kommunizieren zu lassen.
 
 
-        Ähnlich wie beim vorherigen Punkt, der Bidirektionalität, ergibt sich diese Notwendigkeit aus praktischen Erwägungen. Eine
+        Eine
         Ermangelung an Bidirektionalität oder Mehr-Client-Funktionalität wäre zwar allgemein\\durch Verwendung mehrerer paralleler
-        Kommunikationssysteme aus-\\gleichbar, eine solche Konstruktion ist aufgrund des Mehraufwandes an Hardware und der grundsätzlich
-        anderen Ansteuerung jedoch separat zu handhaben. Die angeklungene Forderung nach einem eher geringen Hard-ware-Aufwand läßt sich
+        Kommunikationssysteme ausgleichbar, eine solche Konstruktion ist aufgrund des Mehraufwandes an Hardware und der grundsätzlich
+        anderen Ansteuerung jedoch separat zu handhaben. Die angeklungene Forderung nach einem eher geringen Hardware-Aufwand läßt sich
         im Übrigen noch verallgemeinern, wie wir im nächsten Punkt sehen werden.
+
+	Nach Diskussion mit dem L\"aufer-Team wurde die Notwendigkeit eine Unterst\"utzung von mehr als zehn separaten Ger\"aten als
+	nicht gegeben eingestuft. Aus Gr\"unden zuk\"unftiger Erweiterbarkeit w\"are eine Unterst\"utzung f\"ur eine gr\"o\ss ere Zahl
+	w\"unschenswert; da diese jedoch nicht n\"aher spezifiziert werden kann, wurde, um die Anzahl der m\"oglichen Protokolle an
+	dieser Stelle nicht unrealistisch einzuschr\"anken, von mindestens 16 Ger\"aten ausgegangen.
         %
 
         \subsection{Geringe Ressourcenanforderungen}
@@ -178,19 +198,20 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
         \subsection{Praktische Realisierbarkeit mit gegebenen Mitteln}
 
-        Das Kommunikationssystem muß an finanziellem und technischem Aufwand realistisch implementierbar sein.
+        Das Kommunikationssystem muß finanziell und technisch realistisch implementierbar sein.
 
 
         Insbesondere ist, rein komparativ gesehen, eine Unterstützung seitens der Sponsoren, sowohl materiell als auch
-        mit Informationen und praktischer Unterstützung ein relevantes und jedenfalls im Zweifelsfall den Ausschlag gebendes Kriterium.
-        Eine wesentliche Einschränkung ergab sich zudem durch den gewählten Controller der im Läufer verwendeten Mehrzweck-Platinen, der
+        mit Informationen und praktischer Unterstützung ein relevantes und jedenfalls im Zweifelsfall den Ausschlag f\"ur oder gegen die
+	``endg\"ultige'' Wahl einer entsprechenden Technologie gebendes Kriterium.
+        Eine wesentliche Einschränkung ergab sich zudem durch den gewählten Controller, der im Läufer verwendeten Mehrzweck-Platinen, der
         nur eine sehr beschränkte Menge an Speicherplatz für Programme bietet.
         %
 
 
-        \subsection{Die Minimalanforderungen}\label{j-min-req}
+        \subsection{Grundvoraussetzungen}\label{j-min-req}
 
-        Um nun nicht unnötig auszuschließen, wollen wir unsre Minimalforderungen derart formulieren, daß der Ausgleich fehlender
+        Um nichts unnötig auszuschließen, wollen wir unsere Minimalforderungen derart formulieren, daß der Ausgleich fehlender
         Eigenschaften auf einer höheren Ebene prinzipiell erlaubt sein soll, endgültiger Ausschluß einer Technologie würde also nur
         erfolgen, wenn sie das Erfüllen eines der Kriterien (in einem angemessenen Maß) prinzipiell ausschließen würde.
 
@@ -199,6 +220,7 @@ die wir unsrer Kommunikationslösung anlegen wollen?
           \item{\bf Korrektheit}
           \item{{\bf Hinreichende Datenübertragungsrate}: Mindestens 16384 bps für\\ Daten alleine}
           \item{{\bf Geringe Latenzzeit}: Maximal 0.05s pro Botschaft oder 0.1s für zwei Botschaften\footnote{Diese beiden Kriterien sind sehr unterschiedlich, da z.B. über Priorisierungsmechanismen unter Umständen sichergestellt werden kann, daß Botschaften, die eingingen, jedoch weiterversandt werden müssen, eine geringere Latenzzeit haben. Auf der anderen Seite jedoch ist es-- bei einer Latenz von konstant 0.05s-- durch zusätzlichen Bearbeitungsaufwand möglich, daß dennoch ein wenig mehr als 0.1s benötigt wird. Diese Zeit betrachten wir jedoch als unerheblich und verwenden somit 0.05s als ein einfacher zu handhabendes Kriterium.}}
+	  \item{\bf Prioritisierung von Nachrichten}
           \item{\bf Bidirektionalität}
           \item{\bf Unterstützung für mindestens 16 Peripheriegeräte}
           \item{{\bf Geringe Ressourcenanforderungen}: Strombedarf auf Platine abdeckbar, eventuelle Kabel maximal handelsübliche Koaxialkabel an Dicke, 
@@ -207,7 +229,7 @@ die wir unsrer Kommunikationslösung anlegen wollen?
         \end{enumerate}
 
 
-        Mit diesen sieben Kriterien werden wir nun die verschiedenen Möglichkeiten, die sich uns zur Kommunikation bieten,
+        Mit diesen acht Kriterien werden wir nun die verschiedenen Möglichkeiten, die sich uns zur Kommunikation bieten,
         beurteilen.
 
 \newpage
@@ -216,8 +238,9 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
 Wir werden nun eine Reihe von Alternativen durchgehen, die uns, verbunden mit verschiedenen Vor- und Nachteilen,
 Kommunikation zwischen PDA und Peripherie erlauben. Im Falle einiger dieser Technologien könnten die benötigten Anschlüsse
-zwar unmittelbar auf die SX-Board aufgelötet werden, eine Kommunikation mit dem PDA würde jedoch einer Zwischenstation, eines
-Proxys, benötigen. Da auf den genannten Platinen ohnehin ein serieller Anschluß vorhanden ist, können sie, bei
+zwar unmittelbar auf die SX-Board aufgelötet werden, eine Kommunikation mit dem PDA würde jedoch eine Zwischenstation mit einem
+als Proxy agierenden Programm (oder entpsrechender Hardware) benötigen.
+Da auf den genannten Platinen ohnehin ein serieller Anschluß vorhanden ist, können sie, bei
 entsprechender Programmierung, unmittelbar als ein solcher dienen (sofern die verwendete Kommunikationsmethode
 der Forderung nach {\bf Bidirektionalität} genügt).\\
 
@@ -228,8 +251,8 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 
         Diese Lösung erfüllt zunächst unsre Minimalanforderungen, erlaubt beliebig viele Peripheriegeräte und ist an Bandbreite und Latenz nur durch
         den Systembus des SX-Controllers begrenzt. Doch schon hier stellt sich die erste Frage: Wie verbindet man die Controller direkt an ihrem
-        Systembus? Ein Arbitrierungsmechanismus müßte herbei, es muß sichergestellt werden, daß keine Übertragungen verloren
-        gehen\footnote{Erste Forderung der Korrektheit}. Aber
+        Systembus? Ein Arbitrierungsmechanismus müßte herbei, um den Verlust von \"Ubertragungen zu verhindern\footnote{Dritte Forderung
+	  der Korrektheit}. Aber
         damit haben wir schon wesentlich mehr als eine einfache Hartverdrahtung; wenn wir jedoch unser Modell beibehalten wollen, bliebe uns nur,
         die Peripherie direkt mit den Eingängen der SX-Ports zu verbinden. Dies würde natürlich die Anzahl der anschließbaren Peripheriegeräte unmittelbar
         beschränken-- die notwendigen 16 Geräte sollten jedoch kein prinzipielles Problem darstellen.
@@ -248,7 +271,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         daher will ich es ohne Umschweife ausformulieren.
 
         Drahtlose Kommunikation benötigt mehr Leistung als hartverdrahtete Kommunikation und ist störungsanfälliger; da sie kein geschlossenes
-        System erlaubt (jedenfalls nicht ohne harte Kryptographie, die jenseits der Schranken der praktischen Realisierbarkeit lag), ist
+        System erlaubt (jedenfalls nicht ohne Kryptographie, die jenseits der Schranken der praktischen Realisierbarkeit lag), ist
         somit auch die Erfüllung der Forderungen der Korrektheit nur schwerlich vorstellbar.
         %
 
@@ -292,7 +315,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         Multi-Master-Kommunikation im Auftrag von Mercedes entwickelt,
         erfreut sich heutzutage einer wachsenden Beliebtheit auch bei
         anderen KFZ-Her-\\stellern wie BMW, Porsche, Fiat etc., wird
-        jedoch auch außerhalb der Automobilbranche genutzt.
+        auch außerhalb der Automobilbranche genutzt.
 
 
         Das CAN-Protokoll ist ein reines Kommunikationsprotokoll
@@ -310,7 +333,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         Datenübertragungen und einen vorgesehenen Adressraum von 11 Bits
         für angeschlossene Geräte zur Ver-fügung; aufgrund einer
         protokollbedingten Einschränkung ist jedoch ``nur''
-        eine Adressierung von 2032 Busteilnehmern möglich.\\
+        eine Adressierung von 2032 ($= 2^{11} - 16$) Busteilnehmern möglich.\\
         Ein zur unmittelbaren Datenübertragung verwendetes CAN-Frame
         (der Version 1.2) maximaler Größe beinhaltet 8 Bytes an Daten
         und belegt (inkl. Inter-frame space, dem Abstand zweier
@@ -341,7 +364,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         %
 
         \subsection{Konklusion}
-Schlussendlich fiel die Wahl auf das CAN-Protokoll, nicht nur aufgrund der guten Feature-Abdeckung, sondern auch
+Schlussendlich fiel die Wahl auf das CAN-Protokoll, nicht nur aufgrund der guten Abdeckung der Anforderungen, sondern auch
 und insbesondere wegen der Unterstützung bei dessen Verwendung, die seitens der Sponsoren des Läufer-Projektes geleistet wurde und des
 allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
 
@@ -351,8 +374,8 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
 
 \section{Übrige Anforderungen und Umsetzung}
         \subsection{Bereits durch CAN abgedeckte Anforderungen}
-        Untersuchen wir nun die gestellten Anforderungen in Bezug auf bereits
-        stattgefunden habende Abdeckung durch CAN selbst:
+	Wir untersuchen zun\"achst, welche der konkreten gestellten Anforderungen bereits durch
+	CAN selbst abgedeckt werden:
 
         \begin{enumerate}
           \item{{\bf Korrektheit}: Wir erinnern uns an die drei geforderten Eigenschaften:
@@ -457,45 +480,54 @@ Betrachten wir einige der üblichen Möglichkeiten zur Implementierung eines Kommu
         hatte zwar zunächst den unmittelbaren Nachteil, noch nicht entworfen worden zu sein, in Anbetracht der Nicht-
         verfügbarkeit existierender Implementierungen der andren genannten Protokolle für die von uns gewählte Plattform jedoch andererseits
         den Vorteil, mit moderaten Entwurfsaufwand den Implementierungsaufwand den\\ Bedürfnissen des Läufers gegenüber angemessen
-        gestaltbar zu sein.
+        gestaltbar zu sein. Die wesentlichste Schwachstelle dieser Vorgehensweise war die h\"ohere Fehleranf\"alligkeit einer
+	Eigenimplementierung.
 
 
         \subsection{Fazit}
         Schlußendlich fiel unsre Entscheidung schon sehr früh auf eine eigene Entwicklung, da der Aufwand für eine vollständige
         Implementierung bereits existierender Protokolle (soweit ihre Spezifikationen überhaupt öffentlich verfügbar waren) unseres
         Ermessens nach wesentlich höher gewesen wäre, wohingegen die Einschränkung eines dieser Protokolle keine
-        merklichen Vorteile gegenüber einem eigenen solchen erwirkt hätte.
+        merklichen Vorteile gegenüber einem eigenen solchen erwirkt hätte. Eine (entsprechend fehlertr\"achtige) Eigenimplementierung
+	w\"are in jedem Fall n\"otig; es war uns nicht m\"oglich, frei verf\"ugbare Implementierungen der genannten Protokolle f\"ur den
+	SX-Prozessor aufzutreiben.
 
 
 \newpage
 
 \section{Das Läufer-Protokoll für den CAN-Bus} 
 
-Die Aufgaben des resultierenden Protokolls lassen sich nun wieder auf die bereits zuvor verwendeten Protokollkriterien zurückführen.
-Hierbei muß jedoch darauf geachtet werden, die Eigenheiten des CAN-Protokolls zu beachten; die Protokolle haben also nicht nur zur
+Die Aufgaben des resultierenden Protokolls m\"ussen wir nun wieder auf die bereits zuvor verwendeten Protokollkriterien zurückführen.
+Hierbei sind die Eigenheiten des CAN-Protokolls zu beachten; die Protokolle haben also nicht nur zur
 Aufgabe, unsere Korrektheitsforderungen zu erfüllen, sondern auch, eine gute Anbindung an CAN zu bieten-- wobei es sich von diesem
 natürlich aus Gründen eines klaren Designs zumindest in seiner Spezifikation hinreichend weit abtrennen sollte.\\
 
-Unsere Entscheidung fiel zugunsten eines zweischichtigen Protokolldesigns, in dem eines der Protokolle die grundsätzliche Kommunikation und das
-andere einfaches Session-Management mit Timeouts spezifizierte. Die Trennung dieser beiden Dinge schien uns in Hinsicht auf die
-bevorstehende Implementierung, aber auch aus Sicht der Modularität
-sinnvoll.\\
+\subsection{Grunds\"atzliche Protokollstruktur}
 
-Eine zunächst noch offene Frage war jedoch die Form der Protokolle,
-gerade auch, da CAN Unterstützung für Multi-Mastering bietet. Es wurde nun
-zunächst der Entschluß gefaßt, das Session-Protokoll für eine
-Master-Slave-Kommunikation auszulegen, da dies der angestrebten unmittelbaren
-Kontrolle der Peripherie durch ein zentrales System entsprach; dies
-erweiterten wir später um einen Notifikationsmechanismus in die andere
-Richtung und bauten es somit zu einem zwei-Master-Netz aus.
-Das Netzwerk-Protokoll hingegen, das auch die Aufgabe der
-Adressierung bestimmter Clients übernehmen sollte, bildete ein
-Multi-Master-System mit prioritisierten Botschaften (speziell unter Ausnutzung
-der Eigenschaften des CAN-Busses), aus den gleichen Gründen.\\
+Um die Komplexit\"at eines solchen Protokolles zu reduzieren, beschlossen wir eine Aufspaltung in
+zwei Protokolle, in denen eines die grundsätzliche Kommunikation und das
+andere einfaches Session-Management mit Timeouts spezifizieren w\"urde. Trotz des zu erwartenden Overheads
+schien uns dieses Design wartbarer als ein komplett integriertes solches.\\
 
-Aus theoretischer Sicht ist das Netz somit von sternförmiger
-Topologie, die tatsächliche Verdrahtung hingegen kann natürlich
+Eine zunächst noch offene Frage war, ob Multi-Mastering verwendet werden sollte,
+eine von CAN angebotene M\"oglichkeit. Der offensichtliche Vorteil war die
+Verringerung von Latenzzeiten von Meldungen von der Peripherie an den PDA, der
+Nachteil eine h\"ohere Komplexit\"at und m\"ogliche Blockierungen des Busses
+durch ungez\"ugelten prioritisierten Schreibverkehr auf dem Bus.
+Da die Blockierung des Busses jedoch in einem stark eingeschr\"ankten
+System allgemein gut zu isolieren ist (und der tats\"achliche Gebrauch des
+Multi-Masterings f\"ur viele Ger\"ate unn\"otig ist), schien eine Verwendung
+dieser M\"oglichkeit zur schnellen Meldung von Fehlerzustands\"uberg\"angen sinnvoll.
+
+\subsection{Struktur des Netzes}
+
+Aus theoretischer Sicht ist das Netz von sternförmiger
+Topologie, mit dem PDA als Zentrum; diese Vereinfachung des
+Protokolls schien uns hilfreich, um die vollst\"andige Trennung
+(und somit Isolation von Fehlern) auf einzelne Ger\"ate zu beschr\"anken.
+Die tatsächliche Verdrahtung hingegen kann natürlich
 beliebig im Rahmen des von CAN Ermöglichten erfolgen.
+
 
         \subsection{Die beiden Protokollschichten}
         Die beiden Protokolle, mit Namen {\it LLO} und {\it LLZ} (``Läufer Layer One'' bzw. ``Zero''), nehmen also
@@ -554,10 +586,11 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 
 \newpage
 
-\section{Das LLO-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref{llo-proto}}).}
+\section{Das LLO-Protokoll}
 Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unsren Korrektheitsforderungen
 (die ja zu zwei Dritteln schon von CAN erfüllt wurden). In diesem Rahmen stellt es zusätzliche Sicherheitsmechanismen
-und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
+und ein Multi-Master-Protokoll, das sich auf CAN implementieren
+läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref{llo-proto}}).}.
 
         \subsection{Struktur des Protokolls}
 
@@ -591,7 +624,8 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
         nicht-Broadcast-Botschaft um eins erhöht wird. Stellt nun der Controller oder der Client beim
         Empfang einer Botschaft ein Nicht-Übereinstimmen der Sequenznummern fest, kann er davon ausgehen, einige Botschaften verloren zu
         haben und diese neu anfordern.\\
-        Diese Methode greift offensichtlich nicht immer; bei einer Datenverlustrate von $p$ ist die Wahrscheinlichkeit,
+        Diese Methode greift offensichtlich nicht immer; bei einer hypothetisch normalverteilten Datenverlustrate von $p$
+	ist die Wahrscheinlichkeit,
         genau 16 Nachrichten hintereinander zu verlieren, jedoch genau
         $p^{15} * (1-p)$, im Falle von Vielfachen von 16 (also allen Möglichkeiten, in denen ein Datenverlust nicht
         bemerkt würde) somit, für die Aufsummierung der Wahrscheinlichkeiten des Verlustes an der $n$ten Stelle
@@ -604,10 +638,33 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
             & = - \frac{(1-p) * p^{15}}{p^{16} - 1}
           \end{split}
         \end{equation}
-        Entsprechend ist bei einem ``realistischen'' Datenverlustwert die Wahrscheinlichkeit für einen kompletten Ausfall
+
+        Entsprechend ist bei einem ``realistischen'' normalverteilten Datenverlustwert die Wahrscheinlichkeit für einen kompletten Ausfall
         dieses Mechanismusses vernachlässigbar; selbst bei einem Störfaktor von 0.1 läge die Wahrscheinlichkeit noch bei
         unter $10^{-15}$, sogar ein Störfaktor von 0.9 könnte nur in knapp 2.6\% der Fälle einen Totalausfall dieses
-        Sicherungsmechanismusses bewirken.
+        Sicherungsmechanismusses bewirken:
+
+	\vspace{0.3 cm}
+
+	\begin{tabular}{l|l}
+	  {\bf $p$} & {\bf Datenverlustwahrscheinlichkeit} \\
+	  \hline
+	  $0.001$ & $ 0.999 * 10^{-45}$ \\
+	  $0.01$ & $ 0.99 * 10^{-30}$ \\
+	  $0.1$ & $ 0.9 * 10^{-15}$ \\
+	  $0.15$ & $ 0.37221 * 10^{-12}$ \\
+	  $0.2$ & $ 0.262144 * 10^{-10}$ \\
+	\end{tabular}
+	\vspace{0.3 cm}
+
+	Tats\"achlich treten in der Praxis jedoch oft sequentielle Ausf\"alle auf, in denen ein vorheriger Ausfall
+	die Wahrscheinlichkeit f\"ur einen erneuten Ausfall erh\"oht. Die Berechnung der Ausfallwahrscheinlichkeit
+	hierf\"ur ist aufwendiger, da die Wahrscheinlichkeitsfunktion selbst wesentlich komplexer ist; die
+	prinzipielle Vorgehensweise ist jedoch identisch.
+
+	F\"ur allgemein geringe Fehlerwahrscheinlichkeiten ist eine solche Steigerung der Fehlerwahrscheinlichkeit aufgrund
+	eines vorhergehenden Fehlers mit einer Verschlechterung des Verhaltens verbunden, die mit gr\"o\ss\ eren Sequenznummermengen
+	besser aufgefangen werden k\"onnte.
 
         \subsubsection{Keep-Alive}\label{jd-llo-kal}
         Dies alles ist im Falle einer kompletten Unterbrechung der Datenleitung jedoch wenig hilfreich. In diesem
@@ -619,9 +676,12 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
         Da alle vom Controller verwendeten direkten Steuerbefehle Priorität über Client-Befehle haben (mit Ausnahme
         von {\tt ACK} und {\tt SYS}, die von Clients im Rahmen von vom Controller angestoßenen Kommunikationssequenzen
         gesandt werden dürfen, sowie des schweren Systemfehlers {\tt SYS:EGLBL}, der alle Systeme in den sicheren Betriebszustand zwingt),
-        muß der Bus vom Controller explizit freigegeben werden. Dies erfolgt, wenn er selbst keine anstehenden Botschaften hat,
-        ansonsten in regelmäßigen Intervallen, mittels eines {\tt NOP}-Kommandos, das an Priorität geringer als das Client-nach-Controller-Kommando
-        {\tt RTX} ist, das somit-- jedenfalls in der die CAN-Bus-Arbitrierung verwendenden Protokollauslegung-- dieses unterdrückt.\\
+        muß der Bus vom Controller explizit freigegeben werden. Dies kann alternativ durch das Nicht-Versenden von Nachrichten oder
+	dem Versand eines minimal prioritisierten {\tt NOP}-Befehls (zu Debug-Zwecken) geschehen.
+	Eine solche explizite Freigabe erfolgt, wenn der Controller selbst keine anstehenden Botschaften hat,
+        ansonsten in regelmäßigen Intervallen.
+
+
         {\tt RTX}- Übertragung läuft analog zur {\tt STX}-Übertragung von Controller zu Client, verwendet jedoch einen eigenen
         Sequenzzähler\footnote{Die historische Begründung dafür liegt im Wunsch, Vollduplex effizient unterstützen zu können; dies war
         relevant für die Verwendung von LLO über die serielle Schnittstelle.}.\\
@@ -630,8 +690,10 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
         durchgeführt und den endgültig die Geräte programmierenden Mitentwicklern überlassen.
 
         \subsection{Umsetzung und Tests}
-        Das LLO-Protokoll wurde in C zu Testzwecken, aber auch zur seriellen Kommunikation implementiert.
-        Die Implementierung auf dem SX-Chip ist zur Zeit noch nicht abgeschlossen.
+        Das LLO-Protokoll wurde in C zu Testzwecken, aber auch zur seriellen Kommunikation implementiert. F\"ur den SX-Chip
+	wurde aus terminlichen Gr\"unden nur ein vereinfachtes Protokoll mit der vorgesehenen endg\"ultigen API implementiert;
+	die vollst\"andige Protokollimplementierung mu\ss te (ebenfalls aus terminlichen Gr\"unden) auf Mitte Mai 2003 verschoben
+	werden.
 
         \subsection{Einsatz im Proxy}
         Zur Kommunikation zwischen PDA und dem Rest des Busses muß ein ``Proxy'' verwendet werden, eine
@@ -644,14 +706,16 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
         Kontrollinstanz die angeschlossene Peripherie in den sicheren Betriebszustand zu zwingen.
 \newpage
 
-\section{Das LLZ-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion \ref{llz-proto}).}
+\section{Das LLZ-Protokoll}
 
 Das LLZ-Protokoll ist ein zustandsbasiertes Protokoll, das eine feste Maximallänge von Botschaften vorsieht (16 Bytes, mit einer Minimallänge von einem Byte) und
-eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch fehlenden Aspekt des Korrektheitskriteriums.
+eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch fehlenden Aspekt des
+Korrektheitskriteriums\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion \ref{llz-proto}).}.
 
         \subsection{Struktur des Protokolls}
 
-        LLZ definiert Kommunikation zwischen genau zwei Teilnehmern, von denen einer dedizierter Sender und der andere Empfänger ist.
+        LLZ definiert Kommunikation zwischen genau zwei Teilnehmern, von denen einer dedizierter Sender und der andere Empfänger ist (somit
+	\"uberl\"a\ss t es die Handhabung gr\"o\ss erer Mengen von Teilnehmern dem darunterliegenden LLO-Protokoll).
         Beide können Kommunikation initiieren, aber nur der Sender kann eine Antwort ``erzwingen'' lassen; zudem
         ist er auch derjenige, der den Zustand des\\ Empfängers kontrolliert.\\
         Das LLZ-Protokoll wird in mehreren Instanzen verwendet, wobei maximal eine pro Kanal des unterliegenden Protokolles angeboten wird
@@ -660,7 +724,7 @@ eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch
         \subsubsection{Zustände der LLZ-Empfänger}
 
         Bevor es jedoch zu einer Ausführung der Datenübertragungen des Protokolles kommt findet die Initialisierung der Busteilnehmer
-        statt, bei der der Sender zugleich (möglichst vermittels der Verwendung von Broadcasts eines unterliegenden Protokolles) überprüft,
+        statt, bei der der Sender zugleich (möglichst durch Verwendung von Broadcasts eines unterliegenden Protokolles) überprüft,
         wieviele Protokollinstanzen er zu verwenden hat, auf welchen der Kanäle des unterliegenden Protokolles also Empfänger zu erwarten sind.\\
 
         Clients befinden sich initial im {\tt PRE-INIT}- Zustand, der ihnen jegliche Kommunikation auf dem Bus, mit Ausnahme der Beantwortung
@@ -677,20 +741,39 @@ eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch
         Bei der Bestätigung der erfolgreichen Initialisierung vermittels des {\tt IOK}-Blockes wird eine Tabelle der von diesem
         Gerät unterstützten Befehle mitverschickt; diese Tabelle ist bitweise kodiert, wobei in 16 Bytes Raum für 128 Befehle geschaffen wurde.
         Eine spezifische Wahl der Befehlscodes wurde im Rahmen dieser Studienarbeit nur zu Testzwecken durchgeführt und wird späteren
-        Implementierern überlassen.\\
-        Der Vorteil einer derart versandten Tabelle ist eine eingeschränkte ``Plug-and-Play''- Nachrüstbarkeit der Peripherie.
-        Treiber seitens des PDAs\footnote{welche ihre Klienten üblicherweise auf einem bestimmten Kommunikationskanal erwarten} kön-nen mittels
-        der Befehlstabelle nun unmittelbar die Verfügbarkeit von Funktionen, die in einer echten Teilmenge der Menge der Versionen
+        Implementierern überlassen, um nach genauerer Auswahl der zu verendenden Peripherie eine Abstimmung deren Priorit\"aten untereinander
+	den mit der tats\"achlichen Betriebsweise vertrauteren Entwicklern zu \"uberlassen.\\
+        Der Vorteil einer derart versandten Tabelle ist eine eingeschränkte ``Plug-and-Play''- Nachrüstbarkeit der Peripherie, sowie
+	die M\"oglichkeit f\"ur
+        Treiber seitens des PDAs\footnote{welche ihre Klienten üblicherweise auf einem bestimmten Kommunikationskanal erwarten}, mittels
+        der Befehlstabelle unmittelbar die Verfügbarkeit von Funktionen, die in einer echten Teilmenge der Menge der Versionen
         der Peripherie implementiert wurde, überprüfen, und somit ihre Handlungen oder die von ihrer API angebotene Funktionenmenge
-        entsprechend ausrichten.\\
-        Alle Kommunikation über den Bus muß durch einen solchen Befehl gekennzeichnet sein, der Befehl darf jedoch noch bis zu 15 Bytes
-        an Parametern nehmen\footnote{Dies ist ein Kompromiss an den SX, dessen Datenbänke genau 16 Bytes in Folge fassen}.
-        Es gilt eine zusätzliche Einschränkung der Form von Befehlen, die durch die Art des Timeout-Trackings
-        bedingt wird: Für alle Befehle $b$ gilt: Für alle Parameterkonfigurationen $p, p^\prime$ gilt, daß der gesamte Zustand des Clients
-        unmittelbar nach Ausführung von $b$ mit $p$, ohne, daß zuvor $b$ mit $p^\prime$ ausgeführt wurde, identisch zum Zustand des
-        Clients nach der Ausführung von $b$ mit $p^\prime$ gefolgt von $b$ mit $p$ ist.\\
-        Das heißt, vereinfacht ausgedrückt, daß die Semantik eines Befehls sich niemals auf Zustände beziehen darf, die der gleiche Befehl
-        modifizieren kann.
+        entsprechend ausrichten.
+	Zudem erlaubt sie
+	eine fr\"uhzeitige PDA-seitige Erkennung nicht erlaubter Befehle; dort ist es leichter, Entwickler \"uber diesen Fehler
+	zu informieren\footnote{Ein SX-Assembler-seitiger Pr\"aprozessor zur korrekten Erstellung dieser Befehlstabelle w\"are hier
+	  ein n\"utzliches Werkzeug, eine entsprechende Implementierung steht jedoch noch aus, da die SX-Entwicklungsumgebung
+	  integriert ist und somit keine einfache Einbildung in einen Buildprozess erlaubt.}.
+
+	\subsubsection{Semantik der Befehle}
+
+	Wie im Protokoll spezifiziert, ist die Semantik der Befehle eine Semantik der {\it absoluten Zustandstransformation}, in
+	der f\"ur einen Befehl $p$ mit einem festen Befehlscode und $n$ Parametern gilt, da\ss\ f\"ur beliebige
+	$\overline{x} = x_1, \ldots, x_n$, $\overline{x}^\prime = x_1^\prime, \ldots, x_n^\prime$ die Ausf\"uhrung von
+	$p(\overline{x})$ nach $p(\overline{x}^\prime)$
+	den gleichen internen Zustand wie die
+	Ausf\"uhrung von
+	$p(\overline{x})$ ohne $p(\overline{x}^\prime)$
+	erzeugt. Die Motivation f\"ur diese (die Ausdrucksf\"ahigkeit prinzipiell einschr\"ankende) Designentscheidung ist wie folgt:
+	\begin{enumerate}
+	  \item{Senderseitig ist es damit m\"oglich, eine konstante Maximalgr\"o\ss e f\"ur die Nachrichtenqueue zu definieren}
+	  \item{Das Designprinzip des doppelten Zustandsautomaten wird erzwungen, da alle ``relevanten'' Zust\"ande nun
+	    PDA-seitig dupliziert werden. Dies nimmt den Entwicklern Designfreiraum, ohne ihnen Funktionalit\"at vorzuenthalten,
+	    was uns aufgrund der Wahl der endg\"ultigen Entwickler sinnvoll erschien.}
+	  \item{Im Fehlerfall k\"onnen neuere Botschaften \"altere auch serverseitig \"uberschreiben und unn\"otigen Neuversand
+	    verhindern (nach explizitem \"Ubertragungsabbruch)}
+	\end{enumerate}
+
         \subsubsection{Timeouts}
 
         Datenübertragungen in LLZ nehmen an, daß sie vollständig und hinreichend korrekt durchgeführt werden oder
@@ -722,4 +805,15 @@ eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch
 
 Im Rahmen des Projektes wurde eine für die Zwecke des Läufers geeignete Kommunikationsstruktur entworfen und getestet, eine
 vollständige Implementierung auch auf den Mikrocontrollern war aus verschiedenen Gründen bis zur Fertigstellung dieser Ausfertigung
-nicht mehr möglich und muß im Anschluß erfolgen.
+nicht mehr möglich und muß im Anschluß erfolgen. Zum Ausgleich wird anstelle von LLZ zur Zeit ein vereinfachtes Protokoll (MLP, ebenfalls
+eine Eigenentwicklung) eingesetzt. Die endg\"ultige Entwicklung wird nach Abschlu\ss\ der M.Sc. Thesis des verantwortlichen Entwicklers
+nachgereicht.
+
+
+\section{Ausblick}
+In zuk\"unftiger Arbeit planen wir, die  Implementierung des LLZ-Protokolles abzuschlie\ss en. Danach hoffen wir, eine vereinfachte Programmierunmgebung
+f\"ur das synchrone Zustandsmodell entwerfen und implementieren zu k\"onnen sowie eine Kaskadierung des LLZ-Protokolles zur
+Vergr\"o\ss erung des Adressraumes zu spezifizieren und, bei Bedarf, zu implementieren. Parallel dazu planen wir Benchmarks, um den
+hinreichenden Durchsatz unserer Implementierung zu demonstrieren.
+
+
