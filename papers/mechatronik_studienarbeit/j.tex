@@ -13,7 +13,7 @@ Elemente nicht unmittelbar mit dem Fahrer verdrahten, der bei der Fahrt meist be
 
 Dieser Abschnitt widmet sich der Kommunikation zwischen den Elementen des Läufers, insbesondere zwischen der zentralen
 Steuereinheit, hier durch einen PDA realisiert, und ihren Klienten. Verschiedene Möglichkeiten der Konstruktion
-eines Datenübertragungssystems werden beschrieben und bewertet werden. Am Schluß erfolgt eine Beschreibung der gewählten
+eines Datenübertragungssystems werden beschrieben und bewertet. Am Schluß erfolgt eine Beschreibung der gewählten
 Kommunikations- und Gerätesteuerungsinfrastruktur.
 
 
@@ -61,7 +61,7 @@ die wir unsrer Kommunikationslösung anlegen wollen?
           \item{Wenn ein Datum den Empfänger erreicht, muß es zuvor versandt worden sein}\label{j-correct-1}
           \item{Wenn ein Datum den Empfänger mehrfach erreicht, muß seine Semantik idempotent sein}\label{j-correct-2}
           \item{Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}\label{j-correct-0}
-	  \item{Nichtrrivialit\"at}
+	  \item{Nichttrivialit\"at}
         \end{enumerate}
 
         Von diesen vier Forderungen ist insbesondere die Nummer \ref{j-correct-2} erläuterungsbedürftig. In Kommunikationssystemen
@@ -174,7 +174,7 @@ die wir unsrer Kommunikationslösung anlegen wollen?
 
 
         Eine
-        Ermangelung an Bidirektionalität oder Mehr-Client-Funktionalität wäre zwar allgemein\\durch Verwendung mehrerer paralleler
+        Ermangelung an Bidirektionalität oder Mehr-Client-Funktionalität wäre zwar allgemein durch Verwendung mehrerer paralleler
         Kommunikationssysteme ausgleichbar, eine solche Konstruktion ist aufgrund des Mehraufwandes an Hardware und der grundsätzlich
         anderen Ansteuerung jedoch separat zu handhaben. Die angeklungene Forderung nach einem eher geringen Hardware-Aufwand läßt sich
         im Übrigen noch verallgemeinern, wie wir im nächsten Punkt sehen werden.
@@ -314,7 +314,7 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
         Das Controller Area Network, 1986 von der Robert Bosch AG zur
         Multi-Master-Kommunikation im Auftrag von Mercedes-Benz entwickelt,
         erfreut sich heutzutage einer wachsenden Beliebtheit auch bei
-        anderen KFZ-Her-\\stellern wie BMW, Porsche, Fiat etc., wird
+        anderen KFZ-Herstellern wie BMW, Porsche, Fiat etc., wird
         aber auch außerhalb der Automobilbranche genutzt.
 
 
@@ -387,7 +387,7 @@ allgemeinen Interesses an einem in der Industrie derart verbreiteten Protokoll.
             \item{{\it Wenn ein Datum den Empfänger nicht erreicht, muß der Sender davon erfahren}:
               Diese Implikation wird von CAN nicht selbst erfüllt; ein erweiterndes Protokoll müßte
               sie sich zur Aufgabe setzen. In unmittelbarem Zusammenhang damit ergibt sich ein praktisch
-              relevantes Problem: Kurzzeitige Leitunsstörungen können den Verlust einzelner Botschaften zur
+              relevantes Problem: Kurzzeitige Leitungsstörungen können den Verlust einzelner Botschaften zur
               Folge haben, ohne, daß die Kommunkation unbedingt zusammengebrochen wäre. Diese Situation
               erfordert Neuversendungen der alten Daten, wird jedoch nicht von CAN abgedeckt, da dieses
               Protokoll keine empfangenen Sendungen quittiert.
@@ -510,7 +510,7 @@ natürlich aus Gründen eines klaren Designs zumindest in seiner Spezifikation hin
 Um die Komplexit\"at eines solchen Protokolles zu reduzieren, beschlossen wir eine Aufspaltung in
 zwei Protokolle, in denen eines die grundsätzliche Kommunikation und das
 andere einfaches Session-Management mit Timeouts spezifizieren w\"urde. Trotz des zu erwartenden Overheads
-schien uns dieses Design wartbarer als ein komplett integriertes solches.\\
+schien uns dieses Design wartbarer als ein komplett integriertes.\\
 
 Eine zunächst noch offene Frage war, ob Multi-Mastering verwendet werden sollte,
 eine von CAN angebotene M\"oglichkeit. Der offensichtliche Vorteil war die
