@@ -10,7 +10,7 @@
 ;----------------------------------------------------------
 ;
 ; Tool Macros
-;
+; WORKING serial!
 ;----------------------------------------------------------
 
 
@@ -104,7 +104,7 @@ PORT_B_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
 PORT_B_WKEN     EQU %1111_1111 ; multi input wakeup 0=enable 1=disable (see p136 in manual)
 PORT_B_WKED     EQU %0000_0000 ; wakeup edge detection 1=falling_edge 0=rising_edge
 
-PORT_C_VALUE    EQU %0000_0000 ; sets bit on port  
+PORT_C_VALUE    EQU %0100_0000 ; sets bit on port  
 PORT_C_TRIS     EQU %1011_1111 ; configures data direction 1=input 0=output
 PORT_C_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
 PORT_C_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
@@ -143,6 +143,9 @@ PORT_E_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
 ;	nur fürs senden gibt es einmalig eine unterroutine per call aufzurufen die  	
 ; 	als parameter das zu sendne Wort bekommt
 ;	Senden ist also nur byteweise möglich
+;	Um Fehler bei der Initialisierung zu vermeiden solle zu Beginn 
+;	im init Teil folgendes gesetzt sein	PORT_C_VALUE    EQU %0100_0000 ; sets bit on port   
+;
 ;----------------------------------------------------------
 
 
@@ -269,6 +272,8 @@ INIT_SEG_SERIAL		MACRO
 	SET_BANK SERIAL_BANK
 	
 ;BREAK
+
+SETB	STD		; Transmit Datat am anfang auf 1
 MOV	bitcounter, #8
 CLR	StoredByte
 CLR	scancounter
@@ -292,54 +297,52 @@ SETB	CTS	; Ab jetzt kann empfangen werden
 
 INTER_SEG_serial	MACRO
 	
-	;BREAK
-	SET_BANK SERIAL_BANK
+	SET_BANK SERIAL_BANK	; Maro zum bank setzten, kümmert sich auch ums 7te bit
 
-	MOV	Port_reg, RB	;portregister sichern
+	MOV	Port_reg, RB	;portregister sichern, um später das eingengsbit zu maskieren (zeitnahe Erfassung)
 
 
 	; ******************* sendeteil***********************
+
+	JNB	sending, absend	 ; wenn wir nicht am senden sind dann raus
+
+	; an dieser stelle ist ansich noch ein RTS-check nötig!!!!!!!!!!!!!
+	; der code existiert auf papier
+	
+	TEST	wait_counter	 ; jeden 4ten Interrupt ein neues Sendebit auflegen
+	SZ
+	JMP	ending		 ; ansonsten diesen Interrupt-Teil verlassen
+	; zu beginn (so ziemlich...:-) )wird jedesmal das Transmit Data signal gesetzt (zeitnahes senden)	
 	SB 	sendbit	; sendebit setzten
 	CLRB	STD	; Transmit Data 0
 	SNB	sendbit
 	SETB	STD	; Transmit Data 1
-	
-	JNB	sending, absend	 ; wenn wir nicht am senden sind dann raus
 
-	TEST	wait_counter	 ; jeden 4ten Interrupt reingehen
-	SZ
-	JMP	ending
-	MOV	wait_counter, #4 ; wait_counter neu initialisieren
-	TEST	bitcounter2	 ; check ob wir schon am end edes Bytes angekommen sind (bitcounter2 = 0)
-	JZ	STOPBIT2
-	
-	;**************************** DEBUG
-	CLRB	TEST_BIT_AUSGANG ;zum testen geht das Bit jetzt aus und zu beginn der routine an
-	
-	XOR	RA, #%1000_0000
-	
-	RR	tosend		; nächstes Bit setzen
-	SC
+	CSNE	bitcounter2, #10 ; Startbit setzen
 	CLRB	sendbit
+	
+	MOV	wait_counter, #4 ; wait_counter neu initialisieren
+	TEST	bitcounter2	 ; check ob wir schon am end des Bytes angekommen sind (bitcounter2 = 0)
+	JZ	Endbehandlung	 ; wenn wir am ende sind dann zur Endbehandlung
+	
+	RR	tosend		; nächstes Bit setzen 
+	SC			; dazu wird das zusendende Byte Rotiert und das herausrotierte bit im carry benutzt
+	CLRB	sendbit		; um zu entscheiden ob sendbit gesetzt oder gelöscht werden soll
 	SNC
 	SETB	sendbit
 	
-	CSNE	bitcounter2, #1	; das hiersorgt dafür das im neunten durchlauf eine eins als stopbit gesetzt wird !!!
-	SETB	sendbit
+	CSNE	bitcounter2, #1	; das hier sorgt dafür das im neunten durchlauf eine eins als stopbit gesetzt wird !!!
+	SETB	sendbit		; es wird quasi das sendbit nochmal überschrieben
 	
 	DEC	bitcounter2	; bitcounter decrementieren
 
-	JMP	ending
-STOPBIT2
-	SETB	sendbit
-	CLRB	sending
-	;CLRB	CTS		; clear to send abschalten
-	
-	CLRB	TEST_BIT_AUSGANG ;zum testen geht das Bit jetzt aus und zu beginn der routine an
-	
+	SKIP
+Endbehandlung
+	CLRB	sending		; als endbehandlung wird das sending-Bit gelöscht -> der interruptteil zum senden wird
+				; solange nicht mehr aufgerufen, bis _sendbyte gerufen wurde
 ending
 	DEC	wait_counter
-absend
+absend				; ENDE DES SENDE-TEILS
 
 	; ******************* empfangsteil***********************
 	CSBE	UART_XCH_STATUS, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16), dann wird nix empfangen
@@ -417,27 +420,31 @@ endint
 
 SERIAL_CODE_SEG	MACRO
 
+;*******************************************************************
+;	_sendbyte
+;	initialisiert das senden eine Bytes über die Serielle Schnittstelle
+;	Da zu sendede Byte wird aus PARAM1 ausgelesen
+;	Bevor man die Routine aufruft sollte man mit _sendbyte_status überprüfen
+;	ob man nicht noch am senden eines anderen Bytes ist
+
 _sendbyte
 
 	SETB	TEST_BIT_AUSGANG	; zum testen geht das jetzt an....
 
 	SET_BANK SERIAL_BANK
-	; ich gehe einfach davon aus das RTS an ist
-
+	
 	JB	sending, occupied 	; wenn gerade mit senden beschäftigt, dann gehe raus
 	SETB	CTS			; wenn wir senden wollen, dann muss auch CTS an sein (anounce host i am ready to receive = yoe are clear to send)
 	CLRB	sendbit 		; Startbit setzen !!!
 	
-	MOV	tosend, PARAM1
-	MOV	wait_counter, #3
-	MOV	bitcounter2, #9
-	SETB	sending
-	
-	
-	
+	MOV	tosend, PARAM1		; übernehmen des zu sendenden Wortes aus dem PARAM1 Register
+	CLR	wait_counter		; der wait_counter sorgt dafür das erst im 4. Interrupts ab jetzt eine änderung am sendbit
+					; vorgenommen wird. Er wird mit 0 initialisiert um sofort mit der übertragung anzufangen
+	MOV	bitcounter2, #10	; der Bitcounter zählt wieviele Bits noch zu senden sind (8 Daten-Bits + 1 Stopbit)
+	SETB	sending			; mit dem setzten des sending Bits wird der Interruptteil, der das Transmit Data Signal
+					; setzt freigeschaltet
 	occupied
-	
-	RETP	; rücksprung aus routine
+	RETP				; rücksprung aus routine
 
 
 ;*********************************************************************
@@ -809,9 +816,10 @@ main
 		MOV $1b, #'k'
 		MOV $1c, #'s'
 		MOV $1d, #'!'
-		MOV $1e, #$d
+		MOV $1e, #$a
+		MOV $1f, #$d
 
-		MOV PARAM1, #$e
+		MOV PARAM1, #$f
 		MOV PARAM2, #0
 		CALL @SERIAL_sendbuf
 
