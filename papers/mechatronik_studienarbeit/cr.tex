@@ -54,13 +54,69 @@ betriebssicher sein. Noch vor der Inbetriebnahme gilt es die Hardware
 vor Fehlbedienung durch den Ingenieure zu schützen. Das heißt sowohl 
 in der physikalischen Auslegung als auch in der Implementierung müssen
 mögliche Extreme in der Nutzung des Fahrzeugs berücksichtigt werden.
-Dies beinhaltet auch eine gewisse Fehlertoleranz. Bei der
-Zusammenstellung der Platine muß außerdem die Verfügbarkeit der
+Bei der Zusammenstellung der Platine muß außerdem die Verfügbarkeit der
 Bauelemente sichergestellt sein. Wie in den restlichen Teilen des
  Läufers zollt der Designer auch hier
 seinen Tribut: die Platine sollte so wenig Raum wie möglich einnehmen,
 um dem Design des Fahrzeugs größtmöglichen Freiraum zu gewähren.
 
+Nicht zuletzt muss auch der Sicherheit Rechnung getragen werden.
+Sicherheit in diesem Zusammenhang heißt: Sicherheit vor Strom- 
+und Spannungsspitzen zur Betriebszeit und Sicherheit der Komponenten
+vor Fehlbedienung durch den Entwickler.
+
+
+% \subsection{Sicherheit}  % soll raus
+% Sicherheit heißt in diesem Zusammenhang: Sicherheit vor Strom- und
+% Spannungsspitzen zur Betriebszeit und Sicherheit der Komponenten
+% vor Fehlbedienung durch den Entwickler.
+
+% Um von Ausfallsicherheit zur Betriebszeit auszugehen wäre eine groß angelegte Testreihe im Läufer
+% mit allen fertigen mechatronischen Applikationen unter verschiedenen Testbedingungen von Nöten.
+% Die bisherigen Versuche und Tests außerhalb des Läufers 
+% waren erfolgreich.Wie sich die mechatronischen Applikationen der Maschinenbauer im Fall einer Störung verhalten 
+% obliegt letztendlich dem jeweiligen Entwickler. Die Relevanz für die Fahrsicherheit kann letztlich erst von ihm abgeschätzt werden.
+% Das unten erwähnte Modulmodell für die Software soll dabei unter anderem 
+% die Fehleranfälligkeit der Software verringern.
+
+\begin{figure}
+  \center
+  \includegraphics[width=277pt]{Platine_C-Karte.eps}
+  \caption{Grössenvergleich Platine Scheckkarte}
+  \label{Platine-Karte}
+\end{figure}
+
+
+\newpage
+\section{Die Platine}
+
+%Kommentar zur interdiszipl. Erörterung der Anforderungen
+% Überblick über die folgenden themen
+% \subsection{Anforderungen an die Platine}
+% integrationsdichte
+% Sicherheit (Schmelzsicherung)
+% \subsection{Realisierung}
+
+Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die
+erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der
+später erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side
+Switches waren nicht integriert und die angeschlossene Peripherie
+wurde durch einen SX28 gesteuert (zwei I/O-Ports weniger als der
+SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue
+vierlagige scheckkartengroße Trägerplatine ersetzt. Der zweite
+Revision berücksichtigte dann eine Reihe
+weiterer Ideen zur Annäherung an das Ziel einer multifunktionalen
+Mechatronikapplikation für Maschinenbauingenieure.  Die
+Dimensionierung der passiven Bauelemente erlaubt eine Anpassung an
+andere Versorgungsspannungen als die momentanen 12 Volt. Ein
+Spannungswandler kann Versorgungsspannungen von bis zu 48 Volt auf die
+für CMOS üblichen 5 Volt herunterregeln.  Die Platine entstand in
+ständiger Kooperation mit den Maschinenbaustudenten des Projekts und
+der Firma Cetron. Um den Anforderungen der Ingenieure gerecht zu werden,
+waren immer wieder Erörterungen von möglichen Aufgabenfeldern der 
+Platine mit den Maschinenbauern nötig.
+
+Im Folgenden werden einige Aspekte der Platine näher betrachtet.
 
 \subsection{Kosten}  % soll raus
 Die Platine enthält lediglich Standardbauelemente wie sie zum Teil
@@ -82,19 +138,6 @@ der Komponentendistributoren ab. Preisunterschiede von bis zu\linebreak 400 \%
 Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der
 Kostenbestimmung (und letztendlich des Einkaufs) gewesen.
 
-\subsection{Sicherheit}  % soll raus
-Sicherheit heißt in diesem Zusammenhang: Sicherheit vor Strom- und
-Spannungsspitzen zur Betriebszeit und Sicherheit der Komponenten
-vor Fehlbedienung durch den Entwickler.
-
-Um von Ausfallsicherheit zur Betriebszeit auszugehen wäre eine groß angelegte Testreihe im Läufer
-mit allen fertigen mechatronischen Applikationen unter verschiedenen Testbedingungen von Nöten.
-Die bisherigen Versuche und Tests außerhalb des Läufers 
-waren erfolgreich.Wie sich die mechatronischen Applikationen der Maschinenbauer im Fall einer Störung verhalten 
-obliegt letztendlich dem jeweiligen Entwickler. Die Relevanz für die Fahrsicherheit kann letztlich erst von ihm abgeschätzt werden.
-Das unten erwähnte Modulmodell für die Software soll dabei unter anderem 
-die Fehleranfälligkeit der Software verringern.
-
 \subsection{Ausfallsicherheit zur Betriebszeit} % soll raus
 Komponenten mit Anschlussmöglichkeiten auf der Platine vertragen meist
 kurzfristige Strom und Spannungsspitzen und enthalten gegebenenfalls Zener-Dioden.
@@ -109,46 +152,8 @@ Wichtigkeit. Die Größe der Platine beträgt ca. 4,5cm * 8,6 cm, hat
 also etwa die Größe einer Scheckkarte (siehe Abbildung
 \ref{Platine-Karte}).
 
-\begin{figure}
-  \center
-  \includegraphics[width=277pt]{Platine_C-Karte.eps}
-  \caption{Grössenvergleich Platine Scheckkarte}
-  \label{Platine-Karte}
-\end{figure}
 
 
-\newpage
-\section{Platinenlayout}
-%Kommentar zur interdiszipl. Erörterung der Anforderungen
-
-% Überblick über die folgenden themen
-
-
-% \subsection{Anforderungen an die Platine}
-% integrationsdichte
-% Sicherheit (Schmelzsicherung)
-
-% \subsection{Realisierung}
-
-\subsection{Platine} % soll weg
-Die Platine durchlief zwei Iterationsstufen der Entwicklung. Die
-erste, kleinere Platine enthielt noch keinen ausgereiften SPI-Bus (der
-später erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side
-Switches waren nicht integriert und die angeschlossene Peripherie
-wurde durch einen SX28 gesteuert (zwei I/O-Ports weniger als der
-SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue
-vierlagige scheckkartengroße Trägerplatine ersetzt. Erst die
-Entwicklung dieser zweiten Platine wurde von dieser Studienarbeit
-begleitet. Der zweite Revision berücksichtigte dann eine Reihe
-weiterer Ideen zur Annäherung an das Ziel einer multifunktionalen
-Mechatronikapplikation für Maschinenbauingenieure.  Die
-Dimensionierung der passiven Bauelemente erlaubt eine Anpassung an
-andere Versorgungsspannungen als die momentanen 12 Volt. Ein
-Spannungswandler kann Versorgungsspannungen von bis zu 48 Volt auf die
-für CMOS üblichen 5 Volt herunterregeln.  Die Platine entstand in
-ständiger Kooperation mit den Maschinenbaustudenten des Projekts und
-der Firma Cetron. Dazu waren immer wieder Erörterungen von
-Aufgabenfeldern der Maschinenbauer nötig.
 
 \section{Wahl der Komponenten}
 \subsection{Mikrocontroller}
@@ -658,18 +663,18 @@ Einschränkung geschickt umgeht.
 
 \subsubsection{Arbeitsregister}
 Der SX52 nutzt in der Summe 17 Register zur Verarbeitung von Daten zur
-Laufzeit. Die Register teilen sich auf in eine globale Bank und 16
-indirekt adressierbare Bänke (siehe Abbildung \ref{cr_register}).
+Laufzeit. Die Register teilen sich in eine globale Bank und 16
+indirekt adressierbare Bänke auf (siehe Abbildung \ref{cr_register}).
 Jede Bank enthält 16 Register. Für die
 Adressierung der globalen Register sind keine Vorkehrungen nötig.  Um
-ein solches Register zu adressieren schreibt man einfach die absolute
+ein solches Register zu adressieren benutzt man im Quelltext einfach die absolute
 Adresse des Registers (direkte Adressierung). Um die 16 ,,normalen''
 Registerbänke zu referenzieren, muß zuvor die entsprechende
-Registerbank über das FSR angegeben werden. Erst dann kann man unter
-16 Registern der entsprechenden Bank wählen. Das heißt, das nur die
+Registerbank über das FSR angegeben werden. Erst dann kann man die
+16 Register der entsprechenden Bank wählen. Das heißt, das nur die
 unteren vier Bit von Relevanz sind. Um eine solche (indirekte)
-Registeradressierung anzukündiger müssen die ersten vier Bit (den
-MSB\footnote{Most Significent Bits: höchstwertige Bits}MSB eine 1
+Registeradressierung anzukündigen, müssen die ersten vier Bit (den
+MSB\footnote{Most Significent Bits: höchstwertige Bits} eine 1
 darstellen.
 Steht also im Bit Nummer vier einer Registerreferrenz eine 1, so werden die
 Bits 0 bis 3 für die Adressierung eines globalen Registers genutzt,
@@ -705,12 +710,12 @@ Programmierung des Programmspeichers ausgeführt. Sie dient zum
 Beispiel zur Organisation des Programmcodes, zur Benennung von
 Variablen und Konstanten, oder zur arithmetischen Überprüfung einiger
 Programmkomponenten.  Im folgenden werden einige der Direktiven
-beschrieben.Ausserdem wird gezeigt wie sie genutzt werden können um die zuvor
+beschrieben. Ausserdem wird gezeigt, wie sie genutzt werden können, um die zuvor
 formulierten Ziele in der Implementierung zu erreichen.
 
 \subsubsection{EQU-Direktive}
-Mit der EQU-Direktive wird Konstanten oder Registern ein Name
-zugeordnet, der dann beim Programmieren statt der Zahl bzw.
+Mit der EQU-Direktive werden Konstanten oder Registern Namen
+zugeordnet, die dann beim Programmieren statt der Zahl bzw.
 Registernummer genutzt werden kann.
 
 
@@ -778,6 +783,12 @@ FOO EQU $   ;FOO enthält die aktuelle Adresse
 \subsection{Assembler-Module}
 \label{Assembler-Module}
 
+Ein Ingenieure der die Aufgabe erhält ein SX-Assemblerprogramm zu schreiben,
+wird mit einigen gefährlichen Schwierigkeiten konfrontiert.
+Um potentielle Fehler beispielweise mit Unterprogrammaufrufen. Speicherbelegung,
+Registerzugriff etc. zu vermeiden, bietet sich die im Rahmen dieser Arbeit
+entwickelte Modulstruktur an.
+
 Bei der Konzeption der Module galt es, die potentiellen
 Schwierigkeiten mit Unterprogrammaufruf, Verteilung der Programmteile
 auf dem Speicher, sowie den Zugriff auf Register für den Entwickler
@@ -834,7 +845,7 @@ DATA-Segments. Im folgenden die Segmente im Einzelnen.
 
   Man definiert also ein Makro in dem Platz für maximal 16 Register
   reserviert wird. Bei der Reservierung wird die Speicherstelle
-  zwangsweise benannt,so daß beim programmieren, wie bereits gesagt,
+  zwangsweise benannt, sodaß beim programmieren, wie bereits gesagt,
   nur noch die Variablen für den reservierten Platz benutzt werden
   können.  Um dann das Makro einer Registerbank zuzuordnen, wird das
   Makro durch die ORG-Direktive an der entsprechenden Stelle
@@ -863,7 +874,7 @@ FOO     ; Macro FOO wird bei 20 (hex) eingefügt
   beschrieben. Die Interrupsegmente schreibt man dann hintereinander
   an die Adresse 000 (hexadezimal). In den Interruptsegmenten darf
   kein Interrupt-Rücksprungbefehl (RETI oder RETIW) stehen. Der muß
-  am Ende der Makroliste stehen um sicherzustellen das alle Segmente
+  am Ende der Makroliste stehen, daß alle Segmente
   vor Beendigung der Interruptroutine ausgeführt werden.
 
 \item[INIT-Segment] Jedes Modul benötigt auch einen Bereich im
@@ -968,12 +979,12 @@ CODE_MODUL_3
 }
 \subsubsection{Datenaustausch zwischen den Modulen}
 
-Um den Austausch von Daten sicher zu stellen, werden zwei Bänke für
-den Austausch von Daten reserviert. Jedes Modul entnimmt dort seine
+Um den Austausch von Daten sicher zu stellen, werden zwei Bänke
+reserviert. Jedes Modul entnimmt dort seine
 Eingabewerte und legt die Ergebnisse dort wieder ab.
 
 \section{Implementierungen}
-Im folgenden werden beispielhaft Module für einige Bauelemente
+Im Folgenden werden beispielhaft Module für einige Bauelemente
 beschrieben.
 
 \begin{description}
@@ -982,7 +993,7 @@ beschrieben.
   zwei Computer über die Datenleitungen TxD (Transmit Data) und RxD
   (Receive Data) miteinander kommunizieren.  Ein Byte wird in unserem
   Fall im 8n1 Modus gesendet. Das heißt es werden acht Bits, sowie ein
-  voorangestelltes Startbit und ein nachgestelltes Stopbit
+  vorangestelltes Startbit und ein nachgestelltes Stopbit
   gesendet. Eine Fehlerüberprüfung (Parity) findet bei der
   Implementierung in diesem Fall nicht statt.  Es handelt sich bei der
   RS232 um eine asynchrone Übertragung die, im Gegensatz zur
@@ -990,7 +1001,7 @@ beschrieben.
   Empfänger muß das eintreffende Signal mit dem mehrfachen der
   möglichen Taktfrequenz abtasten und so das Taktsignal
   rückgewinnen. Um
-  sicherzustellen, das eine Zustandsänderung am Eingang registriert
+  sicherzustellen, daß eine Zustandsänderung am Eingang registriert
   wird, wählt man als Abtastrate das vierfache der Zielfrequenz ab.
   Um beispielsweise bei einer Zielfrequenz $F$ von $115.200 Baud$ eine
   Änderung der eingehenden Flanke festzustellen, wird der
@@ -1042,7 +1053,10 @@ ausreichend Zeit zur Ausführung bekommen.
   Ändert man nun $t_{i}$ zur Laufzeit in die eine oder andere Richtung, so erzeugt
   man Dimm-Effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
   die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$
-  nach $high$ übergeht (siehe dazu Abbildung \ref{cr_pwm}).
+  nach $high$ übergeht. Ein Beispiel findet sich in Abbildung \ref{cr_pwm}:
+  
+  Die fallende Flanke des PWM-Signals markiert hier jeweils das Ende eines Intervalls $z_i$.
+  Die dunklen Flächen markieren die Plusweiten $t_i$. Durch zunehmende Pulsweiten wird die lineare Funktion simuliert.
   
   Auf die Platine sind die Brücken und die PWM-baren Low-Side-Switchs
   für die Puls-Weit-Modulation vorgesehen.  Ein $z_{i}$ entspricht 256
@@ -1050,14 +1064,13 @@ ausreichend Zeit zur Ausführung bekommen.
   überläuft. Bei jedem Übelauf wird der Zustand auf $low$ bzw $high$
   gesetzt (je nachdem ob von Aus nach An oder umgekehrt moduliert
   wird). Im Hauptprogramm (CODE-Segment) wird dann der Zähler mit
-  einer Variable verglichen die die Pulsweite bestimmt. Je nach
+  einer Variable verglichen, die die Pulsweite bestimmt. Je nach
   Anwendung kann man nun die Pulsweite verändern, indem man sie
   inkrementiert oder dekrementiert bzw. unterschiedlich initialisiert.
 %reverse iterations
 \begin{figure}
   \center \includegraphics[width=400pt]{pwm.eps}
-  \caption{Puls Weit Modulation einer linearen Funktion. Die fallende Flanke des PWM-Signals markiert jeweils das Ende eines Intervalls $z_i$.
-  Die dunklen Flächen markieren die Plusweiten $t_i$. Durch zunehmende Pulsweiten wird die lineare Funktion simuliert.}
+  \caption{Puls Weit Modulation einer linearen Funktion.}
   \label{cr_pwm}
 \end{figure}
 
