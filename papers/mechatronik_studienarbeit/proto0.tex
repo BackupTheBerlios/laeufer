@@ -1,0 +1,228 @@
+
+\section{Protokoll-Layer 0: LLZ-Protokoll, Version 0}
+%-------------------------------------------
+Alle folgenden Aussagen beziehen sich auf Version 0 des Protokolls, mit
+Ausnahme explizit gekennzeichneter Stellen.\\
+
+Das LLZ (Läufer Layer Zero)- Protokoll realisiert eine asynchrone
+und synchrone Kommunikation über einen existierenden sicheren Transferkanal.
+'Sicher' hat hierbei die Bedeutung, daß die erfolgreiche Übertragung
+garantiert wird. Kommt die Übertragung nicht zustande, muß ein Fehler auf
+der darunterliegenden Protokollebene ausgelöst werden.
+Das Protokoll unterscheidet zwischen Empfänger- und Senderstationen, die
+verschiedene Rechte und Pflichten haben.\\
+Zudem ist das Protokoll Zustandsbehaftet.\\
+
+Im folgenden bezeichnet $\prec X$ das Ereignis, daß die Botschaft X empfangen
+wurde, und $X \succ$ das vollständige und erfolgreiche Versenden der Botschaft X,
+ebenso wie $\rightarrow X$ (Senden) und $\leftarrow X$ (Empfangen).\\
+
+\subsection{Kommunikation}
+%----------------
+Jegliche Kommunikation, mit Ausnahme einer Notifikation, wird von einem
+Sender ausgelöst.\\
+
+\subsubsection{Synchrone Kommunikation}
+%---------------------------
+
+\paragraph{Request}
+%-------------
+Eine synchrone Kommunikation beginnt mit einem Request, der vom Sender
+ausgelöst wird. Die Notation hierfür ist (aus Sender-Sicht)\\
+
+\begin{tabular}{cl}
+$\rightarrow$ {\tt REQ(n) <OP> [Parameter]*}\\
+\end{tabular}
+
+z.B.
+
+\begin{tabular}{cl}
+$\rightarrow$ {\tt REQ(2) SET-STATE 7}\\
+\end{tabular}
+
+(n ist 1 plus die Anzahl der Parameter). Die Operation ist ein 7-Bit-Wert
+(das MSB ist reserviert); die Anzahl der Parameter ist beschränkt auf 15.
+Auf einen Request muß ein Response folgen. Protokollimplementierungen
+müssen also eventuell vorher eingehende Notifikationen zurückstellen.\\
+
+\paragraph{Response}
+%--------------
+Aus Sender-Sicht ist die Notation hierfür wie folgt:
+
+\begin{tabular}{cl}
+$\leftarrow$ & {\tt RES(n) <OP> [Value]*}\\
+\end{tabular}
+
+Wobei {\tt <OP>} eine Wiederholung des Operationscodes aus dem Request ist.
+
+\paragraph{Kommando}
+%--------------
+Statt einem Request kann auch ein Kommando ({\tt CMD} statt {\tt REQ}) abgesetzt werden.
+Der einzige Unterschied ist, daß keine Response hierauf generiert wird.
+
+
+\subsubsection{Asynchrone Notifikation}
+%---------------------------
+Der Empfänger kann asynchron Notifikationen absetzen. Diese Notifikationen
+sind wie Responses aufgebaut, habenals Transmissionsoperation (s. 1.3) jedoch
+{\tt NTF} statt {\tt RES}. Insbesondere beinhalten sie auch eine Operation.
+Notifikationen dürfen nur bei außergewönlichen Situationen verwendet werden.
+Es bleibt Senderimplementierungen vorbehalten, Empfänger, die Notifikationen
+unangemessen mißbrauchen, per {\tt SDN} zu deaktivieren.
+
+Jeder Einheit ist jedoch eine Notifikation pro Sekunde zuzugestehen.
+
+
+\subsubsection{Spezifikation der Transmissionspakete}
+%-----------------------------------------
+Alle Übertragungen sind Byte-basiert. Ein Transmissionspaket mit einem
+Payload der Länge n+1 sieht aus wie folgt:
+
+\begin{tabular}{|c|c|c|c|c|}
+	prfx & dat0 & dat1 & . . .  & datn\\
+\end{tabular}
+
+I.e. ein 8-Bit-Präfix, gefolgt von n+1 Datenbytes.
+
+Der Präfix hat folgende Form:
+
+\begin{tabular}{cp{0.8 cm}p{3.5 cm}}
+{\bf Bit}	& {\bf ID}	& {\bf Bedeutung}\\
+\hline
+7-5	& {\tt TOP}	& Transmissionsoperation (siehe \ref{j-app-1.3.1})\\
+4	& --	& reserviert (muß 0 sein)\\
+3-0	& {\tt LEN/ERC/VNR}
+		& {\tt LEN}: Anzahl der folgenden Bytes an Daten minus 1.
+		  Falls {\tt TOP} den Wert {\tt ERR} hat, ist dies der Error-
+		  code; es folgen keine weiteren Daten.
+		  Falls {\tt TOP} den Wert {\tt INI} oder {\tt IOK} hat, ist hier
+		  die Versionsnummer des Protokolls codiert.\\
+\end{tabular}
+
+
+\paragraph{Transmissionsoperationen}\label{j-app-1.3.1}
+%------------------------------
+
+\begin{tabular}{clp{3.5cm}}
+{\bf Code}	& {\bf ID}	& {\bf Semantik}\\
+\hline
+0	& {\tt SDN}	& Der Empfänger soll einen sicheren Betriebs-
+		Zustand einnehmen und sämtliche Kommunikation
+		unterbinden (siehe Sektion \ref{j-app-3})\\
+
+1	& {\tt IOK}	& Initialisierungsantwort (Protokollversion in VNR)\\
+
+2	& {\tt REQ}	& Sender-Operation: Synchrone Anfrage\\
+
+3	& {\tt RES}	& Empfänger-Operation: Synchrone Antwort\\
+
+4	& {\tt CMD}	& Sender-Operation: Asynchrones Kommando\\
+
+5	& {\tt NTF}	& Empfänger-Operation: Asynchrone Notifikation\\
+
+6	& {\tt INI}	& Initialisierungsoperation, siehe Sektion \ref{j-app-3}\\
+
+7	& {\tt ERR}	& Protokollfehler, siehe \ref{j-app-1.3.2}\\
+\end{tabular}
+
+
+\paragraph{Protokollfehler}\label{j-app-1.3.2}
+%---------------------
+Falls ein Sender eine ungültige Übertragung absetzt, muß der Empfänger
+ihn darüber benachrichtigen. Zu diesem Zweck ist {\tt TOP ERR} definiert. 
+
+Die folgenden Werte für {\tt ERC} sind definiert:
+
+\begin{tabular}{lp{3.5cm}}
+{\bf \tt ERC}	& {\bf Bedeutung} \\
+\hline
+0	& Sonstiger Fehler (catch-all-code) \\
+1	& Version nicht unterstützt \\
+2	& Falsche Rolle: Sender versuchte, {\tt RES}, {\tt NTF} oder {\tt IOK} zu senden \\
+3	& Schon initialisiert: {\tt INI} gesendet, obwohl der Empfänger bereits initialisiert ist \\
+4	& Fehler verschickt: Der Sender sandte ein {\tt ERR} zum Empfänger \\
+5	& Paket korrupt: Ein reserviertes Bit ist falsch gesetzt \\
+6-15	& -- {\it reserviert} --\\
+\end{tabular}
+
+\subsection{Payload}
+%----------
+LLZ v0 überträgt Datenpakete einer Größe von 1 bis 16 Bytes. Das erste
+Byte, als ``Operation'' bezeichnet, muß immer vorhanden sein. 
+
+
+\subsection{Lebenslauf von Kommunikationsteilnehmern}\label{j-app-3}
+%-------------------------------------------
+
+Der Lebenslauf von Sendern wird in dieser Spezifikation nicht behandelt.
+Empfänger jedoch werden von Sendern initialisiert und, bei Bedarf, deaktiviert;
+die entsprechenden Zustände und Übergänge finden sich in 3.1.
+
+
+\subsubsection{Empfänger}
+%--------------
+Das LLZ-Protokoll definiert folgende Zustände eines Empfängers:
+
+\begin{tabular}{lll}
+{\bf Code}	& {\bf Name}		& {\bf Erklärung}\\
+\hline
+{\bf S0}	& {\tt PRE-INIT}	& Initialer Zustand. Gerät darf keine Fehlercodes senden.\\
+{\bf S1}	& {\tt INIT}		& Gerät hat INI erhalten, noch nicht beantwortet\\
+{\bf S2}	& {\tt RUNNING}		& Gerät hat IOK geantwortet und ist im normalen	Betriebszustand\\
+{\bf S3}	& {\tt DOWN}		& Gerät hat SDN erhalten und den sicheren
+                                          Betriebszustand eingenommen, es darf keine Fehlercodes mehr senden. \\
+\end{tabular}
+
+
+%Das Zustandsübergangsdiagramm ist wie folgt:
+%
+%		<SDN
+%	+---------------------------+
+%	|			    |
+%	|   <INI     IOK>     <SDN  V
+%	S0 -$\rightarrow$ S1 -$\rightarrow$ S2 -$\rightarrow$ S3
+%        ^	 |
+%	|	 |ERR>
+%	+--------+
+
+
+In Zusatenden {\bf S0}, {\bf S1} und {\bf S3} werden alle Messages ignoriert, die nicht
+zu einem Zustandsübergang führen.
+
+
+\subsubsection{Shutdown}
+%------------
+Beim Erreichen des {\tt DOWN}-Zustandes sollte das Kommunikationsprotokoll, soweit
+möglich, das zugrundeliegende System informieren, so daß dies einen
+gesicherten "Failsafe"-Betriebszustand einnehmen kann.
+
+
+\subsubsection{Initialisierung des Empfängers}
+%-----------------------------------
+Die korrekte Sequenz zur Initialisierung eines Empfängers verläuft aus
+Sicht des SENDERS wie folgt:
+
+$\leftarrow$	{\tt INI(VNR=0)}
+$\rightarrow$	{\tt IOK(VNR=0) ops[16]}
+
+Folgt keine Antwort, so muß der Sender annehmen, daß der Empfänger nicht
+existiert.
+
+Statt IOK kann auch {\tt ERR(1)} (Version nicht Unterstützt) gesendet werden,
+siehe \ref{j-app-3.3.1}.
+
+Das Datenfeld ops[16] beinhaltet eine Liste aller vom Gerät unterstützten
+Operationen, codiert in 128 Bits. Der Test auf Vorhandensein der Operation
+x (für x > 7) ist also in Hochsprachensemantik wie folgt:
+
+{\tt have-op(x) := ((x >> 3) < n) {\bf /* Byte is defined */}\\
+\hspace{2cm}		\&\& (ops[x >> 3] \& (1 << (x \& 7)))}
+
+Dies erlaubt die Deklaration der Operationen 0-127. Die Deklaration dient
+Debugzwecken und ist in dieser Protokollversion nicht verbindlich.
+
+\paragraph{Versionsunterschiede}\label{j-app-3.3.1}
+%--------------------------
+Falls die Protokollversion des Senders vom Empfänger nicht unterstützt
+wird, muß er mit {\tt ERR(1)} antworten. Der
+Sender kann dann andere Protokollversionen durchprobieren, oder mit {\tt SDN} das System deaktivieren.

@@ -1,0 +1,319 @@
+
+
+\section{Protokoll-Layer 1: LLO-Protokoll, Version 0}
+Das Läufer Layer 1- Protokoll hat die Aufgabe, eine zielgerichtete,
+sichere Übertragung von potentiell beliebigen Datenmengen in einem
+Broadcast-Netzwerk mit bis zu 30 Kommunikationsteilnehmern und potentiell
+begrenzter Paketgröße durchzuführen. Sicher in diesem Zusammenhang bedeutet,
+daß es überprüft, ob ein Rezipient die für ihn gedachte Botschaft erhalten
+hat, und, falls nicht, eine vernünftige Anzahl von Neuübertragungen versucht,
+nach denen es den Rezipienten als vom Netz abgetrennt registriert.
+Das vorliegende Netz ist dabei sternförmig aufgebaut.
+\\
+Die hier befindliche Spezifikation bezieht sich auf Version 0 des
+Läufer Layer One (LLO)-Protokolls.\\
+
+
+\subsection{Kommunikation}
+Das Protokoll sieht ein Multi-Master-Netzwerk als Basis vor, mit einem
+Master in der Funktion des LLO-Controllers. Das Netzwerk muß entweder
+drei Klassen von Nachrichten-Prioritäten, oder voll-Duplex-Kommunikation
+unterstützen.\\
+Im Kontrast zum LLO-Controller (kurz: Controller) werden die anderen
+Busteilnehmer als LLO-Clients (kurz: Clients) bezeichnet, auch, wenn diese
+Bezeichnung ihre Möglichkeiten nicht voll würdigt.\\
+
+In dieser Spezifikation wird Bezug auf Timeouts genommen. Diese Timeouts
+werden nicht explizit spezifiziert, mit Ausnahme des Keep-Alive-Timeouts.\\
+
+
+\subsubsection{Clients}
+Jedem Client ist eine eindeutige Identifikationsnummer (Port) zugeordnet, die
+im Addreßbereich des Protokolls liegt (0-31 in dieser Version) und nicht
+0 oder 1 ist (1 ist für den Controller reserviert).\\
+Eine Menge von Hardware ist ein Client genau dann, wenn sie sich an einem
+Port P != 0 als Client im Sinne der Protokollspezifikation verhält.
+Aus dieser Definition folgt, daß mehr als ein physikalischer Empfänger als
+Client agieren kann; die Protokollimplementierungen auf den Clients haben
+in diesem Fall Vorkehrungen dafür zu treffen, daß ihr Verhalten auch im
+Fehlerfall dieser Spezifikation entspricht.\\
+
+Jedem physikalichen Element eines Clients ist ein sicherer Betriebszustand
+zugeordnet. Sobald dieses Element feststellt, daß es von den Übertragungen
+des Netzes abgetrennt wurde, muß es sämtliche Kommunikation beenden und
+den sicheren Betriebszustand einnehmen.\\
+Ein Verlassen des sicheren Betriebszustandes ist nur durch Zurücksetzen
+des Gerätes auf einer untergeordneten Ebene möglich (z.B. Hardware-Reset).\\
+
+
+\subsubsection{Controller zu Client-\"Ubertragungen}
+%---------------------------------------
+
+\paragraph{Synchrone \"Ubertragungen}
+%------------------------------
+Eine Übertragung von einem Controller zu einem Client erfolgt unangekündigt
+mit einer Sequenz von STX-Paketen (Synchronous Transfer); aus Sicht des
+Masters:
+
+\begin{tabular}{cl}
+  $\leftarrow$  & {\tt STX(id, more) size: data}\\
+  $\rightarrow$	& {\tt ACK(id, more)}\\
+\end{tabular}
+
+Wobei die Bedeutungen wie folgt sind:
+
+\begin{tabular}{ll}
+{\bf Name}	& {\bf Bedeutung}\\
+\hline
+
+{\tt STX}	& Synchronous Transfer: Operationscode\\
+{\tt ACK}	& Acknowledgement: Operationscode\\
+{\tt more}	& Flag, welches indiziert, ob noch mehr Daten in diesem	Kommunikationsstrom folgen\\
+{\tt size}	& Menge an folgenden Datenbytes\\
+{\tt data}	& Sequenz von {\it size} Bytes an Daten\\
+\end{tabular}
+
+
+Wenn bei einer Übertragung das {\it more}-Flag gesetzt ist, müssen die
+Daten der nächstes Übertragung ans Ende der vorherigen Übertragung
+angehängt werden.\\
+Zwischen Controller und Client findet maximal eine Übertragung
+gleichzeitig statt; somit ist gewährleistet, daß Pakete einer Übertragung
+eindeutig zugeordnet werden können.\\
+
+Ein Ausbleiben des Acknowledgements für eine bestimmte, implementierungs-
+abhängige Zeit wird als Timeout gewertet; der Sender führt in diesem Fall
+eine Neuübertragung durch.\\
+Nach einer angemessenen Anzahl von versuchten Neuübertragungen wird
+schliesslich eine Fehlermeldung an die aussendende Stelle ausgegeben oder
+(falls keine solche Stelle existiert) intern behandelt werden.\\
+
+\paragraph{Broadcast-Übertragung}
+%----------------------------
+
+Broadcast-Übertratungen entsprechen Übertragungen, bei denen die
+Zieladdresse gleich 0 ist.
+
+
+
+\subsubsection{Client zu Controller- Übetragungen}
+%---------------------------------------
+Diese Übertragungen sind synchron und werden mit der {\tt RTX}-Operation durch-
+geführt:
+
+
+\begin{tabular}{cl}
+$\rightarrow$ & {\tt RTX(id, more) size:data}\\
+$\leftarrow$  & {\tt ACK(id, more)}\\
+\end {tabular}
+
+Die Übetragungen finden statt, sobald der Controller explizit mit einer
+NOP-Anweisung den Bus freigibt. In diesem Fall werden R-Übertragungen von
+dem ausgewiesenen Sender akzeptiert, bis eine Übertragung nicht mehr das
+'more'-Flag gesetzt hat oder ein unbehebbarer Fehler auftrat.
+Jede erfolgreiche Übertragung wird mit einem {\tt ACK} bestätigt.
+
+
+\subsubsection{Fehlererkennung und -behandlung}
+%-----------------------------------
+Das LLO-Protokoll geht von einem selbst fehlererkennenden Protokoll aus,
+daher testet es nur auf Fehler, die eine Netz-Trennung zwischen Controller
+und Client indizieren.
+
+
+\paragraph{Sequenznummern}
+Jede synchrone und asynchrone Übertragung erhöht einen Sequenzzähler
+sowohl auf der Seite des Clients wie auch des Controllers; dieser Zähler
+hat den initialen Zustand 0 und zählt aufwärts, in Schritten der Grösse
+1, Modulo 16. Sein Zustand wird in jeder Übertragung mitgesandt und danach
+erhöht, mit der expliziten Ausnahme einer {\tt SYS}-Übertragung (bei der er nur
+mitgesandt, aber nicht erhöht wird).
+Für {\tt STX} und {\tt RTX} werden hierbei zwei getrennte Zähler verwendet, um
+bei gepipelinetem Versandt eine eindeutige Zuordnungsfähigkeit der Nummern
+zu gewährleisten.
+
+
+\paragraph{Übertragungen im Fehlerfall}
+Falls bei einer Übertragung ein Fehlerfall diagnostiziert wird, wird diese
+Übertragung entweder entweder erneut durchgeführt (wenn der Fehler vom
+Sender diagnostiziert wurde), oder es wird- entweder anstelle eines {\tt ACK}
+(synchron) oder statt zu schweigen (asynchron) ein {\tt SYS} zurückgesandt:
+
+\begin{tabular}{cl}
+  $\rightarrow$ & {\tt RTX(id, more) seq=10, size:data}\\
+  $\leftarrow$  & {\tt ACK(id, more) seq=11}\\
+  $\rightarrow$ & {\tt RTX(id, more) seq=14, size:data}  {\bf /* FEHLER */} \\
+  $\leftarrow$  & {\tt SYS(id, more) seq=12, INVSQ}      {\bf /* Fehlersignalisierung */} \\
+\end{tabular}
+
+In diesem Fall antwortet der Sender entweder ebenfalls mit {\tt SYS} (Abbruch der
+Übertragung), oder er wiederholt die Übertragung an der vom erhaltenen
+{\tt SYS} indizierten Stelle. Ein Abbruch erfolgt genau dann, wenn sich die
+angezeigte Sequenznummer des Empfängers auf eine vorhergehende Botschaft
+bezieht, oder wenn die Differenz der Sequenznummern modulo 16 grösser
+oder gleich 8 ist. Der Empfänger synchronisiert im Abbruchsfall seine
+Sequenznummer mit der des Senders.
+Dieser Fehlerfall kann unter folgenden Bedingungen auftreten (unter Voraus-
+setzung der Korrektheit des Controllers):
+a) Ein Client verwendet eine inkorrekte Protokollimplementierung
+b) Ein Client hat mehrere asynchrone Pakete verpaßt
+c) Ein Client besteht aus mehreren physisch Einheiten, von denen eine echte
+nichtleere Teilmenge einen Teil der Übertragungen verpaßt hat.
+
+Für den Fall (a) kann die Korrektheit des Empfangs im Allgemeinen nicht
+gewährleistet werden. Fall (b) ist durch Definition der inhärenten Un-
+sicherheit asynchroner Pakete abgedeckt. Kritisch ist somit Fall (c):
+Die empfangenden physikalischen Einheiten müssen erkennen, daß eine
+Geschwistereinheit einen Fehler erkannt hat, und sich ruhig verhalten.
+Im Falle eines Übertragungsabbruches müssen auch die Einheiten, die
+die Nachricht korrekt erhalten haben, die aktuelle Übertragung abbrechen,
+um Konsistenz zu gewährleisten.
+
+\paragraph{SYN-Request}
+%-----------------
+Ein {\tt SYN}-Request ist eine synchrone {\tt STX}-Übertragung, die eine size von 0
+hat. Sie dient der Synchronisierung der Sequenznummern und ist wie eine
+normale Übertragung zu behandeln, soweit das Protokoll betroffen ist.
+
+Nach spätestens 14 asynchronen Paketen (Broadcasts) in Folge muß ein Sender
+ein {\tt SYN}-Paket schicken, um die Synchronität der Sequenzzähler zu
+gewährleisten.
+
+
+\paragraph{Systemcodes}
+%-----------------
+Bei einem SYS werden Systemcodes (meist Fehlercodes) mitversandt.
+Sie sind definiert wie folgt:
+
+\begin{tabular}{llll}
+{\bf NR}& {\bf ID}	& {\bf Bedeutung}				& {\bf Kommunikation}\\
+\hline
+1	& {\tt EINTN}	& Interner Fehler				Abbruch\\
+2	& {\tt EINSQ}	& Unpassende Sequenznummer		Retry oder {\tt ABORT}\\
+3	& {\tt ABORT}	& Übertragung Ungültig, Abbruch		Abbruch\\
+4	& {\tt CONTN}	& Übertragung ab hier fortgesetzt	Fortsetzung\\
+5	& {\tt EOVFL}	& Nachricht zu lang: Buffer-Überlauf	Abbruch\\
+6	& {\tt EINVR}	& Ungültige Version			Abbruch\\
+7	& {\tt EGLBL}	& Globales Versagen			Sicherer Betriebszustand\\
+8	& {\tt ENRDY}	& Gerät nicht bereit			Retry nach Verzögerung\\
+\end{tabular}
+
+Ein SYS:GLOBL kann als Broadcast vom Controller eingesetzt werden, um alle
+Geräte in den sicheren Betriebszustand zurückzufahren (und damit den Bus
+effektiv zu deaktivieren).
+
+
+\paragraph{Timeout}
+%-------------
+Bei synchronen Versendungen wird ggf. in einem spezifizierten Zeitraum kein {\tt ACK}
+vom Empfänger erhalten. In diesem Fall wird das Paket erneut versandt
+
+
+\subsection{Keep-Alive}
+%-------------
+
+Mindestens einmal pro 100 ms muß der Controller für ein Keep-Alive-Signal
+({\tt KAL}) auf dem Bus sorgen. Bleibt dieses Signal für mehr als 300 ms aus,
+so müssen sich alle Clients in einen sicheren Betriebszustand zurückfahren.
+
+
+\subsection{Kodierung der Übertragungspakete}
+%------------------------------------
+Dieses Kapitel dokumentiert die Standardkodierung der Pakete; implementierende
+Systeme können eine eigene, angemessenere Kodierung verwenden.
+
+
+\subsubsection{Erstes Präfixbyte}
+%----------------------
+Das erste Byte des Paketes (Präfixbyte) setzt sich zusammen wie folgt:
+
+\begin{tabular}{ll}
+{\bf Bits}	& {\bf Bedeutung} \\
+\hline
+7-5		& Operation \\
+4-0		& Rezipient \\
+\end{tabular}
+
+
+\paragraph{Operationen}
+%------------------
+
+\begin{tabular}{ll}
+{\bf Nummer}	& {\bf ID} \\
+\hline
+0	& {\tt NOP}\\
+1	& {\tt STX}\\
+2	& {\tt RTX}\\
+3	& {\tt ACK}\\
+4	& {\tt SYS}\\
+5	& {\tt KAL}\\
+\end{tabular}
+
+
+\subsubsection{Zweites Präfixbyte}
+%-----------------------
+
+\begin{tabular}{cl}
+{\bf Bits} & {\bf Bedeutung}\\
+\hline
+7	& Reserviert\\
+6,5	& Version (hier immer 0)\\
+4	& Das 'mehr'-Flag\\
+3-0	& Sequenznummer\\
+\end{tabular}
+
+
+\subsubsection{STX, RTX: Übetragungspakete}
+%--------------------------------
+In diesen Paketen folgt ein Byte mit der Anzahl der zu übertragenden
+Daten-bytes, gefolgt von entsprechend vielen Daten.
+
+
+\subsubsection{ACK, NOP und KAL}
+%--------------------
+Diese Pakete sind nach den Präfixbytes leer.
+
+
+\subsubsection{SYS}
+%-------
+Auf dieses Paket folgt genau ein Byte mit dem Identifikator der System-
+Message.
+
+
+\subsection{Appendix A: Implementierung auf dem CAN-Bus}
+%-------------------------------------------
+Bei einer Implementierung auf dem CAN-Bus (LLO/CAN) wird das komplette
+erste Präfixbyte im Identifyer dargestellt:
+
+\begin{tabular}{cl}
+Bits	& Bedeutung\\
+\hline
+10-8	& LLO/CAN-Operation\\
+7-5	& Priorität für {\tt RTX}-Botschaften, sonst 011\\
+4-0	& ID des Rezipienten
+\end{tabular}
+
+
+\subsubsection{A.1 Codierung der LLO/CAN-Operationen}
+%-------------------------------------
+
+\begin{tabular}{llll}
+{\bf Bit 10} 	& {\bf Bit 9}	& {\bf Bit 8}	& {\bf ID}\\
+\hline
+0	& 0	& 0	& {\tt SYS}\\
+0	& 0	& 1	& {\tt ACK}\\
+0	& 1	& 0	& {\tt KAL}\\
+1	& 0	& 0	& {\tt STX}\\
+1	& 1	& 0	& {\tt RTX}\\
+1	& 1	& 1	& {\tt NOP}\\
+\end{tabular}
+
+Somit gilt: \{{\tt SYS}, {\tt ACK}, {\tt KAL}\} > \{{\tt STX}\} > \{{\tt RTX}\} > \{{\tt NOP}\},
+wobei A > B bedeutet, daß alle Elemente von A eine höhere
+Priorität als ein beliebiges Element aus B haben.
+
+Bei STX und RTX wird die Längenangabe im dafür von
+CAN vorgesehenen Bereich gespeichert, nicht als zusätzliches
+Byte. Das Protokoll verwendet im optionalen Datenbereich also
+genau ein Byte.
+
