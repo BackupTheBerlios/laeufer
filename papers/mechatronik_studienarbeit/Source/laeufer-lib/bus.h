@@ -83,12 +83,13 @@ public:
 	 *
 	 * @param id Pointer to an int that stores the incoming ID
 	 * @param op Pointer to an int the incoming operation is stored in
-	 * @param data Pointer any optional bytes will be passed to
-	 * @param length Pointer to an int the number of optiona bytes
-	 * stored in the 'data' pointer will be written to
+	 * @param data Pointer to a sufficiently large buffer any optional
+	 *             bytes will be passed to
+	 * @param length Pointer to an int the number of optional bytes
+	 *             stored in the 'data' pointer will be written to
 	 * @returns 0 on success, an error code otherwise
 	 */
-	virtual int get_message(int *id, int *op, byte **data,
+	virtual int get_message(int *id, int *op, byte *data,
 				int *length) =0;
 
 
