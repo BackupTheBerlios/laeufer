@@ -520,7 +520,8 @@ durch ungez\"ugelten prioritisierten Schreibverkehr auf dem Bus.
 Da die Blockierung des Busses jedoch in einem stark eingeschr\"ankten
 System allgemein gut zu isolieren ist (und der tats\"achliche Gebrauch des
 Multi-Masterings f\"ur viele Ger\"ate unn\"otig ist), schien eine Verwendung
-dieser M\"oglichkeit zur schnellen Meldung von Fehlerzustands\"uberg\"angen sinnvoll.
+dieser M\"oglichkeit zur schnellen Meldung von Fehlerzustands\"uberg\"angen sinnvoll (wenn auch wir
+Protokollseitig die Kommunikationsm\"oglichkeiten aus Gr\"unden der Fehlererkennung einschr\"ankten).
 
 \subsection{Struktur des Netzes}
 
@@ -702,11 +703,15 @@ läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Se
         Zur Kommunikation zwischen PDA und dem Rest des Busses muß ein ``Proxy'' verwendet werden, eine
         dedizierte Platine, die der Vermittlung zwischen CAN-Bus und der seriellen Schnittstelle des PDAs dient.
         Die Kommunikation zwischen Proxy und PDA findet über die serielle Schnittstelle statt, die beide
-        Geräte optional auf Vollduplex betreiben können.\\
+        Geräte optional auf Vollduplex betreiben können. Hierbei werden LLO/LLZ-Nachrichten vermittels eines
+	einfachen seriellen Protokolls (SLP, beschrieben in \ref{slp-proto}) \"ubertragen, das der Trennung
+	von Bl\"ocken dient.\\
         Der Proxy selbst nimmt im Netz noch eine weitere Aufgabe wahr: Er Überprüft das Vorhandensein des PDAs
         und sendet einen Broadcast der Form {\tt SYS:EGLBL} im Falle des Ausbleibens von Antworten des PDAs
         (Systemabsturz, Ausfall, oder Entfernung des Gerätes), um im Falle der Ausschaltung der zentralen
-        Kontrollinstanz die angeschlossene Peripherie in den sicheren Betriebszustand zu zwingen.
+        Kontrollinstanz die angeschlossene Peripherie in den sicheren Betriebszustand zu zwingen. Zudem best\"atigt er
+	selbst {\tt RTX}-Sendungen mit {\tt ACK}, um die Implementierung von Timeout-Behandlung auf der Peripherie
+	unn\"otig zu machen.\\
 \newpage
 
 \section{Das LLZ-Protokoll}
@@ -801,6 +806,11 @@ Korrektheitskriteriums, die Erkennung der Nichterreichung ihres Ziels durch eine
         Schreibens nur ein Fragment der Implementierung verfügbar.\\
         In der ersten Implementierung ist die Beschränkung von Befehlen zumindest SX-seitig auf solche mit bis zu 5 Bytes an Parametern
         vorgesehen; Notifikationen ({\tt NTF}) und Kommandos ohne Antworten ({\tt CMD})  werden nicht verwendet werden.
+
+
+\section{Das SLP-Protokoll}
+
+Au
 
 \newpage
 
