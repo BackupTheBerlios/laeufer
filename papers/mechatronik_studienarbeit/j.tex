@@ -591,10 +591,25 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 \newpage
 
 \section{Das LLO-Protokoll}
+
 Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unseren Korrektheitsforderungen
-(die ja zu zwei Dritteln schon von CAN erfüllt wurden). In diesem Rahmen stellt es zusätzliche Sicherheitsmechanismen
-und ein Multi-Master-Protokoll, das sich auf CAN implementieren
-läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref{llo-proto}}).}.
+(die ja zu zwei Dritteln schon von CAN erfüllt wurden). 
+In diesem Rahmen stellt es zus\"atzliche Sicherheitsmechanismen zur Verf\"ugung. Der
+Grundgedanke ist der eines eingeschr\"ankten Multi-Master-Protokolles,
+in dem zwar ein expliziter einzelner Busmaster existiert, alle anderen
+Busteilnehmer jedoch in explizit daf\"ur vorgesehenen Intervallen miteinander
+konkurrieren. Diese letztere F\"ahigkeit ist f\"ur Meldungen von
+der Peripherie an den Busmaster intendiert, die Spezifikiation verbietet
+jedoch keine Kommunikation von Ger\"aten untereinander (was im Rahmen dieses
+Projektes jedoch nicht zu verwenden geplant ist).
+Die vollstaendige Protokollspezifikation findet sich in Anhang \ref{llo-proto}.
+
+
+
+%Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unseren Korrektheitsforderungen
+%(die ja zu zwei Dritteln schon von CAN erfüllt wurden). In diesem Rahmen stellt es zusätzliche Sicherheitsmechanismen
+%und ein Multi-Master-Protokoll, das sich auf CAN implementieren
+%läßt\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref{llo-proto}}).}.
 
         \subsection{Struktur des Protokolls}
 
