@@ -1,7 +1,7 @@
-\section{Einleitung}
+% TODO: Fazit, Einleitung
 
-%--???--%
-% Platine von 12V bis 48V
+%\section{Einleitung}
+
 
 \section{Vorüberlegung: Zentralisiert oder Föderalistisch?}
 
@@ -236,27 +236,37 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 	somit auch die Erfüllung der Forderungen der Korrektheit nur schwerlich vorstellbar.
 	%
 
-	\subsection{Universal Serial Bus (USB)}
+%	\subsection{Universal Serial Bus (USB)}
 	%
 %% -- fixme -- %%
 
-	\subsection{IEEE 802}
+%	\subsection{IEEE 802}
 	%
 %% -- fixme -- %%
 
-	\subsection{IEEE 1394 ,,Firewire''}
+%	\subsection{IEEE 1394 ,,Firewire''}
 	%
 %% -- fixme -- %%
 
-	\subsection{Profibus}
+%	\subsection{Profibus}
 	%
 %% -- fixme -- %%
 
-	\subsection{InterBus}
+%	\subsection{InterBus}
 	%
 %% -- fixme -- %%
 
-	\subsection{Actuator Sensor Interface}
+	\subsection{Actuator Sensor Interface (AS-i)}
+	Das 1993 entworfene Actuator Sensor Interface des AS-i Konsortiums
+	ist ein Master-Slave-System mit bis zu 31 Slaves, das sich insbesondere
+	durch eine sehr geringe Komplexität auszeichnet. Tatsächlich erfüllt
+	es alle Anforderungen, die von uns an ein solches Netzwerk gestellt werden;
+	sein einziger wesentlicher Nachteil ist die Beschränkung der Größe des Ein- und
+	Ausgangskanals auf je 4 Bit, was zu einer Verwendung von fragmentierter
+	Datenübertragung zwingt.\\
+	Da wir jedoch zu spät von seiner Existenz erfuhren und nicht unmittelbar
+	mit Unterstützung seitens der Sponsoren rechnen konnten, muß seine
+	Bedeutung auf eine Aufführung in dieser Ausarbeitung beschränkt bleiben.
 	%
 %% -- fixme -- %%
 
@@ -385,20 +395,36 @@ der Forderung nach {\bf Bidirektionalität} genügt).\\
 Die Wahl des Bus-Systems (für das wir, auf externe Empfehlung hin, CAN-Controller vom Typ
 MCP2510 der Firma Microchip Technology Inc.
 verwenden), war somit gefallen. Diese liefern die bereits zuvor für diverse Abschätzungen verwendete Übertragungsrate
-von 1 Mb/s
+von 1 Mb/s.
 
-	\subsection{DeviceNet}
+%KILLME%
+Offen stand jedoch noch das zu verwendende Datenprotokoll; verbreitete Protokolle sind, insbesondere in Europa,
+das CANopen-Protokoll, wobei auch DeviceNet und das Smart Distributed System (SDS) sicher Optionen gewesen wären,
+sich jedoch hierzulande durch ihre Verwendung keine unmittelbaren Vorteile ergeben hätten. CANopen jedoch, zu dem
+unter Umständen bereits fertige Komponenten verfügbar gewesen wären, wenn auch deren Verwendbarkeit aufgrund der
+besonderen Konstruktion des Läufers zweifelhaft erscheinen würde, ist ein sehr komplexes Protokoll, dessen
+Implementierung, gerade auch, da die sich ergebenden Vorteile in ihrem Nutzen bestenfalls beschränkt wären,
+unnötigen Aufwand ohne nennenswerten Lerneffekt verursacht hätte.
+
+
+%	\subsection{CANopen}
 %% -- fixme: Mention it at the very least -- %%
 
-	\subsection{CANopen}
+
+%	\subsection{DeviceNet}
 %% -- fixme: Mention it at the very least -- %%
 
-	\subsection{Smart Distributed System (SDS)}
+%	\subsection{Smart Distributed System (SDS)}
 %% -- fixme: Mention it at the very least -- %%
 
 
 	\subsection{Eigenentwicklung}
-	Zuletzt blieb nun noch die Möglichkeit einer auf die Bedürfnisse des Läufers zugeschnittenen Eigenlösung. Diese
+%	Zuletzt blieb nun noch die Möglichkeit einer auf die Bedürfnisse des Läufers zugeschnittenen Eigenlösung.
+%KILLME:
+	Daher schien uns die Möglichkeit einer auf die Bedürfnisse des Läufers zugeschnittenen Eigenlösung als die Vielversprechendste.
+%STOP KILLING ME
+
+	Diese
 	hatte zwar zunächst den unmittelbaren Nachteil, noch nicht entworfen worden zu sein, in Anbetracht der Nicht-
 	verfügbarkeit existierender Implementierungen der andren genannten Protokolle für diese Plattform jedoch andererseits
 	den Vorteil, mit moderaten Entwurfsaufwand den Implementierungsaufwand den Bedürfnissen des Läufers entsprechend
@@ -588,13 +614,80 @@ und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
 
 \section{Das LLZ-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref llz-proto}).}
 
-Das LLZ-Protokoll ist ein zustandsbasiertes Zwei-Wege-Protokoll, das eine feste Maximallänge von Botschaften vorsieht und
-eine sehr spezifische Semantik erzwingt. Zudem stellt es den letzten Schritt der Sicherstellung des ersten Korrektheitskriteriums dar.
+Das LLZ-Protokoll ist ein zustandsbasiertes Protokoll, das eine feste Maximallänge von Botschaften vorsieht (16 Bytes, mit einer Minimallänge von einem Byte) und
+eine sehr spezifische Semantik erzwingt. Zudem implementiert es den letzten noch fehlenden Aspekt des Korrektheitskriteriums.
 
 	\subsection{Struktur des Protokolls}
-	\subsection{Umsetzung}
-	\subsection{Tests}
+
+	LLZ definiert Kommunikation zwischen genau zwei Teilnehmern, von denen einer dedizierter Sender und der andere Empfänger ist.
+	Beide können Kommunikation initiieren, aber nur der Sender kann eine Antwort ``erzwingen'' lassen; zudem
+	ist er auch derjenige, der den Zustand des Empfängers kontrolliert.\\
+	Das LLZ-Protokoll wird in mehreren Instanzen verwendet, wobei maximal eine pro Kanal des unterliegenden Protokolles angeboten wird
+	(bei LLO werden aufgrund der maximal 30 verwendeten nicht-Controller-Adressen also höchstens 30 Instanzen des Protokolls zugleich ausgeführt).
+
+	\subsubsection{Zustände der LLZ-Empfänger}
+
+	Bevor es jedoch zu einer Ausführung der Datenübertragungen des Protokolles kommt findet die Initialisierung der Busteilnehmer
+	statt, bei der der Sender zugleich (möglichst vermittels der Verwendung von Broadcasts eines unterliegenden Protokolles) überprüft,
+	wieviele Protokollinstanzen er zu verwenden hat, auf welchen der Kanäle des unterliegenden Protokolles also Empfänger zu erwarten sind.\\
+
+	Clients befinden sich initial im {\tt PRE-INIT}- Zustand, der ihnen jegliche Kommunikation auf dem Bus, mit Ausnahme der Beantwortung
+	von Initialisierungssignalen ({\tt INI}) verbietet. Sobald sie ein solches Signal erhalten, gehen sie kurzfristig in einen
+	weiteren Zustand ({\tt INIT}), in dem sie eine Überprüfung der Protokollversionsnummer durchführen und, falls kein Fehler auftrat
+	(den sie an den Sender kundtun würden, um Sendern, die mehrere Protokollversionen unterstützen, eine entsprechende Suche zu ermöglichen),
+	in den {\tt RUNNING}-Zustand über, der ihren normalen Operationsmodus darstellt. Dabei wird ein weiteres Signal an den Sender, {\tt IOK},
+	versandt.\\
+	Auf Befehl des Senders hin schalten sie sich (eventuell auch schon aus dem {\tt PRE-INIT}-Zustand) in den {\tt DOWN}-Modus, der
+	dem sicheren Betriebszustand entspricht.
+
+	\subsubsection{Befehlstabelle}
+
+	Bei der Bestätigung der erfolgreichen Initialisierung vermittels des {\tt IOK}-Blockes wird eine Tabelle der von diesem
+	Gerät unterstützten Befehle mitverschickt; diese Tabelle ist bitweise kodiert, wobei in 16 Bytes Raum für 128 Befehle geschaffen wurde.
+	Eine spezifische Wahl der Befehlscodes wurde im Rahmen dieser Studienarbeit nur zu Testzwecken durchgeführt und wird späteren
+	Implementierern überlassen.\\
+	Der Vorteil einer derart versandten Tabelle ist eine eingeschränkte ``Plug-and-Play''- Nachrüstbarkeit der Peripherie.
+	Treiber seitens des PDAs\footnote{welche ihre Klienten üblicherweise auf einem bestimmten Kommunikationskanal erwarten} können mittels
+	der Befehlstabelle nun unmittelbar die Verfügbarkeit von Funktionen, die in einer echten Teilmenge der Menge der Versionen
+	der Peripherie implementiert wurde, überprüfen, und somit ihre Handlungen oder die von ihrer API angebotene Funktionenmenge
+	entsprechend ausrichten.\\
+	Alle Kommunikation über den Bus muß durch einen solchen Befehl gekennzeichnet sein, der Befehl darf jedoch noch bis zu 15 Bytes
+	an Parametern nehmen\footnote{Dies ist ein Kompromiss an den SX, dessen Datenbänke genau 16 Bytes in Folge fassen}.
+	Es gilt eine zusätzliche Einschränkung der Form von Befehlen, die durch die Art des Timeout-Trackings
+	bedingt wird: Für alle Befehle $b$ gilt: Für alle Parameterkonfigurationen $p, p^\prime$ gilt, daß der gesamte Zustand des Clients
+	unmittelbar nach Ausführung von $b$ mit $p$, ohne, daß zuvor $b$ mit $p^\prime$ ausgeführt wurde, identisch zum Zustand des
+	Clients nach der Ausführung von $b$ mit $p^\prime$ gefolgt von $b$ mit $p$ ist.\\
+	Das heißt, vereinfacht ausgedrückt, daß die Semantik eines Befehls sich niemals auf Zustände beziehen darf, die der gleiche Befehl
+	modifizieren kann.
+	\subsubsection{Timeouts}
+
+	Datenübertragungen in LLZ nehmen an, daß sie vollständig und hinreichend korrekt durchgeführt werden oder
+	jedenfalls dem Übertragenden eine Nachricht zukommt, wenn bei der
+	Übertragung ein nicht korrigierbarer Fehler auftrat (im LLO-Protokoll ist das bei massivsten Datenverlusten
+	und fehlschlagender Fehlerbehandlung der Fall). Von der korrekten Überprüfung der Beantwortung von Botschaften
+	geht es jedoch nicht aus, daher wird bei jeder Versendung eines Befehls $b$ mit beliebigen Parametern zum
+	Zeitpunkt $t$ ein Tupel $(b, t)$ gespeichert, wobei eine (partielle) Zuordnung $sent b \mapsto t$ resultiert,
+	also jedem $b$ ein eindeutiges $t$ (jeweils das aktuellste Datum, da, wie gefordert, gleiche Befehle sich ``gegenseitig überschreiben'')
+	zugeordnet ist.\\
+	Mit dieser Information wird nun in regelmäßigen Intervallen nach Timeouts von Antworten gesucht und somit der Rest des Korrektheitskriteriums
+	erfüllt\footnote{Tatsächlich wird natürlich manchmal umsonst Alarm geschlagen, da unter Umständen nur die Bestätigung verloren gint, aber
+	dies haben wir nicht ausgeschlossen}.
+
+	\subsection{Umsetzung und Tests}
+
+	Die Implementierung der Timeouts beschränkt sich auf den PDA; auf der Ebene der SX-Controller, also der Clients,
+	ist im Allgemeinen kein ausreichender Speicherplatz für eine Timeout-Fehlerbehandlung; Timeouts treten zudem meist in Situationen auf,
+	in denen der Client vom Netz abgetrennt ist, ein Fall, der jedoch bereits durch das periodische Keepalive-Signal
+	des LLO-Busses behandelt wird.\\
+	Die Implementierung und Anbindung auf Hochsprachenebene wurde abgeschlossen, auf SX-Ebene ist jedoch zum Zeitpunkt des
+	Schreibens nur ein Fragment der Implementierung verfügbar.\\
+	In der ersten Implementierung ist die Beschränkung von Befehlen zumindest SX-seitig auf solche mit bis zu 5 Bytes an Parametern
+	vorgesehen; Notifikationen ({\tt NTF}) und Kommandos ohne Antworten ({\tt CMD})  werden nicht verwendet werden.
 
 \newpage
 
 \section{Fazit}
+
+Im Rahmen des Projektes wurde eine für die Zwecke des Läufers geeignete Kommunikationsstruktur entworfen und getestet, eine
+vollständige Implementierung auch auf den Mikrocontrollern war aus verschiedenen Gründen bis zur Fertigstellung dieser Ausfertigung
+nicht mehr möglich und muß im Anschluß erfolgen.
