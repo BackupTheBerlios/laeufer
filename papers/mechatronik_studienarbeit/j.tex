@@ -427,12 +427,15 @@ sinnvoll.\\
 
 Eine zunächst noch offene Frage war jedoch die Form der Protokolle,
 gerade auch, da CAN Unterstützung für Multi-Mastering bietet. Wir
-entschlossen uns dazu, das Session-Protokoll für eine
+entschlossen uns zunächst dazu, das Session-Protokoll für eine
 Master-Slave-Kommunikation auszulegen, da dies der angestrebten unmittelbaren
-Kontrolle der Peripherie durch ein zentrales System entsprach,
-wohingegen wir das Netzwerk-Protokoll, das auch die Aufgabe der
-Adressierung bestimmter Clients übernehmen sollte, ein
-Single-Master-Multi-Slave-System bildete, aus den gleichen Gründen.\\
+Kontrolle der Peripherie durch ein zentrales System entsprach; dies
+erweiterten wir später um einen Notifikationsmechanismus in die andere
+Richtung und bauten es somit zu einem zwei-Master-Netz aus.
+Das Netzwerk-Protokoll hingegen, das auch die Aufgabe der
+Adressierung bestimmter Clients übernehmen sollte, bildete ein
+Multi-Master-System mit prioritisierten Botschaften (speziell unter Ausnutzung
+der Eigenschaften des CAN-Busses), aus den gleichen Gründen.\\
 
 Aus theoretischer Sicht ist das Netz somit von sternförmiger
 Topologie, die tatsächliche Verdrahtung hingegen kann natürlich
@@ -440,21 +443,32 @@ beliebig im Rahmen des von CAN Ermöglichten erfolgen.
 
 	\subsection{Die beiden Protokollschichten}
 	Die beiden Protokolle, mit Namen {\it LLO} und {\it LLZ} (``Läufer Layer One'' bzw. ``Zero''), nehmen also
-	signifikant andere Aufgaben wahr, die hier aufgeführt werden und bezüglich ihrer Abdeckung der geforderten
-	Funktionalität überprüft werden sollen.
+	zueinander signifikant andere Aufgaben wahr:
 
 		\subsubsection{Aufgaben des LLO-Protokolls}
-		Die Aufgaben des LLO-Protokolls stellen die der untereren Schicht dar, sie sind wie folgt:
+		Die Aufgaben des LLO-Protokolls umfassen die folgenden:
 		\begin{enumerate}
-		  \item{Verpackung der zu übertragenden Daten in Pakete des Data Link/Network Layer (speziell CAN)}
 		  \item{Adressierung der Klienten}
-		  \item{Sicherstellung der Erfüllung des ersten Korrektheitskriteriums}
+		  \item{Verpackung der zu übertragenden Daten in Pakete des Data Link/Network Layer (speziell CAN)}
 		  \item{Busmastering}
 		\end{enumerate}
 
-		\subsubsection{Aufgaben des LLZ-Protokolls}
-		Das LLZ-Protokoll
 
+		\subsubsection{Aufgaben des LLZ-Protokolls}
+		Das LLZ-Protokoll übernimmt folgende Teilaufgaben:
+		\begin{enumerate}
+		  \item{Session-Management}
+		  \item{Erfüllung des ersten Korrektheitskriteriums}
+		\end{enumerate}
+		Eine ``Sitzung'' im für uns relevanten Sinn erstreckt sich hierbei von Aktivierung bis Deaktivierung
+		des Läufers.
+
+		\subsubsection{Der sichere Betriebszustand}
+		Beiden Protokollen ist ein Konzept zu Eigen, das den Namen ``sicherer Betriebszustand'' trägt, sich
+		auf Klienten im Bus bezieht und
+		individuell für jedes angeschlossene Gerät definiert werden muß. Dieser sichere Betriebszustand
+		ist von angeschlossenen Geräten im Fehlerfall einzunehmen, insbesondere, wenn die Kommunikation nach
+		außen abreißt.
 \newpage
 
 \section{Der Bezug zum OSI-Schichtenmodell}
@@ -484,16 +498,20 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 
 \newpage
 
-\section{Das LLZ-Protokoll}
+\section{Das LLO-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref llo-proto}).}
+
+
 	\subsection{Struktur des Protokolls}
 	\subsection{Umsetzung}
 	\subsection{Tests}
 
 \newpage
 
-\section{Das LLZ-Protokoll}
+\section{Das LLZ-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref llz-proto}).}
 	\subsection{Struktur des Protokolls}
 	\subsection{Umsetzung}
 	\subsection{Tests}
+
+\newpage
 
 \section{Fazit}
