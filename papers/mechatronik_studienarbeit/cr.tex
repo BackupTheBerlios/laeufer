@@ -57,8 +57,8 @@ Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor
 falscher Bedienung durch einen Entwickler wurde bei der Auswahl der
 Komponenten als auch beim Layout auf Robustheit Wert gelegt. Die
 Platine sowie die Bauelemente enthalten eine Reihe von
-Schutzmechanismen wie Zener-dioden oder eine ,,Schmelzsicherung'' in
-Form einer besonders dünnen Leiterbahn.  Die aktiven Komponenten sind
+Schutzmechanismen wie Zenerdioden oder eine ,,Schmelzsicherung'' in
+Form einer besonders dünnen Leiterbahn. Die aktiven Komponenten sind
 außerdem selbst durch diverse Schutzmaßnahmen vor Überhitzung
 und/oder Stromspitzen geschützt.
 
@@ -88,7 +88,7 @@ später erwähnte Multiplexer war noch nicht vorgesehen), die Low-Side
 Switches waren nicht integriert und die angeschlossene Peripherie
 wurde durch einen SX28 gesteuert (zwei I/O-Ports weniger als der
 SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue
-vierlagige Chequekartengroße Trägerplatine ersetzt. Erst die
+vierlagige scheckkartengroße Trägerplatine ersetzt. Erst die
 Entwicklung dieser zweiten Platine wurde von dieser Studienarbeit
 begleitet. Der zweite Iteration berücksichtigte dann eine Reihe
 weiterer Ideen zur Annäherung an das Ziel einer multifunktionalen
@@ -124,7 +124,7 @@ gezogen worden: Infineon/Siemens (C515-Familie), Motorola
   
 \item Infineons SABC515-Familie bietet mit zum Teil integrierten
   RS232-Bauelementen eine reiche Auswahl für
-  Kommunikationsanwendungen. Mit bis zu 24Mhz erfüllt der
+  Kommunikationsanwendungen. Mit bis zu 24MHz erfüllt der
   Mikrocontroller sind die Mikrocontroller für die vorgesehene
   Anwendungen schnell genug. Der Preis von 9 bis 14 Euro
   pro Mikrocontroller ist vergleichbar hoch. Desweiteren müssen für
@@ -161,7 +161,7 @@ gezogen worden: Infineon/Siemens (C515-Familie), Motorola
   teilt der SX52 mit vier Kilobyte nicht mit seinem Konkurrenten. Sein
   Preis ist mit ca. 7 Euro besser als der des Motorolas
   und gleichauf mit dem PIC-Controller.  Durch die
-  PIC-Kompa\-tibilität stehen auch für den SX52 viele Ressourcen offen.
+  PIC-Kompatibilität stehen auch für den SX52 viele Ressourcen offen.
   Mit bis zu 100 MHz ist der SX52 der schnellste Microcontroller
   seiner Klasse.
   
@@ -169,7 +169,7 @@ gezogen worden: Infineon/Siemens (C515-Familie), Motorola
   die erhältliche Entwicklungsumgebung der Firma Parallax. Die
   Software ermöglicht eine schrittweise Verfolgung des
   Programmablaufs, und spiegelt dabei die Arbeitsspeicherbelegung.
-  Nähers dazu im Kapitel \ref{Umgebung} Programmierumgebung.
+  Näheres dazu im Kapitel \ref{Umgebung} Programmierumgebung.
 
 \end{itemize}
 
@@ -193,11 +193,11 @@ in simulierter Umgebung getestet werden muß, sondern sofort im
 Einsatzumfeld erprobt werden kann ohne große Kosten zu verursachen.
 
 Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output
-nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur
+nutzbar sind. Es existiert ein Stromsparmodus (Sleep-Mode) der zur
 Laufzeit an- und ausschaltbar ist. Der Microcontroller hat eine
 Interrupt-funktion die ebenfalls zur Laufzeit aktivier- und
 deaktivierbar ist. Einer der fünf Ports kann als Interrupt oder
-Weck-port konfiguriert werden. Das heißt ein Signal an diesem Port
+Weck-Port konfiguriert werden. Das heißt ein Signal an diesem Port
 löst einen Interrupt aus bzw. ,,weckt'' den Microcontroller aus dem
 Stromsparmodus.
 
@@ -304,7 +304,7 @@ beschrieben.
   
 \item[Digitale Eingänge] Mit dem ULN2004A gibt es über 7 Anschlüsse
   einen direkten Zugang zum Microcontroller.  Der sieben Darlington
-  Schaltungen enthaltende Baustein von STMicroelectronics Akzeptiert
+  Schaltungen enthaltende Baustein von STMicroelectronics akzeptiert
   eine Eingangsspannung von fünf bis zu acht Volt, je nach
   Eingangsstrom.  Drei der Eingänge werden an den interruptfähigen
   Port des Mikrocontrollers durchgeschaltet. Dadurch ergibt sich eine
@@ -539,7 +539,7 @@ können den Kreislauf unterbrechen:
   
 \item[Endlosschleife] Man kann das erreichen der höchste
   Speicherstelle auch durch eine eigene Endlosschleife verhindern, die
-  während des Programmlaufes nicht verlassen wird.
+  während des Programmablaufes nicht verlassen wird.
   
 \item[Neustart durch ab- und einschalten der Versorgungsspannung]
   Natürlich kann man den Microcontroller auch aus- und wieder
@@ -890,7 +890,7 @@ beschrieben.
   Fall nicht statt.  Es handelt sich bei der RS232 um eine asynchrone
   Übertragung die, im Gegensatz zur synchronen Übertragung, ohne
   separates Taktsignal erfolgt.  Ein Empfänger muß das eintreffende
-  Signal mit einer mehrfachen Taktfrequenz abtasten und so das
+  Signal mit dem mehrfachen der möglichen Taktfrequenz abtasten und so das
   Taktsignal rückgewinnen. Das setzt ein akkurates Timing voraus.  Um
   sicherzustellen, das eine Zustandsänderung am Eingang registriert
   wird, nimmt man als Abtastrate das vierfache der Zielfrequenz ab.
@@ -940,7 +940,7 @@ ausreichend zur Ausführung kommen.
   Pulsweite genannt.  Ein angeschlossener Gleichstrommotor zum Beispiel
   dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als normal.
   Ändert man nun $t_{i}$ in die eine oder andere Richtung, so erzeugt
-  man Dim-effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
+  man Dim-Effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
   die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$
   nach $high$ übergeht (siehe dazu \ref{cr_pwm}).
   
@@ -988,7 +988,7 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
   einzelnen Pins, das zweite aktiviert die Einstellung dann
   gegebenenfalls.
 \item{ADC} Noch bevor der Analog-Digital-Wandler per Chip-Select
-  aktiviert wird, werden 4 bit zum auswählen des zu wandelnden Eingangs
+  aktiviert wird, werden 4 Bit zum auswählen des zu wandelnden Eingangs
   übertragen, erst nachdem Chip-Select dann auf $low$ gesenkt wurde,
   wird nach kurzer Verzögerung das Ergebnis an den Microcontroller
   geschickt.
@@ -997,7 +997,7 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
   Digital-Analog-Wandlers übertragen und dann beim Wechsel des
   Chip-Select Signals von $low$ nach $high$ aktiviert. das heißt die
   analogen Interpretation der 12-Bit-Muster liegen in Volt an den
-  Ausgängen des Digital-Analog-wandlers an.
+  Ausgängen des Digital-Analog-Wandlers an.
 \item{CAN}siehe dazu Kapitel \ref{jameson_kapitel}.
 \end{description}
 
@@ -1006,7 +1006,7 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
   Bits 7 bis 4 steht die Slave ID (hier 1010). Das nullte Bit zeigt an
   ob eine Lese- (1) oder Schreibe-Operation (0) anschließt. Nach der
   Adressierung sendet der Master beliebig viele acht-Bit Worte und
-  erhält nach jedem Word eine Bestätigung (engl. Akknowledge) vom
+  erhält nach jedem Word eine Bestätigung (engl. acknowledge) vom
   Speicherbaustein.  Bei der Lese-Operation unterscheidet man zwischen
   sequentiellem Lesen und selektivem Lesen.  Beim sequentiellen Lesen
   werden vom Master dem oben beschriebenen Adressierungsbyte zwei Byte
@@ -1043,7 +1043,7 @@ Technische Dokumentation brauchbar.  Während meiner Recherchen für
 Beispielprogramme stieß ich auch auf einen C-Compiler für den SX52.
 Würde man nun eine grafische Oberfläche zur Nutzung der Module mit dem
 C-Compiler verbinden, könnte man eine komplette und komfortable
-Mechatronik-Entwicklungsumgebung als Produkt anbieten. Insbesondere in
+Mechatronik-Entwicklungsumgebung als Produkt anbieten. Insbesondere im
 Bildungsbereich könnte dies Anklang finden.
 %Anleitung
 %C-Compiler
