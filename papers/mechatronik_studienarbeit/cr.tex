@@ -1,30 +1,170 @@
 \section{Anforderungen an die Peripherieelektronik}
 \subsection{Gesamtkonzept}
+Die Mechatronik im Projekt L"aufer muß einer Reihe projektspezifischer Anforderungen standhalten. Was bedeuten also die eingangs geschilderten
+Zielsetzungen für die Peripherieelektronik?
+
+Da sich der genaue Funktionsumfang aller mechatronischen Komponenten f"ur die Zukunft nicht abschätzen l"asst, und neue Komponenten jederzeit einfach
+einzugliedern sein sollen muss das System leicht erweiterbar sein. Für die  Zielgruppe zur Nutzung der Platinen sind die Peripheriegeräte des L"aufers
+muss das System mit vertretbarem Aufwandt bedienbar sein. Für den nutzenden Ingeneur muss der Effekt und nicht der Weg interessant sein.
+Die begrenzten Resourcen eines autnomen Systems wie dem L"aufer erfordern außerdem eine sparsame Nutzung von Energie.
+Um die Fahrer nicht durch Fehlfunktionen oder Ausfall eines Gerätes zu gefährden muß das System betriebssicher sein. D.h. sowohl in der physikalischen
+Auslegung als auch in der Implementierung m"ussen m"ogliche Extreme in der Nutzung des Fahrzeugs ber"ucksichtigt werden. Dies beinhaltet auch eine
+gewisse Fehlertoleranz mittels ,,fail save Design''.
+Nicht zuletzt muss die Lösung zum einen durch das vorhandene Know How im Umfeld des Projekt L"aufer umsetzbar als auch finanzierbar bzw. durch
+Sponsoren erhältlich sein.
+Bei der Zusammenstellung der Platine muss ausserdem auf Verf"ugbarkeit der Bauelemente sichergestellt sein.
+Zu guter letzt muss eine Platine wenig Raum einnehmen um dem Design des Fahrzeugs gr"oßtm"oglichen freiraum zu gew"ahren.
+
+Zusammengefasst ist das Ziel der Arbeit eine im mechatronischen Bereich vielseitig und einfach bedienbare Platine zu erstellen sowie die
+Implementierung einer Grundfunktionalität.
+Im folgenden wird die Umsetzung der Anforderungen im Detail besprochen.
+
 \subsection{Flexibilit"at}
+Der CAN-Bus macht ein einfaches Einklinken in den Bus an jeder erdenklichen Stelle möglich. Dadurch ist das Gesamzkonzept schnell erweiterbar.
+Ein neueres Gerät erhält eien eindeutige Identifikationsnummer und wird dann durch den PDA erkannt und gesteuert. Näheres dazu findet sich im Protokollteil wieder.
+Die Platine ermöglicht das Anschließen unterschiedlicher Geräte ohne sich um Protokollfragen kümmern zu müssen.
+Die Wahl der Microcontrollers und der elektronischen Bausteine lassen dem Entwickler größtmögliche Freiheit bei der Wahl der Funktionalität des
+Peripheriegerätes. Das Layout der Platine erlaubt bei entsprechender Dimensionierung der Widerstände und Kondensatoren eine Versorgungsspannung von
+5 bis 48 Volt. Ein Spannungswandler regelt dann die Spannung auf die für MOS-technologie üblichen 5 Volt herunter um die Bauelemente entsprechend zu
+versorgen
 \subsection{Kosten}
+Die Platine enthält lediglich Standardbauelemente wie sie auch in der Automobilindustrie verwendet werden. Die Kosten einer komplett bestückten Platine
+belaufen sich auf etwa 150,- \geneuronarrow{}. das Layout erlaubt jedoch eine Teilbestückung die sich auf die für ein spezifisches Peripheriegerät notwendigen
+Bauelemente beschränkt. Ein weitere wichtger Punkt bei der Kostenbestimmung war die verwndbarkeit und das zusammenspiel der Bauelemente in der
+gewünschten Zusammenstellung. Um gravierende Fehler auszuschließen und alle Vorstellungen umzusetzen begleitet die Firma Cetron gesammten Prozess der
+Platinenentwicklung. Von der Idee, dem Prototypen, der Auswahl der Komponenten, des Microcontrollers, dem Layout der Platine in zwei Revisionen bis 
+hin zur Suche nach Sponsoren für 12 4-Layer Platinen sowie bei der Bestückung derselben stand die Firma Cetron mit Rat und Tat bei.
 \subsection{Sicherheit}
+Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor falscher Bedienung durch einen Entwickler wurde bei der Auswahl der Komponenten als
+auch beim Layout auf Robustheit Wert gelegt. Die Platine sowie die Bauelemente enthalten eine Reihe von Schutzmechanismen wie Zener-dioden oder eine
+,,Schmelzsicherung'' in Form einer besonders dünnen Leiterbahn.
+Der zweite wichtige Sicherheitsaspekt liegt in der Funktion eines etwaigen Gerätes. Hierzu sind die Nutzer der Platine angehalten einen fail save
+Zustand zu implementieren. Eine entsprechende Nachricht auf Protokollseite existiert bereits.
 \subsection{Design}
-\subsection{Beispielszenario Scheibenwischer}
+Um sich in das Design des Läufers zu integrieren sind sowohl die Erweiterbarkeit als auch die simple Grösse der Platine von Wichtigkeit.
+Die Erweiterbarkeit ist bereits im Bereich Flexibilität beschrieben. Die Größe der Platine beträgt  x * y cm hat also etw die Grösse einer Checkkarte.
+ Abbildung!!!!! Platine Magnetkarte !!!!!!!!
+
 \newpage
 \section{Wahl der Komponenten}
 \subsection{Microcontroller}
+
+Die Wahl des Microcontrollers beruht auf der Empfehlung der Firma Cetron. Im folgenden werden im groben die Eigenschaften beschrieben. Weitere Details
+stehen im Teil \ref{Konzeption} Konzeption der Implementierung.
+
+Die Wahl des Microcontrollers fiel auf den SX52. Dieser Microcontroller der Firma Ubicom hat 16 sogenannte Codepages Flashrom a 512 12-Bit Worten für den 
+Programmcode und 16 $\times$ 16 8-Bit Registerbänke sowie eine Spezialbank zur Konfiguration. Das heißt es stehen 8 Kilobyte (1 Byte = 12 Bit) für
+Programmcode und $2^{8}$ 8-Bit Register zu Laufzeit zur Verfügung.
+Der SX52 hat 5 8-Bit Ports die sowohl als Input als auch als Output nutzbar sind. Es existiert ein Stromsparmodus (Sleep-mode) der zur Laufzeit an- und ausschltbar
+ist. Der Microcontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit aktivier und deaktivierbar ist. Einer der 5 Ports kann als
+Interrupt oder Weck-port konfiguriert werden.
+Ein Besonderheit des SX ist ein komerziell erhältliches Programmierpaket, mithilfe dessen ein Programm schrittweise ausgeführt und sowohl auf
+Bildschirm als auch am Microcontroller verfolgbar ist.
+Dies macht die Programmierarbeit deutlich einfacher. Mit einer Taktfrequenz von 50 MHz ist der SX auch für eine 115 Baud übertragung an der seriellen
+Schnittstelle schnell genug.
 \subsection{Peripherie}
+Um eine flexible Nutzung der Platine zu sichern gilt es eine Vielzahl von Anschlußmöglichkeiten zur Verfügung zu stellen. Im folgenden werden die
+genutzen Bauelemente und Funktionalität der Platine beschrieben.
+\begin{description}
+\item[Serial Peripheral Interface (SPI)]
+Die große Anzahl an Bauelementen macht eine sparsame Nutzung der I/O-Ports am Microprozessor nötig.
+Zu diesem Zweck sind der CAN-Bus-Chip, zwei Low-Side-Switches, ein Analog-Digital-Wandler und ein Digital-Analog-Wandler über ein SPI-Bus System mit
+dem Microcontroller verbunden. Jeder dieser Bausteine hat einen Chipselect-Eingang der bei einer logischen Null den jeweiligen Baustein aktiviert. Der
+Datentransfer geschieht dann zwischen Microcontroller und dem selektierten Baustein. 
+
+Das jeweilige Chipselect wird über einen Multplexer gesetzt. Diese Lösung spart nicht nur wertvolle Pins am Port des Microcontrollers, sie garaniert
+auch das keine zwei oder mehr Geräte auf den Datentransfer reagieren.
+\item[Kommunikation]
+Neben dem SPI-Bus zur internen Kommunikation stehen eine serielle Schnittstelle und ein CAN-Bus für die externe Kommunikation zur Verfügung. 
+CAN -Jameson Fragen.
+Die serielle Schnittstelle ist direkt über einen Wandlerbaustein (MAX202CSE) mit dem Microcontroller verbunden. Durch die Anbindung des 
+RXD- (RXD = Receive Data) und CTS-Signals (CTS = Clear To Send) an den weckfähigen Port des Microcontrollers ist eine Aktivierung der Platine über die
+serielle Schnittstelle möglich.
+\item[Digital-Analog-Wandler]
+Angeschlossen an den SPI-Bus werden die Auszugebenden Spannungen mit 12 Bit codiert. So kann linear eine Spannung von 0 bis 12 Volt dargestellt werden.
+Der Baustein von Linear Technologie LTC 1446 enthält zwei Digital-Analog-Wandler, so das insgesamt 24 Bit (2 $\times$ 12) über dan Bus übertragen werden
+müssen.
+
+\item[Analog-Digital-Wandler]
+Der LTC 1594 von Linear Tchnologie enthält einen 4-Kanal Multiplexer über den einer von vier Eingängen an den Analog-Digital-Wandler geführt werden
+können. Zur Konfigurations werden anfangs vier Bit übertragen die zum einen als Aktivierung und zum anderen für die Auswahl des Multiplexereingangs.
+Wenn ein Eingang ausgewählt ist, dann codiert der Analog-Digital-Wandler die anliegende Spannung bis maximal 12 Volt in 12 Bit. Die Abtastrate beträgt
+16,8 kHz.
+
+Über Jumper lässt sich eine Rückkopplung der Brückenausgänge mit den Eingängen des Anlog-Digital-Wandlers herstellen. Das heißt es existiert eine
+direkte Möglichkeit zu Messung der ... ->->-> WAS eigentlich ??????
+
+\item[Low-Side-Switch]
+
+Siemens Smart Octal Low Side Switch TLE 6230 GP Short Circuit Protection 8 bit 4bit PWM
+
+TLE1+2
+\item[Digitale Ein- und Ausgänge]
+
+Digitale Ein- und Ausgänge
+\item[Brücken]
+2 x Infineon TLE 5206-2 5 Ampere H-Bridge for DC Motors up to 40 V 6 A peak
+
+Brücken
+\item[Speicher]
+
+RAM
+\end{description}
+
 \newpage
+
 \section{Anforderungen an die Implementierung des Microcontrollers}
+
 \subsection{Bedienbarkeit}
+
+Konstanten
+Speicherreservierung
+Speicherplatzierung
+
+Codeseg
+Callseg
+BANKseg
+
 \subsection{Sicherheit}
+
+muss der Ing machen
+
 \subsection{Kommunikation}
+
+Interrupt
+Wake on ...
+
 \subsection{Erweiterbarkeit}
+Modulstruktur und Speichermanagement
+
 \newpage
 \section{Konzeption der Implementierung}
+\label{Konzeption}
 \subsection{Programmierumgebung}
-\subsection{zeitkritische Automaten}
-\paragraph{CAN}
-\paragraph{Sicherheitsfunktionen}
-\subsection{nicht-zeitkritische Automaten}
-\paragraph{PWM}
-\paragraph{Speicher}
-\paragraph{SPI}
-\paragraph{Sensorik}
+
+SXprogramm
+Debugmölichkeiten
+
+\subsection{Implemetierungen}
+Im folgenden werden Beispielhaft einige Module und die Schwierigkeiten ihrer Programmierung beschrieben.
+\begin{description}
+\item[Serielle Schnittstelle]
+interrupt
+\item[PWM]
+reverse iterations
+\item[Speicher]
+mini seriell
+\item[SPI]
+mux 
+\item[Sensorik]
+Rückkopplung
+\end{description}
+
+\section{Beispielszenario Scheibenwischer}
 \newpage
 \section{Fazit}
+
+\section{Ausblick}
+Anleitung
+C-Compiler
+Techn Docu
