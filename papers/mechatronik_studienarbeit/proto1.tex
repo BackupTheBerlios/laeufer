@@ -126,8 +126,9 @@ Jede synchrone und asynchrone Übertragung erhöht einen Sequenzzähler
 sowohl auf der Seite des Clients wie auch des Controllers; dieser Zähler
 hat den initialen Zustand 0 und zählt aufwärts, in Schritten der Grösse
 1, Modulo 16. Sein Zustand wird in jeder Übertragung mitgesandt und danach
-erhöht, mit der expliziten Ausnahme einer {\tt SYS}-Übertragung (bei der er nur
-mitgesandt, aber nicht erhöht wird).
+erhöht, mit der expliziten Ausnahme von {\tt SYS}-,
+{\tt KAL}- und {\tt NOP}-Übertragung (bei denen er nur
+mitgesandt, aber nicht erhöht wird) sowie Broadcasts.\\
 Für {\tt STX} und {\tt RTX} werden hierbei zwei getrennte Zähler verwendet, um
 bei gepipelinetem Versandt eine eindeutige Zuordnungsfähigkeit der Nummern
 zu gewährleisten.

@@ -499,15 +499,98 @@ In dem verwendeten Kommunikationssystem werden die Ebenen wie folgt belegt:
 \newpage
 
 \section{Das LLO-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref llo-proto}).}
-
+Das Protokoll geht davon aus, dass versandte Daten ``ganz oder gar nicht'' ankommen, gemäß unsren Korrektheitsforderungen
+(die ja zu zwei Dritteln schon von CAN erfüllt wurden). In diesem Rahmen stellt es zusätzliche Sicherheitsmechanismen
+und ein Multi-Master-Protokoll, das sich auf CAN implementieren läßt.
 
 	\subsection{Struktur des Protokolls}
-	\subsection{Umsetzung}
-	\subsection{Tests}
 
+	Das LLO-Protokoll ist ein prinzipiell multi-Masterfähiges Protokoll, das die Nutzung der Möglichkeiten von Multi-Master-
+	Sendungen jedoch auf asynchrone Notifikationen einschränkt. Somit existiert ein tatsächlicher Master in diesem Netzwerk,
+	der als Controller bezeichnet wird; er erhält zugleich eine der 32 im Bus verfügbaren Adressen (1) fest zugewiesen.
+	Eine weitere Adresse ist für explizite Broadcasts (z.B. für eine totale Systemabschaltung im Falle der Entfernung des
+	den Controller steuernden PDAs) reserviert, was 30 Adressen für Busteilnehmer läßt.\\
+	Gerichtete und Broadcast-Adressierung sind somit möglich; die Länge der übertragenen Daten ist zudem durch LLO nicht
+	eingeschränkt.\\
+
+	Fassen wir einmal kurz die vom Protokoll vorgesehenen Befehle mit ihren relativen Prioritäten zusammen:
+	\begin{tabular}{lllp{3cm}}
+	{\bf Kürzel} & {\bf Priorität} & {\bf Sender} & {\bf Bedeutung} \\
+	\hline
+	{\tt SYS} & 3 & Alle 		& Fehlermeldungen, Fehlerbehandlung \\
+	{\tt ACK} & 3 & Alle 		& Bestätigung nach Übertragung \\
+	{\tt KAL} & 3 & Controller 	& Keep-Alive-Signal (s. \ref{jd-llo-kal}) \\
+	{\tt STX} & 2 & Controller 	& Controller $\rightarrow$ Client- Transfer \\
+	{\tt RTX} & 1 & Client 		& Client $\rightarrow$ Controller- Transfer \\
+	{\tt NOP} & 0 & Controller 	& Busfreigabe \\
+	\end{tabular}
+
+	Betrachten wir nun die wesentlichen Eigenschaften des Protokolls: 
+
+	\subsubsection{Sicherheitsmechanismen gegen Datenverlust}
+	Um den Verlust von Datenpaketen wenigstens in den häufigsten Fällen zu bemerken, wird mit jeder Übertragung
+	der Inhalt eines 4-Bit-Sequenzzählers versandt, der (bis auf {\tt SYS}-, {\tt KAL}- und {\tt NOP}-Nachrichten) zudem bei jeder
+	nicht-Broadcast-Botschaft um eins erhöht wird. Stellt nun der Controller oder der Client beim
+	Empfang einer Botschaft ein Nicht-Übereinstimmen der Sequenznummern fest, kann er davon ausgehen, einige Botschaften verloren zu
+	haben und diese neu anfordern.\\
+	Diese Methode greift offensichtlich nicht immer; bei einer Datenverlustrate von $p$ ist die Wahrscheinlichkeit,
+	genau 16 Nachrichten hintereinander zu verlieren, jedoch genau
+	$p^15 * (1-p)$, im Falle von Vielfachen von 16 (also allen Möglichkeiten, in denen ein Datenverlust nicht
+	bemerkt würde) somit, für die Aufsummierung der Wahrscheinlichkeiten des Verlustes an der $x$ten Stelle
+	$$p_n = p^{16n + 15} * (1-p)$$
+	und im Limes
+	\begin{equation}
+	  \begin{split}
+	    \lim_{n \rightarrow \inf} \Sigma_{k = 0}^n p_k &= (1-p) * p^{15} * \lim_{n \rightarrow \inf} \Sigma_{k=0}^n p^{16n}\\
+	    & = 1-p * p^15 * \lim_{n \rightarrow \inf} \frac{p^{(n+1)*16} - 1}{p^{16} - 1}\\
+	    & = - frac{(1-p) * p^15}{p^16 - 1}
+	  \end{split}
+	\end{equation}
+	Entsprechend ist bei einem ``realistischen'' Datenverlustwert die Wahrscheinlichkeit für einen kompletten Ausfall
+	dieses Mechanismusses vernachlässigbar; selbst bei einem Störfaktor von 0.1 läge die Wahrscheinlichkeit noch bei
+	unter $10^{-15}$, sogar ein Störfaktor von 0.9 könnte nur in knapp 2.6\% der Fälle einen Totalausfall dieses
+	Sicherungsmechanismusses bewirken.
+
+	\subsubsection{Keep-Alive}\label{jd-llo-kal}
+	Dies alles ist im Falle einer kompletten Unterbrechung der Datenleitung jedoch wenig hilfreich. In diesem
+	Fall kommt das Keepalive-Signal zum Tragen, das in regelmäßigen Abständen vom Controller auf den Bus geschrieben wird;
+	wenn nicht mindestens ein solches {\tt KAL} innerhalb von 0.3s empfangen wurde, sind Klienten dazu angehalten, sich
+	selbst in den sicheren Betriebszustand zurückzufahren.
+
+	\subsubsection{Busfreigabe und Client-zu-Controller-Botschaften}
+	Da alle vom Controller verwendeten direkten Steuerbefehle Priorität über Client-Befehle haben (mit Ausnahme
+	von {\tt ACK} und {\tt SYS}, die von Clients im Rahmen von vom Controller angestoßenen Kommunikationssequenzen
+	gesandt werden dürfen, sowie des schweren Systemfehlers {\tt SYS:EGLBL}, der alle Systeme in den sicheren Betriebszustand zwingt),
+	muß der Bus vom Controller explizit freigegeben werden. Dies erfolgt, wenn er selbst keine anstehenden Botschaften hat,
+	ansonsten in regelmäßigen Intervallen, mittels eines {\tt NOP}-Kommandos, das an Priorität geringer als das Client-nach-Controller-Kommando
+	{\tt RTX} ist, das somit-- jedenfalls in der die CAN-Bus-Arbitrierung verwendenden Protokollauslegung-- dieses unterdrückt.\\
+	{\tt RTX}- Übertragung läuft analog zur {\tt STX}-Übertragung von Controller zu Client, verwendet jedoch einen eigenen
+	Sequenzzähler\footnote{Die historische Begründung dafür liegt im Wunsch, Vollduplex effizient unterstützen zu können; dies war
+	relevant für die Verwendung von LLO über die serielle Schnittstelle.}.\\
+	{\tt RTX}-Botschaften sind die einzigen Botschaften die, auf vier Prioritisierungsstufen, noch einmal untereinander an Wichtigkeit
+	unterscheiden können. Eine genaue Spezifikation der Verwendung dieser Prioritisierung wurde im Rahmen dieser Studienarbeit nicht
+	durchgeführt und den endgültig die Geräte programmierenden Mitentwicklern überlassen.
+
+	\subsection{Umsetzung und Tests}
+	Das LLO-Protokoll wurde in C zu Testzwecken, aber auch zur seriellen Kommunikation implementiert.
+	Die Implementierung auf dem SX-Chip ist zur Zeit noch nicht abgeschlossen.
+
+	\subsection{Einsatz im Proxy}
+	Zur Kommunikation zwischen PDA und dem Rest des Busses muß ein ``Proxy'' verwendet werden, eine
+	dedizierte Platine, die der Vermittlung zwischen CAN-Bus und der seriellen Schnittstelle des PDAs dient.
+	Die Kommunikation zwischen Proxy und PDA findet über die serielle Schnittstelle statt, die beide
+	Geräte optional auf Vollduplex betreiben können.\\
+	Der Proxy selbst nimmt im Netz noch eine weitere Aufgabe wahr: Er Überprüft das Vorhandensein des PDAs
+	und sendet einen Broadcast der Form {\tt SYS:EGLBL} im Falle des Ausbleibens von Antworten des PDAs
+	(Systemabsturz, Ausfall, oder Entfernung des Gerätes), um im Falle der Ausschaltung der zentralen
+	Kontrollinstanz die angeschlossene Peripherie in den sicheren Betriebszustand zu zwingen.
 \newpage
 
 \section{Das LLZ-Protokoll}\footnote{Die vollständige Protokollspezifikation findet sich als Anhang (Sektion {\ref llz-proto}).}
+
+Das LLZ-Protokoll ist ein zustandsbasiertes Zwei-Wege-Protokoll, das eine feste Maximallänge von Botschaften vorsieht und
+eine sehr spezifische Semantik erzwingt. Zudem stellt es den letzten Schritt der Sicherstellung des ersten Korrektheitskriteriums dar.
+
 	\subsection{Struktur des Protokolls}
 	\subsection{Umsetzung}
 	\subsection{Tests}
