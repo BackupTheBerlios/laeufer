@@ -1,0 +1,1995 @@
+   DEVICE SX52 , OSCXT5 
+   ; DEVICE TURBO, STACKX_OPTIONX
+  ; DEVICE STACKX_OPTIONX
+  ;device SX28L, OSCXT5, TURBO, STACKX_OPTIONX, PROTECT
+ 
+	freq	48_000_000
+	;freq	11_059_200
+	reset	start
+        id 'J-PROXY0'  
+;----------------------------------------------------------
+;
+; Tool Macros
+; Serial with translation
+;----------------------------------------------------------
+
+
+WATCH	mlp_f_start_recv,1,UBIN
+WATCH	mlp_f_escaping,1,UBIN
+WATCH	mlp_writepos,8,UHEX
+WATCH	serial_recv_ctr,8,UHEX
+WATCH	serial_recv_pos,8,UHEX
+WATCH	serial_recv_writepos,8,UHEX
+WATCH	store_base,8,UHEX
+WATCH	STORE_FOR_IND,8,UHEX
+
+WATCH	tosend,8,UHEX
+WATCH	CTS,1,UBIN
+WATCH	STD,1,UBIN
+WATCH	sendbit,1,UBIN
+
+
+SET_BANK MACRO	1
+	BANK	\1
+	IF	\1 > $7F
+		SETB	FSR.7
+	ELSE
+		CLRB	FSR.7
+	ENDIF
+ENDM	
+
+
+MODE_SELECT_TRIS        EQU     $1f
+MODE_SELECT_PLP         EQU     $1e
+MODE_SELECT_LVL         EQU     $1d
+MODE_SELECT_ST          EQU     $1c
+MODE_SELECT_WKEN        EQU     $1b
+MODE_SELECT_WKED        EQU     $1a
+
+LEDgreen		EQU	RA.6
+LEDblue			EQU	RA.7
+
+
+OUTPUT			EQU	$0A	; Rückgebwerte
+RETVAL			EQU	$0B
+PARAM1			EQU	$0C
+PARAM2			EQU	$0D	; Parameter für unterprogrammaufruf.
+STORE_FOR_IND		EQU	$0E	; Zwischnespeicher für die Indireckta Adressierung
+TMPREG			EQU	$0F	; Temporaeres Register
+
+TESTBIT	EQU RD.7
+
+;OPTION REGISTER (%76543210)
+;BIT		  meaning
+; 7	0= $01 is W , 1= $01 is RTCC
+; 6	0= RTCC roll-over enabled 1=disabled
+; 5	0= RTCC increment on internal instr. , 1= increm. on pin
+; 4	RTCC increment: 0= on low-high transition, 1= high-low transition
+; 3	prescaler 0= on ,1 = off
+; 2	prescale divide rate
+; 1	see manual for further info
+; 0
+
+
+OPTION_ACCRTCC_INT      EQU %10011111	;$01 is RTCC ,interrupt on ,prescaler off , increment on instr.
+
+OPTION_ACCRTCC_NOINT    EQU %11011111	;;$01 is RTCC ,interrupt off ,prescaler off , increment on instr.
+
+
+; 50 MHZ, 115200 Bd
+INT_PERIOD   		EQU 104
+
+
+;----------------------------------------------------------
+;intial values of port registers
+;----------------------------------------------------------
+
+PORT_A_VALUE    EQU %0000_0000 ; sets bit on port     
+PORT_A_TRIS     EQU %0011_1111 ; configures data direction 1=input 0=output
+PORT_A_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_A_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+
+PORT_B_VALUE    EQU %0000_0000 ; sets bit on port     
+PORT_B_TRIS     EQU %0111_1111 ; configures data direction 1=input 0=output
+PORT_B_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_B_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_B_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+PORT_B_WKEN     EQU %1111_1111 ; multi input wakeup 0=enable 1=disable (see p136 in manual)
+PORT_B_WKED     EQU %0000_0000 ; wakeup edge detection 1=falling_edge 0=rising_edge
+
+PORT_C_VALUE    EQU %0100_0000 ; sets bit on port  
+PORT_C_TRIS     EQU %1011_1111 ; configures data direction 1=input 0=output
+PORT_C_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_C_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_C_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+PORT_D_VALUE    EQU %0100_0000 ; sets bit on port  
+PORT_D_TRIS     EQU %0000_0100 ; configures data direction 1=input 0=output
+PORT_D_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_D_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_D_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+PORT_E_VALUE    EQU %0000_0000 ; sets bit on port  
+PORT_E_TRIS     EQU %0000_0000 ; configures data direction 1=input 0=output
+PORT_E_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_E_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_E_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+
+
+
+
+
+;####################################################################			
+; Modules
+;####################################################################			
+
+;----------------------------------------------------------
+;
+; Serielle  Schnittstelle
+;
+;	Neuimplementierung der seriellen Schnittstelle
+;	verwendet werden 5 Kabel
+;	TD, RD, CTS, RTS, GND
+;	Der Hauptteil des Moduls spielt sich im Interrupt ab
+;	hier werden getaktet der Eingang abgetastet und neue Signale gelegt
+;	nur fürs senden gibt es einmalig eine unterroutine per call aufzurufen die  	
+; 	als parameter das zu sendne Wort bekommt
+;	Senden ist also nur byteweise möglich
+;	Um Fehler bei der Initialisierung zu vermeiden solle zu Beginn 
+;	im init Teil folgendes gesetzt sein	PORT_C_VALUE    EQU %0100_0000 ; sets bit on port   
+;
+;----------------------------------------------------------
+
+
+
+
+;--------------------------------------
+; Konstanten und Signale
+;--------------------------------------
+
+DATA_SEG_SERIAL_READ	MACRO
+
+SERIAL_READ_BANK	= $
+
+	SER	DS 16
+	
+		ENDM
+
+DATA_SEG_SERIAL_WRITE	MACRO
+SERIAL_WRITE_BANK	= $
+
+	SEW	DS 16
+	
+		ENDM
+
+
+DATA_SEG_GLOBAL_XCHANGE	MACRO
+GLO_XCH_BANK		= $
+	
+	XCHG	DS 16
+	
+		ENDM
+
+	
+	;; ========================================
+	;; ---------------- MLP -------------------
+	;; ========================================
+; ------------------------------------------------------------
+; 
+;	MLP-Protokoll fuer serielle Schnittstelle
+; 
+; ------------------------------------------------------------
+	
+;--------------------------------------
+; MLP -- Daten-Segment
+;--------------------------------------
+
+DATA_SEG_MLP_WRITE MACRO
+MLP_WRITE_BANK		= $
+	mlp_write_buffer	DS 16
+	ENDM
+	
+DATA_SEG_MLP MACRO
+	
+MLP_BANK	= $
+	mlp_xlate	DS 12
+	mlp_flags	DS 1
+	mlp_writepos	DS 1
+
+mlp_f_start_recv	EQU mlp_flags.0
+mlp_f_escaping		EQU mlp_flags.1
+
+MLP_SOB	EQU $f0
+MLP_EOB	EQU $f1
+MLP_ESC EQU $f2
+MLP_MAXSIZE EQU $7
+MLP_VERSION EQU 1
+	
+		ENDM
+	
+;--------------------------------------
+; MLP -- Code-Segment
+;--------------------------------------
+
+INIT_SEG_MLP	MACRO 0
+	SET_BANK MLP_BANK
+	CLRB mlp_f_start_recv
+	CLRB mlp_f_escaping
+	ENDM
+	
+
+CODE_SEG_MLP	MACRO 0
+
+_mlp_writebuf
+	CLR RETVAL
+	;; Phase 1:	Copy to MLP_WRITE_BANK
+:copy_loop
+	MOV FSR, PARAM2
+	SET_BANK GLO_XCH_BANK
+	MOV TMPREG, IND
+
+	MOV FSR, RETVAL
+	SET_BANK MLP_WRITE_BANK
+	MOV IND, TMPREG
+
+	INC RETVAL
+	INC PARAM2
+	AND PARAM2, #$0f
+	
+	CJB RETVAL, PARAM1, :copy_loop
+	;; Phase 2:	Write back, encode special characters
+
+	CLR RETVAL
+	CLR PARAM2
+
+	;; Write Start Of Block
+	MOV FSR, RETVAL
+	SET_BANK GLO_XCH_BANK
+	MOV IND, #MLP_SOB
+	INC RETVAL
+	
+:translate_loop
+	MOV FSR, PARAM2
+	SET_BANK MLP_WRITE_BANK
+	MOV TMPREG, IND
+
+	MOV FSR, RETVAL
+	SET_BANK GLO_XCH_BANK
+	
+	CJB TMPREG, #$f0, :writeb
+	CJAE TMPREG, #$f8, :writeb
+	;; Otherwise, we must escape
+	MOV IND, #MLP_ESC
+	INC RETVAL
+	INC FSR
+	AND TMPREG, #$0f
+:writeb
+	MOV IND, TMPREG
+
+	INC RETVAL
+	INC PARAM2
+	
+	CJB PARAM2, PARAM1, :translate_loop
+
+	;; Loop-postprocess
+	;; Write End Of Block
+	INC FSR
+	INC RETVAL
+	MOV IND, #MLP_EOB
+
+	;; Phase 3:	 Transmit
+	MOV PARAM1, RETVAL
+	CLR PARAM2
+ 	CALL @SERIAL_sendbuf
+
+	;; --- DEBUG CODE ---
+	TEST RETVAL
+	SNZ
+	CLRB LEDgreen
+	;; --- END OF DEBUG CODE ---
+	
+	RETP
+
+;;; ============================================================
+	;; handle_command
+	;; Behandelt internes Kommando der Seriell<->CAN Translationsschicht
+	;; PARAMETER:	PARAM1:	CMD
+	;;		PARAM2:	Parameter
+_sub_mlp_handle_command
+	CJNE PARAM1, #0, :no_turnoff_light
+	SNB PARAM2.0
+	SETB LEDblue
+	SNB PARAM2.1
+	SETB LEDgreen
+	RETP
+:no_turnoff_light
+
+	CJNE PARAM1, #1, :no_turnon_light
+	SNB PARAM2.0
+	CLRB LEDblue
+	SNB PARAM2.1
+	CLRB LEDgreen
+	RETP
+:no_turnon_light
+
+	CJNE PARAM1, #2, :no_echo_version
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #$e1		; Reply for this device
+	MOV $11, #2
+	MOV $12, #MLP_VERSION
+	
+	MOV PARAM1, #3
+	MOV PARAM2, #0
+	CALL @MLP_writebuf
+	RETP
+:no_echo_version
+
+	;; Unrecognized command
+	RETP
+	ENDM
+	
+
+CALL_SEG_MLP	MACRO 0
+;;; ============================================================
+	;; writebuf
+	;; Codiert eine Nachricht und schreibt auf die serielle Schnittstelle
+	;; PARAMETER:	PARAM1:	Anzahl der zu schreibenden Bytes
+	;;		PARAM2:	Offset des ersten zu schreibenden Bytes in der global exchange bank
+	;; RUECKGABE:	Rueckgabe des anschliessenden seriellen Sendebefehls
+MLP_writebuf
+	JMP _mlp_writebuf
+
+
+;;; INTERNE API
+_MLP_handle_command
+	JMP _sub_mlp_handle_command
+	ENDM
+
+
+;;; --------------------------
+;;;  MLP Main loop
+;;; --------------------------
+MLP_MAINLOOP	MACRO 0
+
+mlp_read_loop_start
+	;; Start with the "READ" loop:	PDA to CAN
+
+	MOV PARAM1, #1
+	MOV PARAM2, #0
+	CALL @SERIAL_readbuf
+	TEST RETVAL		; Read a byte?
+	
+	SNZ
+	JMP :mlp_read_loop_done
+	;; Got a byte!
+	
+	SET_BANK GLO_XCH_BANK
+	MOV TMPREG, $10		; First byte in global exchange bank
+
+	SET_BANK MLP_BANK
+	
+	SNB mlp_f_start_recv	; Do we receive or wait for a SOB?
+	JMP :read_handle_real_input
+:read_handle_boring_input		; Haven't received an #MLP_SOB yet
+
+	CJNE TMPREG, #MLP_SOB, :mlp_read_loop_done
+
+	SETB mlp_f_start_recv	; Start receiving
+	CLR mlp_writepos
+	JMP mlp_read_loop_start	; Start over, try to receive
+
+:read_handle_real_input
+		
+	CJNE TMPREG, #MLP_ESC, :mlp_read_normal
+	;; Escape character
+	SETB mlp_f_escaping
+	JMP mlp_read_loop_start	; Start over, try to read escaped char
+	
+:mlp_read_normal
+	CJE TMPREG, #MLP_EOB, :mlp_read_finished_recv ; End of block?
+	;; No end of block, normal char
+	MOV W, TMPREG
+	SNB mlp_f_escaping
+	OR W, #$f0		; Handle escaped char
+
+	CLRB mlp_f_escaping	; Clear escape flag
+	;; Now W has the received character
+
+	MOV TMPREG, W
+	CJAE mlp_writepos, #MLP_MAXSIZE, :mlp_read_loop_error
+
+	MOV FSR, mlp_writepos
+	SET_BANK MLP_BANK
+	MOV IND, TMPREG		; Store the byte we just read
+	SET_BANK MLP_BANK
+	INC mlp_writepos
+
+	JMP mlp_read_loop_start
+
+:mlp_read_finished_recv
+	CLRB mlp_f_start_recv
+	CJNE mlp_writepos, #MLP_MAXSIZE, :mlp_read_loop_error
+	;; Jump to error address if we read more or less than 9 bytes total
+
+	CLR PARAM1
+:mlp_read_finished_loop
+	;; Copy everything in a loop
+	MOV FSR, PARAM1
+	SET_BANK MLP_BANK
+	MOV TMPREG, IND
+
+	MOV FSR, PARAM1
+	SET_BANK GLO_XCH_BANK
+	MOV IND, TMPREG
+
+	INC PARAM1
+	CJB PARAM1, #MLP_MAXSIZE, :mlp_read_finished_loop
+
+	SET_BANK GLO_XCH_BANK
+	MOV TMPREG, $10
+;;; --- TESTCODE ---
+	OR $10, #$e0		; REPORT from same device
+;;; --- ENDE DES TESTCODES ---
+
+	AND TMPREG, #$1f
+	CJNE TMPREG, #1, :mlp_read_handle_remote
+	;; Handle local command
+	MOV PARAM1, $11
+	MOV PARAM2, $12
+	CALL @_MLP_handle_command
+	JMP mlp_read_loop_start
+	
+:mlp_read_handle_remote
+	MOV PARAM1, TMPREG	; Geraete-ID und Prioritaet 0
+	MOV PARAM2, #6 		; MLP Order verschicken
+
+	;; Global Xchange Bank vorbereiten auf Transmission: CAN-Payload an Anfang
+	;; alignen
+	MOV $10, $11
+	MOV $11, $12
+	MOV $12, $13
+	MOV $13, $14
+	MOV $14, $15
+	MOV $15, $16
+  	CALL @CAN_send_mlp
+	JMP mlp_read_loop_start
+	
+:mlp_read_loop_error
+	CLRB LEDblue
+	JMP :mlp_read_loop_done
+	
+:mlp_read_loop_done
+	ENDM
+	
+	
+	
+	;; ========================================
+	;; -------------- SERIAL ------------------
+	;; ========================================
+	
+;--------------------------------------
+; Daten-Segment
+;--------------------------------------
+
+DATA_SEG_SERIAL		MACRO
+
+SERIAL_BANK 	=	$
+
+bitcounter	    DS		1
+StoredByte	    DS		1
+scancounter	    DS		1
+serial_FLAGS	    DS		1
+store_base	    DS		1	; Pointer auf das erste Register des Kommunikationenspeichers der sereillen
+STOPBIT_COUNTER	    DS		1	; der sorgt dafür das nach dem Stopbit noch ein bischen zeit vergeht
+Port_reg	    DS		1	; register zum Zwischenspeichern des Ports
+; Register für senderoutine
+wait_counter	    DS		1	; quasi der scancounter fürs senden (verzögert die änderung des Output um 4 Interrupts)
+bitcounter2	    DS		1	; zählt die Bits die gesendet wurden
+tosend		    DS		1	; zu sendendes Byte
+serial_recv_writepos	DS	1	; Globales Register für den Zustand des Empfangsspeichers der seriellen Schnittstelle
+serial_recv_ctr		DS	1	; Anzahl der erhaltenen, noch nicht gelesenen Bytes
+serial_recv_pos		DS	1	; Leseposition fuer erhaltene Bytes
+	
+	;; Gebufferte Uebertragung:
+serial_transmit_ctr	DS	1 ; Anzahl der noch zu uebertragenden bytes
+serial_transmit_pos	DS	1 ; Aktuelle Position im Transferbuffer
+
+
+
+RTS		EQU		RC.5	; clear to send
+SRD		EQU		RB.6	; Receive Data
+STD		EQU		RC.6	; Transmit Data Leitung
+CTS		EQU		RB.7	; clear to send
+
+
+JUSTIERT	EQU		serial_FLAGS.1 
+MEM_LOCK	EQU		serial_FLAGS.2
+receiving_Flag	EQU		serial_FLAGS.3 ; zeigt an ob gerade ein Byte empfangen wird oder nicht
+sendbit		EQU		serial_FLAGS.4 ; BIT das in das Outputbit gespiegelt wird
+serial_sending		EQU		serial_FLAGS.5 ; Stausbit ob gesendet wird oder nicht
+
+TEST_BIT_AUSGANG	EQU	RD.7 ; nur zum testen .....
+
+
+				ENDM
+;--------------------------------------
+;Initsegment
+;--------------------------------------
+
+INIT_SEG_SERIAL		MACRO
+	SET_BANK SERIAL_BANK
+	
+	SETB	STD		; Transmit Datat am anfang auf 1
+	MOV	bitcounter, #8
+	CLR	StoredByte
+	CLR	scancounter
+	;MOV	scancounter, #1 ; mit einer Zahl ungleich 0 initialisieren nicht am anfang 
+	CLR	serial_FLAGS
+	CLR	STOPBIT_COUNTER
+	CLR	serial_recv_ctr		; Noch keine Daten erhalten
+	CLR	serial_recv_pos
+	CLR	serial_recv_writepos
+
+
+	MOV	store_base, #SERIAL_READ_BANK
+	AND	store_base, #$F0
+
+	CLRB	receiving_Flag	; zeigt an ob gerade ein Byte empfangen wird oder nicht (0 kein empfang, 1 empfang)
+
+	SETB	CTS	; Ab jetzt kann empfangen werden
+	                
+
+			ENDM
+
+;--------------------------------------
+;Interrupt-Segment
+;--------------------------------------
+
+INTER_SEG_serial	MACRO
+	
+	SET_BANK SERIAL_BANK	; Maro zum bank setzten, kümmert sich auch ums 7te bit
+
+	MOV	Port_reg, RB	;portregister sichern, um später das eingengsbit zu maskieren (zeitnahe Erfassung)
+
+
+	; ******************* sendeteil***********************
+
+	JNB	serial_sending, absend	 ; wenn wir nicht am senden sind dann raus
+
+	; an dieser stelle ist ansich noch ein RTS-check nötig!!!!!!!!!!!!!
+	; der code existiert auf papier
+	
+	TEST	wait_counter	 ; jeden 4ten Interrupt ein neues Sendebit auflegen
+	SZ
+	JMP	ending		 ; ansonsten diesen Interrupt-Teil verlassen
+	; zu beginn (so ziemlich...:-) )wird jedesmal das Transmit Data signal gesetzt (zeitnahes senden)	
+	SB 	sendbit	; sendebit setzten
+	CLRB	STD	; Transmit Data 0
+	SNB	sendbit
+	SETB	STD	; Transmit Data 1
+
+	CSNE	bitcounter2, #10 ; Startbit setzen
+	CLRB	sendbit
+	
+	MOV	wait_counter, #4 ; wait_counter neu initialisieren
+	TEST	bitcounter2	 ; check ob wir schon am end des Bytes angekommen sind (bitcounter2 = 0)
+	JZ	Endbehandlung	 ; wenn wir am ende sind dann zur Endbehandlung
+	
+	RR	tosend		; nächstes Bit setzen 
+	SC			; dazu wird das zusendende Byte Rotiert und das herausrotierte bit im carry benutzt
+	CLRB	sendbit		; um zu entscheiden ob sendbit gesetzt oder gelöscht werden soll
+	SNC
+	SETB	sendbit
+	
+	CSNE	bitcounter2, #1	; das hier sorgt dafür das im neunten durchlauf eine eins als stopbit gesetzt wird !!!
+	SETB	sendbit		; es wird quasi das sendbit nochmal überschrieben
+	
+	DEC	bitcounter2	; bitcounter decrementieren
+
+	SKIP
+Endbehandlung
+	CLRB	serial_sending		; als endbehandlung wird das sending-Bit gelöscht -> der interruptteil zum senden wird
+				; solange nicht mehr aufgerufen, bis _sendbyte gerufen wurde
+ending
+	DEC	wait_counter
+absend				; ENDE DES SENDE-TEILS
+	; ******************* empfangsteil***********************
+	CSBE	serial_recv_ctr, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16), dann wird nix empfangen
+	JMP	endint
+	
+	TEST	STOPBIT_COUNTER	; der Stopbitcounter sorgt für ein bischen zeit zwischen den übertragungen 
+	JNZ	stopbit		; er zählt quasi das Stopbit aus
+
+	JNB	receiving_FLAG, checkForStart   
+	;wir sind am empfangen 
+	DEC	scancounter
+	; wenn wir in einem 4. Interruptdurchlauf sind, wird ein Bit eingelesen sonst nicht
+	JNZ	endint
+	
+	MOV	scancounter, #4
+	DEC	bitcounter
+		
+	; wenn RD-bit 1 dann 1 im carry, sonst gilt 0 im carry
+	; das carrybit wird dann reinrotiert
+	CLC
+	AND	Port_reg, #%0100_0000
+	SZ
+	STC
+	RR	StoredByte
+	
+	TEST	bitcounter
+	JNZ	endint
+
+	MOV	STORE_FOR_IND, StoredByte		; Byte auf austauschbank legen
+
+	
+	MOV	W, store_base	; auf die Adresse der Bank 
+	ADD	W, serial_recv_writepos	; die Adresse des Registers
+
+	; je nach stand des XCH_STTUS byte wir das gelesene Byte an die höchste oder keine stelle geschrieben	
+	MOV	FSR,W		; die errechnete adresse ins FSR
+	MOV	IND, STORE_FOR_IND ; und das gelesenen Byte per indireckte Adressierung wegschreiben
+	
+	SET_BANK SERIAL_BANK	; wieder auf die serielle Bank wechseln
+	INC	serial_recv_writepos	; +1 damit kein altes Word überschrieben wird
+	AND	serial_recv_writepos, #$0f
+	INC	serial_recv_ctr ; Anzahl der gelesenen Bytes erhoehen
+
+	MOV	STOPBIT_COUNTER, #4
+	CLRB	receiving_Flag
+	
+	;SETB	RTS
+	
+	JMP	endint
+checkForStart
+	; hier wird gechecked ob ein startbit gesendet wurde
+	JB	SRD, endint ; wenn an RD keine 0 anliegt, dann gehe zu schluss
+
+	;CLR	UART_XCH_STATUS ; im Global. Statusreg zeigen, dass Byte jetzt nicht gelesen werden darf!
+	MOV	scancounter, #5
+	MOV	bitcounter, #8
+	SETB	receiving_Flag
+	CLR	StoredByte
+	;CLRB	RTS
+	SKIP	
+stopbit	DEC	STOPBIT_COUNTER
+
+	CSBE	serial_recv_ctr, #15	; wenn die 16 empfangregister voll sind (UART_XCH_STATUS=16)
+	CLRB	RTS			; dann wir RTS auf null gestellt
+
+endint
+
+
+			ENDM
+			
+			
+;--------------------------------------
+;Code-Segment
+;--------------------------------------
+
+CODE_SEG_SERIAL	MACRO
+
+;*******************************************************************
+;	_sendbyte
+;	initialisiert das senden eine Bytes über die Serielle Schnittstelle
+;	Da zu sendede Byte wird aus PARAM1 ausgelesen
+;	Bevor man die Routine aufruft sollte man mit _sendbyte_status überprüfen
+;	ob man nicht noch am senden eines anderen Bytes ist
+
+_sendbyte
+
+	SETB	TEST_BIT_AUSGANG	; zum testen geht das jetzt an....
+
+	SET_BANK SERIAL_BANK
+	
+	JB	serial_sending, occupied 	; wenn gerade mit senden beschäftigt, dann gehe raus
+	SETB	CTS			; wenn wir senden wollen, dann muss auch CTS an sein (anounce host i am ready to receive = yoe are clear to send)
+	CLRB	sendbit 		; Startbit setzen !!!
+	
+	MOV	tosend, PARAM1		; übernehmen des zu sendenden Wortes aus dem PARAM1 Register
+	CLR	wait_counter		; der wait_counter sorgt dafür das erst im 4. Interrupts ab jetzt eine änderung am sendbit
+					; vorgenommen wird. Er wird mit 0 initialisiert um sofort mit der übertragung anzufangen
+	MOV	bitcounter2, #10	; der Bitcounter zählt wieviele Bits noch zu senden sind (8 Daten-Bits + 1 Stopbit)
+	SETB	serial_sending			; mit dem setzten des sending Bits wird der Interruptteil, der das Transmit Data Signal
+					; setzt freigeschaltet
+	occupied
+	RETP				; rücksprung aus routine
+
+
+;*********************************************************************
+;	sendstatus:
+;	liefert in OUTPUT1 eine '0' wenn wir gerade mit senden beschäftigt sind
+;	sonst eine 1
+	
+_sendbyte_status
+
+	SET_BANK SERIAL_BANK
+	
+	CLR	RETVAL
+	SB	serial_sending
+	INC	RETVAL
+
+	RETP
+
+
+;; **********************************************************************
+	;; sendbuf
+	;; Uebertraegt den global exchange buffer
+	;; PARAMETER:	PARAM1:	Anzahl der zu uebertragenden Bytes
+	;;              PARAM2:	Index des ersten zu uebertragenden Bytes
+	;; 			in der Bank (meistens 0)
+	;; RUECKGABE:	RETVAL:	0 falls nicht genug Platz war, 1 sonst
+_serial_sendbuf
+
+	;; First, check to see if sufficient space is available
+	MOV W, RETVAL
+	CALL _serial_sendbuf_status
+	MOV OUTPUT, W
+	CLR RETVAL
+	CSAE OUTPUT, PARAM1
+	RETP			; Return with 0 if not
+
+	MOV RETVAL, #1		; Sufficient space
+
+	;; Now precompute registers for memcpy
+	ADD serial_transmit_ctr, PARAM1	; Fix number of bytes to send
+	
+	;; And enter copy loop
+:copy_loop
+	MOV FSR, PARAM2
+	SET_BANK GLO_XCH_BANK 	; READ address
+
+	MOV OUTPUT, IND
+
+	SET_BANK SERIAL_BANK
+	MOV FSR, serial_transmit_pos
+	SET_BANK SERIAL_WRITE_BANK 	; WRITE address
+
+	MOV IND, OUTPUT
+
+	;; Modify counters
+	SET_BANK SERIAL_BANK
+	INC serial_transmit_pos
+	AND serial_transmit_pos, #$0f
+	INC PARAM2
+	AND PARAM2, #$0f
+
+	DECSZ PARAM1
+	JMP :copy_loop
+	
+	RETP
+
+;; **********************************************************************
+	;; sendbuf_status
+	;; Liefert die Anzahl der noch verfuegbaren Bytes im Uebertragungsbuffer
+	;; RUECKGABE:	RETVAL:	Anzahl noch freier Bytes im Transferbuffer
+_serial_sendbuf_status
+	SET_BANK SERIAL_BANK
+	MOV RETVAL, serial_transmit_ctr
+	XOR RETVAL, #$ff		; Negate
+	ADD RETVAL, #$11		; subtract serial_transmit_ctr from $10
+	RETP
+	
+
+;; **********************************************************************
+	;; Liefert die Anzahl der Bytes im Lesebuffer
+	;; RUECKGABE:	RETVAL:	 Anzahl der Bytes im Lesebuffer
+	;; BEMERKUNGEN:	Die Anzahl wird niemals 0x10 uebersteigen; falls
+	;; 		dieser Wert erreicht wird, werden alle folgenden
+	;;		einkommenden Bytes abgelehnt.
+_serial_readbuf_status
+	SET_BANK SERIAL_BANK
+	MOV RETVAL, serial_recv_ctr
+	RETP
+	
+;; **********************************************************************
+	;; Liefert die spezifizierte Anzahl an Bytes aus dem Lesebuffer
+	;; PARAMETER:	PARAM1:	Anzahl der zu lesenden Bytes
+	;;		PARMA2:	Index in die global exchange bank, ab dem
+	;;			zu schreiben ist (Modulo 0x10)
+	;; RUECKGABE:	Global exchange:	Eingelesene Zeichen
+	;;		RETVAL:	Anzahl der gelesenen Bytes
+	;; Falls PARAM1 groesser als SERIAL_readbuf_status(), wird
+	;; RETVAL < PARAM1 sein und SERIAL_readbuf_status()
+_serial_readbuf
+	CALL _serial_readbuf_status
+	
+	CSB RETVAL, PARAM1	; Weniger Bytes lesbar als angefordert?
+	jmp :better
+	MOV PARAM1, RETVAL
+:better
+	MOV RETVAL, PARAM1	; Anzahl der wirklich gelesenen Bytes
+
+	TEST RETVAL
+	SNZ
+	RETP			; Nothing to read!
+
+	SUB serial_recv_ctr, RETVAL ; Anzahl Bytes im Puffer verringern
+
+	;; Uebertragung der Bytes
+	SET_BANK SERIAL_BANK
+:bank_copy_loop	
+	MOV FSR, serial_recv_pos
+	SET_BANK SERIAL_READ_BANK
+
+	MOV TMPREG, IND		; Read
+
+	MOV FSR, PARAM2
+	SET_BANK GLO_XCH_BANK
+
+	MOV IND, TMPREG		; Write
+	
+	SET_BANK SERIAL_BANK
+	;; Postprocess variables
+
+	INC serial_recv_pos
+	AND serial_recv_pos, #$0f
+	INC PARAM2		; AND is implicit in bank selection
+	
+	DECSZ PARAM1
+	JMP :bank_copy_loop
+	;; Done w/ loop
+
+	RETP
+
+
+	
+;;; ----------------- Segment-Ende:
+			ENDM
+;--------------------------------------
+; Call-Segment
+;--------------------------------------
+
+CALL_SEG_SERIAL	MACRO
+
+SERIAL_sendbyte
+	JMP	_sendbyte
+	
+SERIAL_sendbyte_status
+	JMP	_sendbyte_status
+
+	
+SERIAL_sendbuf
+	JMP	_serial_sendbuf
+	
+SERIAL_sendbuf_status
+	JMP	_serial_sendbuf_status
+
+
+SERIAL_readbuf_status
+	JMP	_serial_readbuf_status
+	
+SERIAL_readbuf
+	JMP	_serial_readbuf
+			ENDM
+
+
+SERIAL_MAINLOOP		MACRO 0
+		
+		; wenn 0 dann ist das Byte nicht lesbar
+;;; 	SET_BANK SERIAL_READ_BANK	
+
+	;TEST	UART_XCH_STATUS
+	;JZ	nothinToDo
+	
+	;CALL	@sendstatus	; liefert '0' in OUTPUT1 wenn belegt
+	
+	;TEST	OUTPUT1
+	;JZ	nothinToDo
+	
+
+;;; 	CJNE UART_XCH_STATUS, #15, nothinToDo
+	
+	;MOV	W, #SERIAL_READ_BANK
+	;ADD	W, UART_XCH_STATUS	; die Adresse des Registers
+
+	; je nach stand des XCH_STTUS byte wir das gelesene Byte an die höchste oder keine stelle geschrieben	
+		
+	;MOV	FSR,W		; die errechnete adresse ins FSR
+	;MOV	PARAM1,IND	; und das gelesenen Byte per indirekte Adressierung wegschreiben
+	;DEC	UART_XCH_STATUS	; -1 damit kein Byte doppelt gelesen wird
+
+;;; 	MOV	PARAM1, SER
+
+;;; 	CALL	@SERIAL_sendbyte
+;;; 	DEC	UART_XCH_STATUS
+	
+	nothinToDo
+	;; Transmit buffer management
+
+	SET_BANK SERIAL_BANK
+	MOV W, serial_transmit_ctr
+	TEST W
+	SNZ			; Nothing to write?
+	JMP :no_byte_write
+
+	CALL @SERIAL_sendbyte_status
+	TEST RETVAL
+	SNZ			; Busy writing?
+	JMP :no_byte_write
+
+	;; Load address of byte to transfer and increment it
+	MOV PARAM2, serial_transmit_ctr
+	XOR PARAM2, #$ff 		; Negate for subtraction
+	ADD PARAM2, serial_transmit_pos
+	INC PARAM2
+	AND PARAM2, #$0f
+	DEC serial_transmit_ctr
+
+	;; Transmit
+	MOV FSR, PARAM2
+	SET_BANK SERIAL_WRITE_BANK
+	MOV PARAM1, IND
+	CALL @SERIAL_sendbyte	; ...and engage!
+
+:no_byte_write
+	ENDM
+
+
+	
+;----------------------------------------------------------
+;
+; SPI
+;
+;The followinf devices are accessable throug SPI:
+;	[DEVICE]   [DECODER] [CBA]   [MASKID]
+;	TLE1		Y0 == 000   == % 0000_0000
+;	TLE2		Y1 == 001   == % 0000_1000
+;	ADC		Y2 == 010   == % 0001_0000
+;	DAC		Y3 == 011   == % 0001_1000
+;	CAN		Y4 == 100   == % 0010_0000
+;	RESET ALL	Y5 == 101   == % 0010_1000
+;----------------------------------------------------------
+
+;--------------------------------------
+; Konstanten und Signale
+;--------------------------------------
+
+SPI_CONST		MACRO
+
+SPI_INPORT		EQU RD.2	; SPI inputline
+SPI_OUTPORT		EQU RD.1	; SPI outputline
+SPI_CLK			EQU RD.0	; SPI clock
+SPI_DECO_A		EQU RD.3	; decoderbits for chipselect
+SPI_DECO_B		EQU RD.4	;
+SPI_DECO_C		EQU RD.5	; MSB
+SPI_DECO_SET		EQU RD.6	; activate decoder settings
+
+SPI_TLE1		EQU %0000_0000	; see above for information
+SPI_TLE2		EQU %0000_1000
+SPI_ADC			EQU %0001_0000
+SPI_DAC			EQU %0001_1000
+SPI_CAN			EQU %0010_0000
+SPI_RESET		EQU %0010_1000
+SPI_NOTCON		EQU %0011_0000
+	
+			ENDM
+			
+;----------------------------------------------------------
+;
+; SPI
+;
+;The followinf devices are accessable throug SPI:
+;	[DEVICE]   [DECODER] [CBA]   [MASKID]
+;	TLE1		Y0 == 000   == % 0000_0000
+;	TLE2		Y1 == 001   == % 0000_1000
+;	ADC		Y2 == 010   == % 0001_0000
+;	DAC		Y3 == 011   == % 0001_1000
+;	CAN		Y4 == 100   == % 0010_0000
+;	RESET ALL	Y5 == 101   == % 0010_1000
+;----------------------------------------------------------
+
+;--------------------------------------
+; Konstanten und Signale
+;--------------------------------------
+
+SPI_CONST		MACRO
+
+SPI_INPORT		EQU RD.2	; SPI inputline
+SPI_OUTPORT		EQU RD.1	; SPI outputline
+SPI_CLK			EQU RD.0	; SPI clock
+SPI_DECO_A		EQU RD.3	; decoderbits for chipselect
+SPI_DECO_B		EQU RD.4	;
+SPI_DECO_C		EQU RD.5	; MSB
+SPI_DECO_SET		EQU RD.6	; activate decoder settings
+
+SPI_TLE1		EQU %0000_0000	; see above for information
+SPI_TLE2		EQU %0000_1000
+SPI_ADC			EQU %0001_0000
+SPI_DAC			EQU %0001_1000
+SPI_CAN			EQU %0010_0000
+SPI_RESET		EQU %0010_1000
+SPI_NOTCON		EQU %0011_0000
+	
+			ENDM
+
+
+SPI_X_BANK		MACRO
+
+SPI_XCH_BANK	= $
+
+SPI_XI0		DS 1
+SPI_XI1		DS 1
+SPI_XI2		DS 1
+SPI_XI3		DS 1
+SPI_XI4		DS 1
+SPI_XI5		DS 1
+SPI_XI6		DS 1
+SPI_XI7		DS 1
+SPI_XO0		DS 1
+SPI_XO1		DS 1
+SPI_XO2		DS 1
+SPI_XO3		DS 1
+SPI_XO4		DS 1
+SPI_XO5		DS 1
+SPI_XO6		DS 1
+SPI_XO7		DS 1
+
+			ENDM
+
+
+
+
+
+
+
+;--------------------------------------
+; Daten-Segment
+;--------------------------------------
+
+SPI_DAT			MACRO
+
+SPI_BANK	=	$	; get current bank and call it SPI_BANK
+SPI_get_input		DS 1	; temporary memory for input bits
+SPI_set_output		DS 1	; temporary memory for output bits
+SPI_SENT_WORD		DS 1 	; contains word to be sent
+SPI_device		DS 1	; frequency depends on selected device
+SPI_CAN_ADRESS		DS 1	; Adressbyte für den CAN-Bus
+SPI_length_input	DS 1	; number of bits input has (range 1-24)
+SPI_length_output	DS 1	; number of bits output has (range 1-24)
+SPI_msb 		DS 1	; MSB (1) or LSB (0) first 
+SPI_numofwords		DS 1	; number of words that have to be sent/received
+SPI_bitcounter		DS 1	; count x bit down to 0
+SPI_temp		DS 1	; free for use within 2 instructions
+SPI_already_received	DS 1	; counter to note how many words have been received (needed for memory adress calculation)
+SPI_CAN_STATUS		DS 1 	; holds send or receive status in Bit 0
+SPI_bytecounter		DS 1	; contains devicespecific number of bytes to send
+SPI_CAN_HEAD		DS 1	; contains number of instruction and adressbytes for CAN-Bus
+SPI_READ_BYTE		DS 1	; temporary contains received byte
+
+SPI_CAN_f_sending		EQU	SPI_CAN_STATUS.0 ;	1=sending 0=receiving
+
+
+			ENDM
+			
+			
+			
+SPI_CAN_DATA		MACRO
+
+SPI_CAN_BANK	=	$
+
+CAN_instr_byte	DS	1
+CAN_Adr_byte	DS	1
+CANMEM		DS	14
+
+			ENDM
+;---------------------------------------
+;SPI CODE SEGMENT
+;---------------------------------------
+
+; sends and receives one byte to already specified peripheral
+; -> Decoder must be set
+SPI_CODE_SEG		MACRO
+
+_SPI_table
+	JMP 	PC+W
+	RETW	16	;TLE1		Y0 == 000   == % 0000_0000
+	RETW	16	;TLE2		Y1 == 001   == % 0000_1000
+	RETW	24	;ADC		Y2 == 010   == % 0001_0000
+	RETW	24	;DAC		Y3 == 011   == % 0001_1000
+	RETW	1	;CAN		Y4 == 100   == % 0010_0000
+	RETW	1	;RESET ALL	Y5 == 101   == % 0010_1000
+	RETW	1
+	RETW	1
+
+; in this function the in W specified device is selected
+; before the selection, Clock is decreased!!
+_SPI_select_device
+
+	SETB	SPI_DECO_SET			; deactivate decoder
+
+	BANK	SPI_BANK
+	MOV	SPI_device, W			; store select device
+	CLRB 	SPI_CLK				; decrease clock
+	AND	RD, #%1100_0111			; mask old selected device out
+	OR	RD, SPI_device			; select new device by inserting nec. id
+	
+	CLRB	SPI_DECO_SET			; activate device selected on decoder inputs
+						; see _SPI_select_device					
+	NOP
+	NOP
+	
+	RETP
+
+
+
+; in PARAM1 muss die Anzahl der zu lesenden Bytes angegeben werden
+; in PARAM2 muss die Adresse von welcher gelesen werden soll übergeben werden
+; steht eine null oder eine Zahl grösser 14 in PARAM1 so wird ein zu sendendes Wort angenommen
+; das Ergebnis steht dann in GLO_XCH 0 bis d
+_SPI_CAN_read_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0011 ; code for read
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	MOV	PARAM2, PARAM1
+	MOV	PARAM2, #2
+
+	TEST	PARAM1
+	SNZ
+	INC	PARAM1
+	
+	CJBE	PARAM1, #14, isok
+	MOV	PARAM1,#1
+	isok
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	; ergebnis nach GLO_XCH schreiben
+	SET_BANK SPI_BANK
+	CLR SPI_temp
+
+	cploop_for_CAN_read2
+	
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	ADD	SPI_CAN_ADRESS,SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK	
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	ADD	SPI_CAN_ADRESS, SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND,STORE_FOR_IND
+	SET_BANK SPI_BANK
+	
+	INC	SPI_temp
+	CJBE	SPI_temp, #14, cploop_for_CAN_read2
+
+	RETP
+
+
+; in PARAM1 muss die Anzahl der zu schreibenden Bytes angegeben werden
+; in PARAM2 muss die Adresse von welcher gelesen werden soll übergeben werden
+; steht eine null oder eine 15 drin so wird ein zu sendendes Wort angenommen
+_SPI_CAN_write_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0010 ; code for write
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+
+	TEST	PARAM1
+	SNZ
+	INC	PARAM1
+	
+	CJBE	PARAM1, #14, isok2
+	MOV	PARAM1,#1
+	isok2
+
+	; zu schreibenden Bytes aus GLO_XCH holen
+	SET_BANK SPI_BANK
+	CLR SPI_temp
+	
+	cploop_for_CAN_read1
+	
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	ADD	SPI_CAN_ADRESS, SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	ADD	SPI_CAN_ADRESS,SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND, STORE_FOR_IND
+	SET_BANK SPI_BANK	
+	INC	SPI_temp
+	CJBE	SPI_temp, PARAM1, cploop_for_CAN_read1 ; Achtung!! das mit PARAM1 ist nixht sauber
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+	
+	RETP
+
+;Das in PARAM1 abgelegte Muster bestimmt welche Registerbänke im CAN gesendet werden sollen
+;dabei gilt:	Bit 0 = 0.Bank
+;		Bit 1 = 1.Bank
+;		Bit 2 = 2.Bank
+_SPI_CAN_RTS
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%1000_0111 ; code for write
+	AND	CAN_instr_byte,PARAM1
+	
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+	MOV	PARAM1, #1
+	
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+	
+	RETP
+
+
+
+; Nachdem SPI_CAN_read_status_instr aufgerufen wurde,
+; steht in RETVAL Das Status-Byte
+_SPI_CAN_read_status_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%1010_0000 ; code for read status instruction
+	MOV	PARAM1,#1
+	MOV	PARAM2,#1
+
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	;ergebnis noch nach RETVAL schieben
+	SET_BANK SPI_BANK
+
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	RETVAL, IND
+
+	RETP
+	
+
+;Für die BIT MODIFY INSTRUCTION müssen drei Bytes übergeben werden
+; in PARAM1 das MASK-Byte (Maskiert alle Bits heraus die geändert werden sollen)
+; in PARAM2 muss die betreffende Adresse angegeben werden
+; das dritte (in GLO_XCH auf 00) das DATA-Byte (Die Daten in die das ganze geändert werden soll)
+_SPI_CAN_bit_mod_instr ; bit modify instruction
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0101 ; code for bit modify instruction
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+
+	MOV	CANMEM,PARAM1	; MASK Byte ablegen
+	MOV	PARAM1,#4	; es werden 4 Bytes gelesen
+
+	; zu schreibendes Bytes aus GLO_XCH holen
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #3
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND, STORE_FOR_IND
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+
+
+	RETP
+	
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+_SPI_CAN_rwx	;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	;	Allen CAN SPI Routinen ist gleich das der CAN chip Signale an der steigenden
+	;	Flanke liest und an der fallenden Flanke schreibt.
+
+
+	SET_BANK SPI_BANK
+
+	; schritt für schritt
+	; Clock laufen lassen -> muss nicht syncron sein, aber die signale müssen
+	; mindetens 10 Instr abstand haben
+	; dabei den ausgang toggeln
+
+		MOV	SPI_bytecounter, PARAM1	; Zähler für die zu senden Bytes  !!!!!!!!! aus Param 
+		MOV	SPI_numofwords, PARAM2	; Zähler der zu empfangenden Bytes  !!!!????????? aus Param
+
+		SETB	SPI_CAN_f_sending
+		CLR	SPI_length_output	; Zähler für gesendete Byte
+		CLR	SPI_already_received	; Zähler für empfangene Byte
+
+			
+	newbyteinit
+
+		MOV	SPI_bitcounter , #8	; Bitcounter neu initialisieren
+		
+		MOV	W, #SPI_CAN_BANK	; Auslesen des zu sendenden Bytes
+		ADD	W, SPI_length_output	; via indirekter Adressierung
+		MOV	FSR, W			; FSR = adr(SPI_CAN_BANK)+SPI_length_output
+		MOV	W, IND			; lese von Adresse in FSR nach W
+		SET_BANK SPI_BANK		; wechsle Bank
+		MOV	SPI_SENT_WORD, W	; schreibe W nach SPI_SEND_WORD
+		
+		INC	SPI_length_output	; weiteres wort gelesen -> wird gleich gesendet
+	clockingloop
+
+		; SENDEN
+
+		TEST	SPI_bytecounter
+		JZ	end_send_part
+		RL	SPI_SENT_WORD		; das sende_wort wird stück für stück in den Ausgang rotiert
+		SC
+		CLRB	SPI_OUTPORT
+		SNC
+		SETB	SPI_OUTPORT
+
+		end_send_part
+		
+		NOP	; zehn instruktionen warten
+		NOP	
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP
+		
+		SETB	SPI_CLK				; CLK anmachen
+	
+		NOP	; zehn instruktionen warten
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP	
+		; LESEN
+		TEST	SPI_bytecounter	; solange gesendet wird braucht man nicht zu empfangen
+		JNZ	end_read_part
+		
+		SB	SPI_INPORT
+		CLC
+		SNB	SPI_INPORT
+		STC
+		RL	SPI_READ_BYTE
+
+		end_read_part
+		NOP	
+		NOP	
+		NOP
+		NOP
+	
+		CLRB	SPI_CLK				; CLK wieder zumachen
+	
+		DEC	SPI_bitcounter 	; sind noch bits zu empfangen ?
+		JNZ	clockingloop		; Wenn ja dann zurück
+	end_of_loop
+		
+		; vor den Decrementieren MUSS bytecounter getestet werden, da schon auf null stehen koennte
+		; und zwar wegwn des receive teils 
+		TEST	SPI_bytecounter		; wenn keien Bytes mehr gesendet werden sollen
+		JZ	receiveword		; nachschauen ob empfangen werden soll ->receiveword ?
+	
+		DEC	SPI_bytecounter		; hier dekrementieren da ein Wort gesendet wurde
+
+		TEST	SPI_bytecounter		; check ob noch bytes zu senden sind
+		JNZ	newbyteinit		; wenn ja dann eine neue runde
+
+	receiveword
+		; -- dann werden bytes empfangen		
+		JNB	SPI_CAN_f_sending,skiptest; in diesen bereich kommt man genau einmal: nämlich beim wechsel von senden
+					; nach Empfang. die folgenden 5 instruktionen sorgen dafür, dass 
+					; nicht gleich ein byte geschrieben wird sondern zuvor noch einmal im lesemodus die Schleife
+					; durchlaufen wird
+		TEST	SPI_numofwords 	; für den fall das keine Bytes empfangen werden sollen (PARAM2=0), machen wir hier dicht
+		JZ	endCANrwx
+		CLRB	SPI_CAN_f_sending
+		MOV	SPI_bitcounter , #8		; Bitcounter neu initialisieren
+		JMP	clockingloop
+		skiptest
+		
+		
+	
+			JB	TESTBIT, test_it
+			SETB	TESTBIT
+			SKIP
+			test_it
+			CLRB	TESTBIT
+		
+		DEC	SPI_numofwords
+
+		MOV	SPI_bitcounter , #8		; Bitcounter neu initialisieren
+
+		; Speichern des eingelesenen Bytes per indireckte Adressierung
+		MOV	STORE_FOR_IND, SPI_READ_BYTE	; zu speicherndes Byte auf globales Regiter schieben
+		CLR	SPI_temp
+		
+		MOV	SPI_temp, #SPI_CAN_BANK		; FSR = Adr(SPI_CAN_BANK + 2 + SPI_already_received)
+		ADD	SPI_temp, SPI_already_received		; +2 deshalb weil in den ersten beiden Registern der Bank
+		ADD	SPI_temp, #2
+		MOV	W,SPI_temp
+		MOV	FSR, W
+		MOV	IND, STORE_FOR_IND
+		SET_BANK SPI_BANK			; Zurück in die SPI Bank
+		
+		INC	SPI_already_received		; weiteres Byte empfangen
+
+		TEST	SPI_numofwords
+		JNZ	clockingloop			; und wieder lesen
+
+
+	endCANrwx
+		
+	RETP
+	
+
+;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ENDM
+
+
+
+
+;--------------------------------------
+; INIT-Segment
+;--------------------------------------
+
+SPI_INIT_SEG		MACRO
+
+	BANK	SPI_BANK
+IF SPI_BANK > $7F
+	SETB	FSR.7
+ELSE
+	CLRB	FSR.7
+ENDIF
+	;set internal input and output to 0
+	CLR	SPI_get_input	
+	CLR	SPI_set_output
+	SETB	SPI_DECO_SET	; disable Decoder
+	CLRB	SPI_CLK
+	SETB	SPI_DECO_A	; LSB	101-> Y5 == RESET for all attached devices
+	CLRB	SPI_DECO_B
+	SETB	SPI_DECO_C	; MSB
+	NOP
+	NOP
+	NOP
+	CLRB	SPI_DECO_SET	; activate Y5 output of decoder
+	NOP
+	NOP			; wait to ensure input is set
+	NOP
+	SETB	SPI_DECO_SET	; disable Decoder
+	NOP
+	NOP
+	NOP
+		
+			ENDM
+
+MAINTEST		MACRO
+
+	MOV	PARAM1, #2
+	MOV	PARAM2, #1
+
+	SET_BANK SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0011 ; code for read
+	MOV	CAN_Adr_byte, #%0010_0001 ;any adress
+	MOV 	CANMEM, #%1101_0101 ; normaly this has to be read
+
+	; select device
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	CALL	@SPI_CAN_rwx
+
+			ENDM
+;---------------------------------------
+;INTERRUPT-SEGMENT
+;---------------------------------------
+
+SPI_INT_SEG		MACRO
+	
+
+			ENDM
+;---------------------------------------
+;SPI CALL SEGMENT
+;---------------------------------------
+
+SPI_CALL_SEG		MACRO
+
+
+SPI_select_device
+	JMP	_SPI_select_device
+	
+SPI_CAN_write_instr
+	JMP	_SPI_CAN_write_instr
+
+	
+SPI_CAN_read_instr
+	JMP	_SPI_CAN_read_instr
+
+SPI_CAN_RTS
+	JMP	_SPI_CAN_RTS
+
+SPI_CAN_read_status_instr
+	JMP	_SPI_CAN_read_status_instr
+
+SPI_CAN_bit_mod_instr ; bit modify instruction
+	JMP	_SPI_CAN_bit_mod_instr
+
+; dient dem internen ein und auslesen
+; von x byte (wird von den anderen CAN funktionen benutzt)
+SPI_CAN_rwx
+	JMP	_SPI_CAN_rwx
+	
+
+			ENDM
+
+;;; ------------------------------------------------------------------------
+;;; End of SPI
+	
+DATA_SEG_COM MACRO
+	COM_BANK	= $
+	
+	com_sent_priority	DS 1 ; Prioritaet der letztversandten Message
+	com_flags		DS 1 ; Flags
+	com_addr0		DS 1 ; Temp-Variable
+	com_addr1		DS 1 ; Temp-Variable
+
+	com_f_sent	EQU com_flags.0	; Botschaft verschickt?
+	ENDM
+
+INIT_SEG_COM MACRO
+	SET_BANK COM_BANK
+	CLRB com_f_sent
+	ENDM
+
+	
+CALL_SEG_COM	MACRO
+;;; ============================================================
+;;; read_message_any
+;;; Ueberprueft das Vorhandensein einer Neuen Botschaft und liest diese ggf. aus
+;;; RUECKGABE:	RETVAL:	0 falls keine, 1 falls eine Botschaft vorhanden ist
+;;;             Global Exchange Bank: Die Botschaft, ab Offset 1, und in 0 die Geraete-ID
+COM_read_message_any
+	JMP _com_read_message_any
+
+;;; ============================================================
+;;; notify_ready
+;;; Testet Versandbereitschaft
+;;; RUECKGABE:	RETVAL:	0 falls versandbereit, 1 sonst (Versand blockiert)
+COM_notify_ready
+	JMP _com_notify_ready
+
+;;; ============================================================
+;;; signal_fatal
+;;; Signalisiert einen fatalen lokalen Zustand
+;;; Springt nach der Signalisierung in SAFE_STATE_HANDLER
+COM_signal_fatal
+	JMP _com_signal_fatal
+
+;;; INTERNE API
+CAN_send_mlp
+	ENDM
+
+
+;;; ============================================================
+;;; ----------------- COM Code segment -------------------------
+;;; ============================================================
+CODE_SEG_COM	MACRO
+
+	MLP_ORDER EQU 6
+	MLP_REPORT EQU 7
+
+	MLP_CAN_BODY_SIZE EQU 6	; Anzahl Bytes in CAN-encodiertem MLP-Paket
+	
+_com_read_message_any
+	CALL @SPI_CAN_read_status_instr
+	MOV TMPREG, RETVAL
+	CLR RETVAL
+	SNB TMPREG.0		; CANINTF.RX0IF nicht gesetzt -> nichts empfangen
+	RETP
+
+	;; Etwas empfangen: Nachricht auslesen!
+
+	MOV PARAM1, #$d
+	MOV PARAM2, #%0110_0001	; RXB0SIDH bis RXB0D7
+	CALL @SPI_CAN_read_instr
+
+	CLR RETVAL		; Auf Nummer Sicher gehen...
+
+	SET_BANK GLO_XCH_BANK
+	MOV PARAM1, $10		; Hoeherwertiger Addressteil
+	AND PARAM1, #$1f	; Prioritaet ausmaskieren
+	MOV PARAM2, $11		; Niederwertiger Addressteil
+	
+	RL PARAM2
+	RL PARAM2
+	RL PARAM2
+	RL PARAM2 		; Now the topmost 3 bits are at the bottom
+	AND PARAM2, #$7
+
+	CSE PARAM2, #MLP_REPORT	; Nur 'REPORT' wird akzeptiert
+	RETP
+
+	MOV $10, PARAM1		; Geraete-ID sichern
+
+	;; CAN-Controller freigeben
+	MOV PARAM1, #%0000_0001	; RX0IF
+	MOV PARAM2, #%0010_1100	; CANINTF
+	CLR $10			; Bit zum Loeschen markieren
+	CALL @SPI_CAN_bit_mod_instr ; Freigeben!
+
+	MOV RETVAL, #1		; Botschaft vorhanden
+	MOV OUTPUT, $15		; Erstes Datenbyte
+	MOV TMPREG, #5		; Konstant 5 Parameter in MLP
+
+	;; Alle Parameter (payload) an vorgesehene Stellen kopieren
+	MOV $11, $15 		; Payload verruecken
+	MOV $12, $16
+	MOV $13, $17
+	MOV $14, $18
+	MOV $15, $19
+	MOV $16, $1a
+	
+	RETP			; Erfolgreich zurueckkehren
+
+;;; ============================================================
+;;; INTERNE API:	 send_mlp:	Sendet CAN-Message an freie Bank
+;;; PARAMETER:	PARAM1:	[7:5]=Prioritaet, [4:0]=Geraete-ID
+;;;		PARAM2:	Operationsbits [2:0]
+;;;		Global Exchange Bank: Payload (6 Bytes)
+;;; RUECKGABE:	RETVAL wird 1 bei Erfolg, 0 falls nix mehr frei war
+_can_send_mlp
+	SET_BANK COM_BANK
+	;; Globale Variablen sichern
+	MOV com_addr0, PARAM1
+	MOV com_addr1, PARAM2
+
+	CALL @SPI_CAN_read_status_instr
+
+	MOV OUTPUT, #%0011_0000	; TX-Bank 0
+	SB RETVAL.2
+	JMP :have_writer	; TX-Bank 0 ist frei
+	
+	MOV OUTPUT, #%0100_0000	; TX-Bank 1
+	SB RETVAL.4
+	JMP :have_writer	; TX-Bank 1 ist frei
+	
+	MOV OUTPUT, #%0101_0000	; TX-Bank 2
+	SB RETVAL.6
+	JMP :have_writer	; TX-Bank 2 ist frei
+	
+	CLR RETVAL		; Keine Bank mehr frei
+	RETP
+:have_writer
+
+	MOV PARAM1, #MLP_CAN_BODY_SIZE	; 6 Bytes nach...
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$06		; TXBnD0
+	CALL @SPI_CAN_write_instr ; Payload schreiben
+
+	SET_BANK COM_BANK
+	MOV PARAM1, com_addr0
+	MOV PARAM2, com_addr1
+	SET_BANK GLO_XCH_BANK
+	MOV $10, PARAM1
+	MOV $11, PARAM2
+	MOV PARAM1, #2		; 2 Bytes nach...
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$01		; TXBnSIDH
+	CALL @SPI_CAN_write_instr ; Header schreiben
+
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #MLP_CAN_BODY_SIZE	; Groesse der Payload
+	MOV PARAM1, #1
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$05		; TXBnDLC
+	CALL @SPI_CAN_write_instr ; Payload-Groesse schreiben
+
+	MOV RETVAL, #1
+	RETP
+	
+_com_notify_ready
+	SET_BANK COM_BANK
+	CLR RETVAL
+	SB com_f_sent
+	RETP 			; Noch nichts gesendet
+
+	CALL @SPI_CAN_read_status_instr
+	MOV TMPREG, RETVAL
+	CLR RETVAL
+	SB TMPREG.2		; TCB0CNTRL.TXREQ gesetzt -> noch am Senden
+	SETB RETVAL.0		; Nicht mehr am Senden
+	RETP
+	
+_com_signal_fatal
+	JMP @SAFE_STATE_HANDLER
+	ENDM
+;;; ----------------------------------------------------------------------------------+
+;;; COM:	 Ende
+	
+			
+;####################################################################			
+;####################################################################			
+;####################################################################			
+
+
+
+
+
+
+;##########################################################
+; Konstanten
+;##########################################################
+
+
+;##########################################################
+; RAM
+;##########################################################
+
+;-------------------------
+; --- Common variables ---
+;-------------------------
+
+                        ; org $08
+
+;-------------------------
+; --- Bank 0 Variablen ---
+;-------------------------
+                        org $10
+	SPI_DAT
+                        org $20
+	SPI_X_BANK
+
+			
+;-------------------------
+; --- Bank 1 Variablen ---
+;-------------------------
+                        org $30
+	SPI_CAN_DATA
+			org $40
+	DATA_SEG_COM
+   
+			
+;-------------------------
+; --- Bank 2 Variablen ---
+;-------------------------
+                         org $50
+                         
+DATA_SEG_SERIAL_READ
+
+			
+;-------------------------
+; --- Bank 3 Variablen ---
+;-------------------------
+                         org $70
+                         
+DATA_SEG_SERIAL
+
+
+;-------------------------
+; --- Bank 4 Variablen ---
+;-------------------------
+                        org $90
+	
+DATA_SEG_SERIAL_WRITE	
+                        
+	
+;-------------------------
+; --- Bank 5 Variablen ---
+;-------------------------
+                        org $B0
+	
+DATA_SEG_GLOBAL_XCHANGE
+                        
+                        
+;-------------------------
+; --- Bank 6 Variablen ---
+;-------------------------
+			org $d0
+DATA_SEG_MLP
+
+                        
+;-------------------------
+; --- Bank 7 Variablen ---
+;-------------------------
+			org $f0
+DATA_SEG_MLP_WRITE
+
+
+
+;##########################################################
+; Def-Segmente
+;##########################################################
+
+	SPI_CONST
+
+;##########################################################
+; Code
+;##########################################################
+
+
+;--------------------------------------
+; Interrupt Einsprung
+;--------------------------------------
+	ORG $0
+
+	INTER_SEG_serial	
+
+	MOV W, #-INT_PERIOD	; frequenz von 115 Baud
+	RETIW
+
+
+start		JMP		@main
+
+;--------------------------------------
+; MODULE
+;--------------------------------------
+
+	ORG $200
+
+	CALL_SEG_SERIAL
+	CALL_SEG_MLP
+
+	CODE_SEG_SERIAL
+	CODE_SEG_MLP
+
+
+;--------------------------------------
+;Initialisierung
+;--------------------------------------
+
+	ORG $400
+main
+	;initialisierung
+
+		MOV !OPTION, #OPTION_ACCRTCC_NOINT ;Interrupt ausschalten
+		
+					
+		; I/O-Konfiguration initialisieren
+		
+                MOV RA, #PORT_A_VALUE
+                MOV RB, #PORT_B_VALUE
+                MOV RC, #PORT_C_VALUE
+                MOV RD, #PORT_D_VALUE
+                MOV RE, #PORT_E_VALUE
+                
+                MOV W, #MODE_SELECT_TRIS
+                MOV M, W
+                MOV !RA, #PORT_A_TRIS
+                MOV !RB, #PORT_B_TRIS
+                MOV !RC, #PORT_C_TRIS
+                MOV !RD, #PORT_D_TRIS
+                MOV !RE, #PORT_E_TRIS
+
+                MOV W,   #MODE_SELECT_PLP
+                MOV M, W
+                
+                MOV !RA, #PORT_A_PLP                
+                MOV !RB, #PORT_B_PLP
+                MOV !RC, #PORT_C_PLP
+                MOV !RD, #PORT_D_PLP
+                MOV !RE, #PORT_E_PLP
+                
+
+                MOV W, #MODE_SELECT_LVL
+                MOV M, W                       
+                MOV !RA, #PORT_A_LVL         
+                MOV !RB, #PORT_B_LVL
+                MOV !RC, #PORT_B_LVL
+                MOV !RD, #PORT_C_LVL
+		MOV !RE, #PORT_D_LVL
+                
+
+                MOV W, #MODE_SELECT_ST
+                MOV M, W                       
+                MOV !RB, #PORT_B_ST
+                MOV !RC, #PORT_C_ST
+		MOV !RD, #PORT_D_ST
+                MOV !RE, #PORT_E_ST
+                                       
+
+                MOV W, #MODE_SELECT_WKEN
+                MOV M, W                       
+                MOV !RB, #PORT_B_WKEN
+
+                MOV W, #MODE_SELECT_WKED
+                MOV M, W                       
+                MOV !RB, #PORT_B_WKED
+
+                CLR !WDT
+
+		SETB LEDgreen
+		SETB LEDblue
+	
+		INIT_SEG_SERIAL
+		INIT_SEG_MLP
+		INIT_SEG_COM
+		SPI_INIT_SEG
+			
+		; interrupt aktivieren
+                MOV !OPTION, #OPTION_ACCRTCC_INT  ;interrupt wieder anschalten
+
+;--------------------------------------
+;--------------------------------------
+; Hauptprogramm
+;--------------------------------------
+;--------------------------------------
+
+ mainloop
+
+	SERIAL_MAINLOOP
+	MLP_MAINLOOP
+
+	CALL @COM_read_message_any
+	TEST RETVAL
+	JZ mainloop
+
+	;; Got a CAN message!
+	SET_BANK GLO_XCH_BANK
+	OR $10, #$e0		; Flag as 'report' with appropriate ID
+	MOV PARAM1, #$7		; Prefix, command, 5 parameters
+	CLR PARAM2
+	CALL @MLP_writebuf
+		
+	JMP	mainloop
+
+	
+;--------------------------------------
+; Routinen Page 0
+;--------------------------------------
+
+
+	org $600
+	
+		CALL_SEG_COM
+
+		CODE_SEG_COM
+
+
+	org $800
+
+		SPI_CALL_SEG
+	
+		SPI_CODE_SEG
+
+		
+;;; Globale Fehlerbehandlung 
+	
+ORG	$c00
+		;; Sicheren Betriebszustand einnehmen
+SAFE_STATE_HANDLER
+	CLRB LEDgreen
+	CLRB LEDblue
+:endless_loop
+	jmp :endless_loop	

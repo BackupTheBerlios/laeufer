@@ -1,0 +1,1340 @@
+;;; com-api.src Copyright (C) 2003 Laeufer-Projekt
+;;; 
+;;; Netz-Kommunikations-API
+;;; 
+;;; BENUTZUNG:	Die folgenden Symbole muessen definiert sein (und sind hier
+;;;		mit Beispielwerten initialisiert):
+;;; - COM_ID:	Identifikation des Kommunikationsteilnehmers (2-31)
+;;; - SAFE_STATE_HANDLER:
+;;; 		Globaler Ansprungpunkt fuer fatale Fehler/Anfragen
+;;;		zur Setzung des sicheren Betriebszustandes
+;;; 
+;;; Die Kommunikations-API-Funktionen werden in CALL_SEG_COM erlaeutert.
+
+
+DEVICE SX52, OSCXT5
+  ;device SX28L, OSCXT5, TURBO, STACKX_OPTIONX, PROTECT
+ 
+	freq	48_000_000
+	;freq	11_059_200
+	reset	start
+        id 'CJR-COM0'
+
+
+	WATCH 	SPI_bitcounter,8, UBIN
+	WATCH	SPI_CLK,1,UDEC
+	WATCH	SPI_XO0,8,UBIN
+	WATCH	SPI_XO1,8,UBIN
+	
+	WATCH	SPI_bytecounter,8,UDEC
+	WATCH	SPI_numofwords,8,UDEC
+
+
+COM_ID	EQU	$2		; <-- Geraete-ID
+
+
+MODE_SELECT_TRIS        EQU     $1f
+MODE_SELECT_PLP         EQU     $1e
+MODE_SELECT_LVL         EQU     $1d
+MODE_SELECT_ST          EQU     $1c
+MODE_SELECT_WKEN        EQU     $1b
+MODE_SELECT_WKED        EQU     $1a
+
+LEDgreen		EQU	RA.6
+LEDblue			EQU	RA.7
+
+
+OUTPUT			EQU	$0A
+RETVAL			EQU	$0B	; Rückgebwerte
+PARAM1			EQU	$0C
+PARAM2			EQU	$0D	; Parameter für unterprogrammaufruf.
+STORE_FOR_IND		EQU	$0E	; Zwischnespeicher für die Indireckta Adressierung
+TMPREG			EQU	$0F	; Temporaeres Register
+
+
+TESTBIT	EQU RD.7
+
+SET_BANK MACRO	1
+	BANK	\1
+	IF	\1 > $7F
+		SETB	FSR.7
+	ELSE
+		CLRB	FSR.7
+	ENDIF
+ENDM	
+
+
+
+
+
+;OPTION REGISTER (%7643210)
+;BIT		  meaning
+; 7	0= $01 is W , 1= $01 is RTCC
+; 6	0= RTCC roll-over enabled 1=disabled
+; 5	0= RTCC increment on internal instr. , 1= increm. on pin
+; 4	RTCC increment: 0= on low-high transition, 1= high-low transition
+; 3	prescaler 0= on ,1 = off
+; 2	prescale divide rate
+; 1	see manual for further info
+; 0
+;
+
+OPTION_ACCRTCC_INT      EQU %10011111	;$01 is RTCC ,interrupt on ,prescaler off , increment on instr.
+
+OPTION_ACCRTCC_NOINT    EQU %11011111	;;$01 is RTCC ,interrupt off ,prescaler off , increment on instr.
+
+
+; 50 MHZ, 115200 Bd
+INT_PERIOD   EQU  108
+
+
+;----------------------------------------------------------
+;intial values of port registers
+;----------------------------------------------------------
+
+PORT_A_VALUE    EQU %0000_0000 ; sets bit on port     
+PORT_A_TRIS     EQU %0011_1111 ; configures data direction 1=input 0=output
+PORT_A_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_A_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+
+PORT_B_VALUE    EQU %0000_0000 ; sets bit on port     
+PORT_B_TRIS     EQU %1111_1111 ; configures data direction 1=input 0=output
+PORT_B_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_B_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_B_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+PORT_B_WKEN     EQU %1111_1111 ; multi input wakeup 0=enable 1=disable (see p136 in manual)
+PORT_B_WKED     EQU %0000_0000 ; wakeup edge detection 1=falling_edge 0=rising_edge
+
+PORT_C_VALUE    EQU %0000_0000 ; sets bit on port  
+PORT_C_TRIS     EQU %1111_1111 ; configures data direction 1=input 0=output
+PORT_C_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_C_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_C_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+PORT_D_VALUE    EQU %0100_0000 ; sets bit on port  
+PORT_D_TRIS     EQU %0000_0100 ; configures data direction 1=input 0=output
+PORT_D_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_D_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_D_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+PORT_E_VALUE    EQU %0000_0000 ; sets bit on port  
+PORT_E_TRIS     EQU %0000_0000 ; configures data direction 1=input 0=output
+PORT_E_PLP      EQU %1111_1111 ; pullup resistors config 1=disable 0=enable
+PORT_E_LVL      EQU %0000_0000 ; CMOS/TTL selection 1=TTL 0=CMOS
+PORT_E_ST       EQU %1111_1111 ; schmitt trigger 1=disable ST  0=enable ST
+
+
+;----------------------------------------------------------
+;
+; Tool Macros
+;
+;----------------------------------------------------------
+
+OVERFLOWCHECK           MACRO  1
+IF ( (($-1) & $F0)<>(\1 & $F0))
+   ERROR 'RAM-Bank exceeded'
+ENDIF
+                        ENDM
+
+
+TABLE_START             MACRO 0
+IF $ & $100
+   ERROR 'Must be located in the first half of a page.'
+ENDIF
+                        ENDM
+
+
+TABLE_END               MACRO 0
+IF $ & $100
+   ERROR 'Must be located in the first half of a page.'
+ENDIF
+                        ENDM
+
+
+DATA_SEG_GLOBAL_XCHANGE	MACRO
+GLO_XCH_BANK	= $
+	XCHG	DS 16
+		ENDM
+
+
+;####################################################################			
+; Modules
+;####################################################################			
+
+;----------------------------------------------------------
+;
+; SPI
+;
+;The followinf devices are accessable throug SPI:
+;	[DEVICE]   [DECODER] [CBA]   [MASKID]
+;	TLE1		Y0 == 000   == % 0000_0000
+;	TLE2		Y1 == 001   == % 0000_1000
+;	ADC		Y2 == 010   == % 0001_0000
+;	DAC		Y3 == 011   == % 0001_1000
+;	CAN		Y4 == 100   == % 0010_0000
+;	RESET ALL	Y5 == 101   == % 0010_1000
+;----------------------------------------------------------
+
+;--------------------------------------
+; Konstanten und Signale
+;--------------------------------------
+
+SPI_CONST		MACRO
+
+SPI_INPORT		EQU RD.2	; SPI inputline
+SPI_OUTPORT		EQU RD.1	; SPI outputline
+SPI_CLK			EQU RD.0	; SPI clock
+SPI_DECO_A		EQU RD.3	; decoderbits for chipselect
+SPI_DECO_B		EQU RD.4	;
+SPI_DECO_C		EQU RD.5	; MSB
+SPI_DECO_SET		EQU RD.6	; activate decoder settings
+
+SPI_TLE1		EQU %0000_0000	; see above for information
+SPI_TLE2		EQU %0000_1000
+SPI_ADC			EQU %0001_0000
+SPI_DAC			EQU %0001_1000
+SPI_CAN			EQU %0010_0000
+SPI_RESET		EQU %0010_1000
+SPI_NOTCON		EQU %0011_0000
+	
+			ENDM
+			
+SPI_X_BANK		MACRO
+
+SPI_XCH_BANK	= $
+
+SPI_XI0		DS 1
+SPI_XI1		DS 1
+SPI_XI2		DS 1
+SPI_XI3		DS 1
+SPI_XI4		DS 1
+SPI_XI5		DS 1
+SPI_XI6		DS 1
+SPI_XI7		DS 1
+SPI_XO0		DS 1
+SPI_XO1		DS 1
+SPI_XO2		DS 1
+SPI_XO3		DS 1
+SPI_XO4		DS 1
+SPI_XO5		DS 1
+SPI_XO6		DS 1
+SPI_XO7		DS 1
+
+			ENDM
+
+
+
+
+
+
+
+;--------------------------------------
+; Daten-Segment
+;--------------------------------------
+
+SPI_DAT			MACRO
+
+SPI_BANK	=	$	; get current bank and call it SPI_BANK
+SPI_get_input		DS 1	; temporary memory for input bits
+SPI_set_output		DS 1	; temporary memory for output bits
+SPI_SENT_WORD		DS 1 	; contains word to be sent
+SPI_device		DS 1	; frequency depends on selected device
+SPI_CAN_ADRESS		DS 1	; Adressbyte für den CAN-Bus
+SPI_length_input	DS 1	; number of bits input has (range 1-24)
+SPI_length_output	DS 1	; number of bits output has (range 1-24)
+SPI_msb 		DS 1	; MSB (1) or LSB (0) first 
+SPI_numofwords		DS 1	; number of words that have to be sent/received
+SPI_bitcounter		DS 1	; count x bit down to 0
+SPI_temp		DS 1	; free for use within 2 instructions
+SPI_already_received	DS 1	; counter to note how many words have been received (needed for memory adress calculation)
+SPI_CAN_STATUS		DS 1 	; holds send or receive status in Bit 0
+SPI_bytecounter		DS 1	; contains devicespecific number of bytes to send
+SPI_CAN_HEAD		DS 1	; contains number of instruction and adressbytes for CAN-Bus
+SPI_READ_BYTE		DS 1	; temporary contains received byte
+
+sending			EQU	SPI_CAN_STATUS.0 ;	1=sending 0=receiving
+
+
+			ENDM
+			
+			
+			
+SPI_CAN_DATA		MACRO
+
+SPI_CAN_BANK	=	$
+
+CAN_instr_byte	DS	1
+CAN_Adr_byte	DS	1
+CANMEM		DS	14
+
+			ENDM
+;---------------------------------------
+;SPI CODE SEGMENT
+;---------------------------------------
+
+; sends and receives one byte to already specified peripheral
+; -> Decoder must be set
+SPI_CODE_SEG		MACRO
+
+_SPI_table
+	JMP 	PC+W
+	RETW	16	;TLE1		Y0 == 000   == % 0000_0000
+	RETW	16	;TLE2		Y1 == 001   == % 0000_1000
+	RETW	24	;ADC		Y2 == 010   == % 0001_0000
+	RETW	24	;DAC		Y3 == 011   == % 0001_1000
+	RETW	1	;CAN		Y4 == 100   == % 0010_0000
+	RETW	1	;RESET ALL	Y5 == 101   == % 0010_1000
+	RETW	1
+	RETW	1
+
+; in this function the in W specified device is selected
+; before the selection, Clock is decreased!!
+_SPI_select_device
+
+	SETB	SPI_DECO_SET			; deactivate decoder
+
+	BANK	SPI_BANK
+	MOV	SPI_device, W			; store select device
+	CLRB 	SPI_CLK				; decrease clock
+	AND	RD, #%1100_0111			; mask old selected device out
+	OR	RD, SPI_device			; select new device by inserting nec. id
+	
+	CLRB	SPI_DECO_SET			; activate device selected on decoder inputs
+						; see _SPI_select_device					
+	NOP
+	NOP
+	
+	RETP
+
+
+
+; in PARAM1 muss die Anzahl der zu lesenden Bytes angegeben werden
+; in PARAM2 muss die Adresse von welcher gelesen werden soll übergeben werden
+; steht eine null oder eine Zahl grösser 14 in PARAM1 so wird ein zu sendendes Wort angenommen
+; das Ergebnis steht dann in GLO_XCH 0 bis d
+_SPI_CAN_read_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0011 ; code for read
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	MOV	PARAM2, PARAM1
+	MOV	PARAM2, #2
+
+	TEST	PARAM1
+	SNZ
+	INC	PARAM1
+	
+	CJBE	PARAM1, #14, isok
+	MOV	PARAM1,#1
+	isok
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	; ergebnis nach GLO_XCH schreiben
+	SET_BANK SPI_BANK
+	CLR SPI_temp
+
+	cploop_for_CAN_read2
+	
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	ADD	SPI_CAN_ADRESS,SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK	
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	ADD	SPI_CAN_ADRESS, SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND,STORE_FOR_IND
+	SET_BANK SPI_BANK
+	
+	INC	SPI_temp
+	CJBE	SPI_temp, #14, cploop_for_CAN_read2
+
+	RETP
+
+
+; in PARAM1 muss die Anzahl der zu schreibenden Bytes angegeben werden
+; in PARAM2 muss die Adresse von welcher gelesen werden soll übergeben werden
+; steht eine null oder eine 15 drin so wird ein zu sendendes Wort angenommen
+_SPI_CAN_write_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0010 ; code for write
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+
+	TEST	PARAM1
+	SNZ
+	INC	PARAM1
+	
+	CJBE	PARAM1, #14, isok2
+	MOV	PARAM1,#1
+	isok2
+
+	; zu schreibenden Bytes aus GLO_XCH holen
+	SET_BANK SPI_BANK
+	CLR SPI_temp
+	
+	cploop_for_CAN_read1
+	
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	ADD	SPI_CAN_ADRESS, SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	ADD	SPI_CAN_ADRESS,SPI_temp
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND, STORE_FOR_IND
+	SET_BANK SPI_BANK	
+	INC	SPI_temp
+	CJBE	SPI_temp, PARAM1, cploop_for_CAN_read1 ; Achtung!! das mit PARAM1 ist nixht sauber
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+	
+	RETP
+
+;Das in PARAM1 abgelegte Muster bestimmt welche Registerbänke im CAN gesendet werden sollen
+;dabei gilt:	Bit 0 = 0.Bank
+;		Bit 1 = 1.Bank
+;		Bit 2 = 2.Bank
+_SPI_CAN_RTS
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%1000_0111 ; code for write
+	AND	CAN_instr_byte,PARAM1
+	
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+	MOV	PARAM1, #1
+	
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+	
+	RETP
+
+
+
+; Nachdem SPI_CAN_read_status_instr aufgerufen wurde,
+; steht in RETVAL Das Status-Byte
+_SPI_CAN_read_status_instr
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%1010_0000 ; code for read status instruction
+	MOV	PARAM1,#1
+	MOV	PARAM2,#1
+
+
+	SET_BANK SPI_CAN_BANK
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	;ergebnis noch nach RETVAL schieben
+	SET_BANK SPI_BANK
+
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #2
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	RETVAL, IND
+
+	RETP
+	
+
+;Für die BIT MODIFY INSTRUCTION müssen drei Bytes übergeben werden
+; in PARAM1 das MASK-Byte (Maskiert alle Bits heraus die geändert werden sollen)
+; in PARAM2 muss die betreffende Adresse angegeben werden
+; das dritte (in GLO_XCH auf 00) das DATA-Byte (Die Daten in die das ganze geändert werden soll)
+_SPI_CAN_bit_mod_instr ; bit modify instruction
+
+	SET_BANK	SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0101 ; code for bit modify instruction
+	MOV	CAN_Adr_byte, PARAM2  ;any adress
+	CLR	PARAM2	; keine Bytes einlesen
+
+	MOV	CANMEM,PARAM1	; MASK Byte ablegen
+	MOV	PARAM1,#4	; es werden 4 Bytes gelesen
+
+	; zu schreibendes Bytes aus GLO_XCH holen
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, GLO_XCH_BANK
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	STORE_FOR_IND, IND
+	SET_BANK SPI_BANK
+	MOV	SPI_CAN_ADRESS, SPI_CAN_BANK
+	ADD	SPI_CAN_ADRESS, #3
+	MOV	FSR,SPI_CAN_ADRESS
+	MOV	IND, STORE_FOR_IND
+	; select device
+	MOV	W, #SPI_CAN
+	CALL	@SPI_select_device
+	CALL	@SPI_CAN_rwx
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+
+
+	RETP
+	
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+_SPI_CAN_rwx	;++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	;	Allen CAN SPI Routinen ist gleich das der CAN chip Signale an der steigenden
+	;	Flanke liest und an der fallenden Flanke schreibt.
+
+
+	SET_BANK SPI_BANK
+
+	; schritt für schritt
+	; Clock laufen lassen -> muss nicht syncron sein, aber die signale müssen
+	; mindetens 10 Instr abstand haben
+	; dabei den ausgang toggeln
+
+		MOV	SPI_bytecounter, PARAM1	; Zähler für die zu senden Bytes  !!!!!!!!! aus Param 
+		MOV	SPI_numofwords, PARAM2	; Zähler der zu empfangenden Bytes  !!!!????????? aus Param
+
+		SETB	sending
+		CLR	SPI_length_output	; Zähler für gesendete Byte
+		CLR	SPI_already_received	; Zähler für empfangene Byte
+
+			
+	newbyteinit
+
+		MOV	SPI_bitcounter , #8	; Bitcounter neu initialisieren
+		
+		MOV	W, #SPI_CAN_BANK	; Auslesen des zu sendenden Bytes
+		ADD	W, SPI_length_output	; via indirekter Adressierung
+		MOV	FSR, W			; FSR = adr(SPI_CAN_BANK)+SPI_length_output
+		MOV	W, IND			; lese von Adresse in FSR nach W
+		SET_BANK SPI_BANK		; wechsle Bank
+		MOV	SPI_SENT_WORD, W	; schreibe W nach SPI_SEND_WORD
+		
+		INC	SPI_length_output	; weiteres wort gelesen -> wird gleich gesendet
+	clockingloop
+
+		; SENDEN
+
+		TEST	SPI_bytecounter
+		JZ	end_send_part
+		RL	SPI_SENT_WORD		; das sende_wort wird stück für stück in den Ausgang rotiert
+		SC
+		CLRB	SPI_OUTPORT
+		SNC
+		SETB	SPI_OUTPORT
+
+		end_send_part
+		
+		NOP	; zehn instruktionen warten
+		NOP	
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP
+		
+		SETB	SPI_CLK				; CLK anmachen
+	
+		NOP	; zehn instruktionen warten
+		NOP	
+		NOP	
+		NOP	
+		NOP
+		NOP	
+		; LESEN
+		TEST	SPI_bytecounter	; solange gesendet wird braucht man nicht zu empfangen
+		JNZ	end_read_part
+		
+		SB	SPI_INPORT
+		CLC
+		SNB	SPI_INPORT
+		STC
+		RL	SPI_READ_BYTE
+
+		end_read_part
+		NOP	
+		NOP	
+		NOP
+		NOP
+	
+		CLRB	SPI_CLK				; CLK wieder zumachen
+	
+		DEC	SPI_bitcounter 	; sind noch bits zu empfangen ?
+		JNZ	clockingloop		; Wenn ja dann zurück
+	end_of_loop
+		
+		; vor den Decrementieren MUSS bytecounter getestet werden, da schon auf null stehen koennte
+		; und zwar wegwn des receive teils 
+		TEST	SPI_bytecounter		; wenn keien Bytes mehr gesendet werden sollen
+		JZ	receiveword		; nachschauen ob empfangen werden soll ->receiveword ?
+	
+		DEC	SPI_bytecounter		; hier dekrementieren da ein Wort gesendet wurde
+
+		TEST	SPI_bytecounter		; check ob noch bytes zu senden sind
+		JNZ	newbyteinit		; wenn ja dann eine neue runde
+
+	receiveword
+		; -- dann werden bytes empfangen		
+		JNB	sending,skiptest; in diesen bereich kommt man genau einmal: nämlich beim wechsel von senden
+					; nach Empfang. die folgenden 5 instruktionen sorgen dafür, dass 
+					; nicht gleich ein byte geschrieben wird sondern zuvor noch einmal im lesemodus die Schleife
+					; durchlaufen wird
+		TEST	SPI_numofwords 	; für den fall das keine Bytes empfangen werden sollen (PARAM2=0), machen wir hier dicht
+		JZ	endCANrwx
+		CLRB	sending
+		MOV	SPI_bitcounter , #8		; Bitcounter neu initialisieren
+		JMP	clockingloop
+		skiptest
+		
+		
+	
+			JB	TESTBIT, test_it
+			SETB	TESTBIT
+			SKIP
+			test_it
+			CLRB	TESTBIT
+		
+		DEC	SPI_numofwords
+
+		MOV	SPI_bitcounter , #8		; Bitcounter neu initialisieren
+
+		; Speichern des eingelesenen Bytes per indireckte Adressierung
+		MOV	STORE_FOR_IND, SPI_READ_BYTE	; zu speicherndes Byte auf globales Regiter schieben
+		CLR	SPI_temp
+		
+		MOV	SPI_temp, #SPI_CAN_BANK		; FSR = Adr(SPI_CAN_BANK + 2 + SPI_already_received)
+		ADD	SPI_temp, SPI_already_received		; +2 deshalb weil in den ersten beiden Registern der Bank
+		ADD	SPI_temp, #2
+		MOV	W,SPI_temp
+		MOV	FSR, W
+		MOV	IND, STORE_FOR_IND
+		SET_BANK SPI_BANK			; Zurück in die SPI Bank
+		
+		INC	SPI_already_received		; weiteres Byte empfangen
+
+		TEST	SPI_numofwords
+		JNZ	clockingloop			; und wieder lesen
+
+
+	endCANrwx
+		
+	RETP
+	
+
+;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ENDM
+
+
+
+
+;--------------------------------------
+; INIT-Segment
+;--------------------------------------
+
+SPI_INIT_SEG		MACRO
+
+	BANK	SPI_BANK
+IF SPI_BANK > $7F
+	SETB	FSR.7
+ELSE
+	CLRB	FSR.7
+ENDIF
+	;set internal input and output to 0
+	CLR	SPI_get_input	
+	CLR	SPI_set_output
+	SETB	SPI_DECO_SET	; disable Decoder
+	CLRB	SPI_CLK
+	SETB	SPI_DECO_A	; LSB	101-> Y5 == RESET for all attached devices
+	CLRB	SPI_DECO_B
+	SETB	SPI_DECO_C	; MSB
+	NOP
+	NOP
+	NOP
+	CLRB	SPI_DECO_SET	; activate Y5 output of decoder
+	NOP
+	NOP			; wait to ensure input is set
+	NOP
+	SETB	SPI_DECO_SET	; disable Decoder
+	NOP
+	NOP
+	NOP
+		
+			ENDM
+
+MAINTEST		MACRO
+
+	MOV	PARAM1, #2
+	MOV	PARAM2, #1
+
+	SET_BANK SPI_CAN_BANK
+	MOV	CAN_instr_byte, #%0000_0011 ; code for read
+	MOV	CAN_Adr_byte, #%0010_0001 ;any adress
+	MOV 	CANMEM, #%1101_0101 ; normaly this has to be read
+
+	; select device
+	MOV	W, #SPI_NOTCON
+	CALL	@SPI_select_device
+
+	CALL	@SPI_CAN_rwx
+
+			ENDM
+;---------------------------------------
+;INTERRUPT-SEGMENT
+;---------------------------------------
+
+SPI_INT_SEG		MACRO
+	
+
+			ENDM
+;---------------------------------------
+;SPI CALL SEGMENT
+;---------------------------------------
+
+SPI_CALL_SEG		MACRO
+
+
+SPI_select_device
+	JMP	_SPI_select_device
+	
+SPI_CAN_write_instr
+	JMP	_SPI_CAN_write_instr
+
+	
+SPI_CAN_read_instr
+	JMP	_SPI_CAN_read_instr
+
+SPI_CAN_RTS
+	JMP	_SPI_CAN_RTS
+
+SPI_CAN_read_status_instr
+	JMP	_SPI_CAN_read_status_instr
+
+SPI_CAN_bit_mod_instr ; bit modify instruction
+	JMP	_SPI_CAN_bit_mod_instr
+
+; dient dem internen ein und auslesen
+; von x byte (wird von den anderen CAN funktionen benutzt)
+SPI_CAN_rwx
+	JMP	_SPI_CAN_rwx
+	
+
+			ENDM
+
+;;; ------------------------------------------------------------------------
+;;; End of SPI
+	
+DATA_SEG_COM MACRO
+	COM_BANK	= $
+	
+	com_sent_priority	DS 1 ; Prioritaet der letztversandten Message
+	com_flags		DS 1 ; Flags
+	com_addr0		DS 1 ; Temp-Variable
+	com_addr1		DS 1 ; Temp-Variable
+
+	com_f_sent	EQU com_flags.0	; Botschaft verschickt?
+	ENDM
+
+INIT_SEG_COM MACRO
+	SET_BANK COM_BANK
+	CLRB com_f_sent
+	ENDM
+
+	
+CALL_SEG_COM	MACRO
+;;; ============================================================
+;;; read_message
+;;; Ueberprueft das Vorhandensein einer Neuen Botschaft und liest diese ggf. aus
+;;; RUECKGABE:	RETVAL:	0 falls keine, 1 falls eine Botschaft vorhanden ist
+;;;             OUTPUT:	Der Kommandocode der Botschaft, falls Botschaft vorhanden
+;;;             TMPREG:	Anzahl der Parameter zur Botschaft, falls vorhanden
+;;;             Global Exchange Bank: Die Parameter zur Botschaft, falls vorhanden
+COM_read_message
+	JMP _com_read_message
+
+;;; ============================================================
+;;; notify_ready
+;;; Testet Versandbereitschaft
+;;; RUECKGABE:	RETVAL:	0 falls versandbereit, 1 sonst (Versand blockiert)
+COM_notify_ready
+	JMP _com_notify_ready
+
+;;; ============================================================
+;;; notify
+;;; Sendet eine Notifikation an den PDA
+;;; PARAMETER:	PARAM1:	Kommandocode der Notifikation (oder Code, auf den dies
+;;;			eine Antwort ist)
+;;;		PARAM2:	Anzahl der Argumente auf der Global Exchange Bank
+;;;		TMPREG:	Prioritaet der Botschaft (aus {0..7}, wobei niedriger wichtiger ist)
+;;; RUECKGABE:	RETVAL:	0 bei Erfolg, 1 bei Uebertragungsfehler
+COM_notify
+	JMP _com_notify
+
+;;; ============================================================
+;;; signal_fatal
+;;; Signalisiert einen fatalen lokalen Zustand
+;;; Springt nach der Signalisierung in SAFE_STATE_HANDLER
+COM_signal_fatal
+	JMP _com_signal_fatal
+
+;;; INTERNE API
+CAN_send_mlp
+	ENDM
+
+
+;;; ============================================================
+;;; ----------------- COM Code segment -------------------------
+;;; ============================================================
+CODE_SEG_COM	MACRO
+
+	MLP_ORDER EQU 6
+	MLP_REPORT EQU 7
+
+	MLP_CAN_BODY_SIZE EQU 6	; Anzahl Bytes in CAN-encodiertem MLP-Paket
+	
+_com_read_message
+	CALL @SPI_CAN_read_status_instr
+	MOV TMPREG, RETVAL
+	CLR RETVAL
+	SNB TMPREG.0		; CANINTF.RX0IF nicht gesetzt -> nichts empfangen
+	RETP
+
+	;; Etwas empfangen: Nachricht auslesen!
+
+	MOV PARAM1, #$d
+	MOV PARAM2, #%0110_0001	; RXB0SIDH bis RXB0D7
+	CALL @SPI_CAN_read_instr
+
+	CLR RETVAL		; Auf Nummer Sicher gehen...
+
+	SET_BANK GLO_XCH_BANK
+	MOV PARAM1, $10		; Hoeherwertiger Addressteil
+	AND PARAM1, #$1f	; Prioritaet ausmaskieren
+	MOV PARAM2, $11		; Niederwertiger Addressteil
+	
+	RL PARAM2
+	RL PARAM2
+	RL PARAM2
+	RL PARAM2 		; Now the topmost 3 bits are at the bottom
+	AND PARAM2, #$7
+
+	CSE PARAM2, #MLP_ORDER	; Nur 'ORDER' wird akzeptiert
+	RETP
+
+	TEST PARAM1
+	JZ :process_this	; Broadcast
+	CSE PARAM1, #COM_ID
+	RETP			; Kein Broadcast, nicht fuer uns
+:process_this
+
+	;; CAN-Controller freigeben
+	MOV PARAM1, #%0000_0001	; RX0IF
+	MOV PARAM2, #%0010_1100	; CANINTF
+	CLR $10			; Bit zum Loeschen markieren
+	CALL @SPI_CAN_bit_mod_instr ; Freigeben!
+
+	MOV RETVAL, #1		; Botschaft vorhanden
+	MOV OUTPUT, $15		; Erstes Datenbyte
+	MOV TMPREG, #5		; Konstant 5 Parameter in MLP
+
+	;; Parameter an vorgesehene Stellen kopieren
+	MOV $10, $16
+	MOV $11, $17
+	MOV $12, $18
+	MOV $13, $19
+	MOV $14, $1a
+	
+	RETP			; Erfolgreich zurueckkehren
+
+;;; ============================================================
+;;; INTERNE API:	 send_mlp:	Sendet CAN-Message an freie Bank
+;;; PARAMETER:	PARAM1:	[7:5]=Prioritaet, [4:0]=Geraete-ID
+;;;		PARAM2:	Operationsbits [2:0]
+;;;		Global Exchange Bank: Payload (6 Bytes)
+;;; RUECKGABE:	RETVAL wird 1 bei Erfolg, 0 falls nix mehr frei war
+_can_send_mlp
+	SET_BANK COM_BANK
+	;; Globale Variablen sichern
+	MOV com_addr0, PARAM1
+	MOV com_addr1, PARAM2
+
+	CALL @SPI_CAN_read_status_instr
+
+	MOV OUTPUT, #%0011_0000	; TX-Bank 0
+	SB RETVAL.2
+	JMP :have_writer	; TX-Bank 0 ist frei
+	
+	MOV OUTPUT, #%0100_0000	; TX-Bank 1
+	SB RETVAL.4
+	JMP :have_writer	; TX-Bank 1 ist frei
+	
+	MOV OUTPUT, #%0101_0000	; TX-Bank 2
+	SB RETVAL.6
+	JMP :have_writer	; TX-Bank 2 ist frei
+	
+	CLR RETVAL		; Keine Bank mehr frei
+	RETP
+:have_writer
+
+	MOV PARAM1, #MLP_CAN_BODY_SIZE	; 6 Bytes nach...
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$06		; TXBnD0
+	CALL @SPI_CAN_write_instr ; Payload schreiben
+
+	SET_BANK COM_BANK
+	MOV PARAM1, com_addr0
+	MOV PARAM2, com_addr1
+	SET_BANK GLO_XCH_BANK
+	MOV $10, PARAM1
+	MOV $11, PARAM2
+	MOV PARAM1, #2		; 2 Bytes nach...
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$01		; TXBnSIDH
+	CALL @SPI_CAN_write_instr ; Header schreiben
+
+	SET_BANK GLO_XCH_BANK
+	MOV $10, #MLP_CAN_BODY_SIZE	; Groesse der Payload
+	MOV PARAM1, #1
+	MOV PARAM2, OUTPUT
+	OR PARAM2, #$05		; TXBnDLC
+	CALL @SPI_CAN_write_instr ; Payload-Groesse schreiben
+
+	MOV RETVAL, #1
+	RETP
+	
+_com_notify_ready
+	SET_BANK COM_BANK
+	CLR RETVAL
+	SB com_f_sent
+	RETP 			; Noch nichts gesendet
+
+	CALL @SPI_CAN_read_status_instr
+	MOV TMPREG, RETVAL
+	CLR RETVAL
+	SB TMPREG.2		; TCB0CNTRL.TXREQ gesetzt -> noch am Senden
+	SETB RETVAL.0		; Nicht mehr am Senden
+	RETP
+	
+_com_notify
+	CALL @COM_notify_ready
+	TEST RETVAL
+	SZ
+	RETP
+	;; Transmit
+	SET_BANK COM_BANK
+	SETB com_f_sent
+
+	;; exchange bank vorbereiten:	Kommandocode auch drauf
+	SET_BANK GLO_XCH_BANK
+	MOV $16, $15
+	MOV $15, $14
+	MOV $14, $13
+	MOV $13, $12
+	MOV $12, $11
+	MOV $11, $10
+	MOV $10, PARAM1
+
+	;; oberwertiges CAN-Adress-byte berechnen
+	RR TMPREG
+	RR TMPREG
+	RR TMPREG
+	RR TMPREG
+	AND TMPREG, #$e0
+	;; Prioritaet jetzt ganz oben
+	OR TMPREG, #COM_ID
+
+	MOV PARAM2, $e0		; MLP Report
+	JMP _can_send_mlp
+
+	
+_com_signal_fatal
+	JMP @SAFE_STATE_HANDLER
+	ENDM
+;;; ----------------------------------------------------------------------------------+
+;;; COM:	 Ende
+	
+
+;##################################################
+;	MAINPROGRAM
+;##################################################
+
+
+MAIN_BANK_SEG		MACRO
+
+MAIN_BANK	=	$
+
+DANONE	DS	1
+;DS	1
+;DS	1
+;DS	1
+;DS	1
+;DS	1
+
+DONE	EQU	DANONE.0
+
+			ENDM
+
+;####################################################################			
+;####################################################################			
+;####################################################################			
+
+
+
+
+
+
+;##########################################################
+; Constants
+;##########################################################
+
+SPI_CONST
+
+
+;##########################################################
+; RAM
+;##########################################################
+;only even numbered Banks can be adressed by BANK 
+;to adress odd numbered Banks chose:
+; MOV FSR, #literal
+;	or
+; setb FSR.4 after BANK instr.
+;-----------------------------------------------------------
+
+
+
+
+;-------------------------
+; --- Common variables --- 5 available
+;------------------------- 
+
+
+;-------------------------
+; --- Bank 0 Variablen ---
+;-------------------------
+			
+;-------------------------
+; --- Bank 1 Variablen ---
+;-------------------------
+   	                ORG $20
+   
+   			SPI_DAT
+			
+;-------------------------
+; --- Bank 2 Variablen ---
+;-------------------------
+                        ORG $30
+                        
+                        SPI_X_BANK
+			
+;-------------------------
+; --- Bank 3 Variablen ---
+;-------------------------
+                        ORG $40
+                        
+                        DATA_SEG_GLOBAL_XCHANGE
+
+;-------------------------
+; --- Bank 4 Variablen ---
+;-------------------------
+                        
+                        ORG $50
+                        
+                        
+                        MAIN_BANK_SEG
+                        
+;-------------------------
+; --- Bank 5 Variablen ---
+;-------------------------
+                        ORG $60
+                        
+                        SPI_CAN_DATA
+                        
+;-------------------------
+; --- Bank 6 Variablen ---
+;-------------------------
+                        org $70
+
+			DATA_SEG_COM
+                        
+;-------------------------
+; --- Bank 7 Variablen ---
+;-------------------------
+
+			; org $80
+
+;-------------------------
+; --- Bank 8 Variablen ---
+;-------------------------
+
+			; org $90
+
+;-------------------------
+; --- Bank 9 Variablen ---
+;-------------------------
+
+			; org $A0
+
+;-------------------------
+; --- Bank A Variablen ---
+;-------------------------
+
+			; org $B0
+
+;-------------------------
+; --- Bank B Variablen ---
+;-------------------------
+
+			; org $C0
+
+;-------------------------
+; --- Bank C Variablen ---
+;-------------------------
+
+			; org $D0
+
+;-------------------------
+; --- Bank D Variablen ---
+;-------------------------
+
+			; org $E0
+
+;-------------------------
+; --- Bank E Variablen ---
+;-------------------------
+
+			; org $F0
+
+;-------------------------
+; --- Bank F Variablen ---
+;-------------------------
+
+
+
+;##########################################################
+; Def-Segmente
+;##########################################################
+
+
+;##########################################################
+; Code
+;##########################################################
+
+;
+; upper banks are not directly accessable via BANK instruction 
+; FSR bit no 4 has to be set
+;
+
+		ZERO	EQU	$00
+		ONE	EQU	$10
+		TWO	EQU	$20
+		THREE	EQU	$30
+		FOUR	EQU	$40
+		FIVE	EQU	$50
+		SIX	EQU	$60
+		SEVEN	EQU	$70
+		EIGHT	EQU	$80
+		NINE	EQU	$90
+		TEN	EQU	$A0
+		ELEVEN	EQU	$B0
+		TWELVE	EQU	$C0
+		THIRTEEN	EQU	$D0
+		FOURTEEN	EQU	$E0
+		FIFTEEN	EQU	$F0
+		
+				
+		
+;--------------------------------------
+; Interrupt
+;--------------------------------------
+		ORG $000
+
+		MOV W, #-INT_PERIOD
+		RETIW
+		
+start		JMP		@main
+
+
+;--------------------------------------
+;CODEPAGES
+;the ProgramCounter holds 12 bits, 3 of them are available to adress
+;the "codepages" .The following numbers refer to 8 (3bit) pages of 512 words (9bit) == 4096 words
+;000.0_0000_0000	000
+;001.0_0000_0000	200
+;010.0_0000_0000	400
+;011.0_0000_0000	600
+;100.0_0000_0000	800
+;101.0_0000_0000	A00
+;110.0_0000_0000	C00
+;111.0_0000_0000	E00
+;--------------------------------------
+		ORG $200
+
+		CALL_SEG_COM
+
+		CODE_SEG_COM
+
+	
+
+		ORG $400
+
+		SPI_CALL_SEG
+		
+		SPI_CODE_SEG
+
+		
+;--------------------------------------
+;--------------------------------------
+; mainprogram
+;--------------------------------------
+;--------------------------------------
+
+		
+		ORG $E00
+
+
+main		
+		MOV !OPTION, #OPTION_ACCRTCC_NOINT ;Interrupt ausschalten
+		
+					
+		; I/O-Konfiguration initialisieren
+		
+                MOV RA, #PORT_A_VALUE
+                MOV RB, #PORT_B_VALUE
+                MOV RC, #PORT_C_VALUE
+                MOV RD, #PORT_D_VALUE
+                MOV RE, #PORT_E_VALUE
+                
+                MOV W, #MODE_SELECT_TRIS
+                MOV M, W
+                MOV !RA, #PORT_A_TRIS
+                MOV !RB, #PORT_B_TRIS
+                MOV !RC, #PORT_C_TRIS
+                MOV !RD, #PORT_D_TRIS
+                MOV !RE, #PORT_E_TRIS
+
+                MOV W,   #MODE_SELECT_PLP
+                MOV M, W
+                
+                MOV !RA, #PORT_A_PLP                
+                MOV !RB, #PORT_B_PLP
+                MOV !RC, #PORT_C_PLP
+                MOV !RD, #PORT_D_PLP
+                MOV !RE, #PORT_E_PLP
+                
+
+                MOV W, #MODE_SELECT_LVL
+                MOV M, W                       
+                MOV !RA, #PORT_A_LVL         
+                MOV !RB, #PORT_B_LVL
+                MOV !RC, #PORT_B_LVL
+                MOV !RD, #PORT_C_LVL
+		MOV !RE, #PORT_D_LVL
+                
+
+                MOV W, #MODE_SELECT_ST
+                MOV M, W                       
+                MOV !RB, #PORT_B_ST
+                MOV !RC, #PORT_C_ST
+		MOV !RD, #PORT_D_ST
+                MOV !RE, #PORT_E_ST
+                                       
+
+                MOV W, #MODE_SELECT_WKEN
+                MOV M, W                       
+                MOV !RB, #PORT_B_WKEN
+
+                MOV W, #MODE_SELECT_WKED
+                MOV M, W                       
+                MOV !RB, #PORT_B_WKED
+
+                CLR !WDT
+                
+                SETB LEDgreen  ; green
+                SETB LEDblue  ; blue
+                
+                
+                
+                SPI_INIT_SEG
+		INIT_SEG_COM
+                       
+                MOV !OPTION, #OPTION_ACCRTCC_INT  ;interrupt wieder anschalten
+       
+mainloop
+		SET_BANK MAIN_BANK
+
+		SETB	DONE
+
+loopeindeutig		
+
+		SET_BANK MAIN_BANK
+
+		
+		JNB	DONE,	finished
+		
+		CLRB	DONE
+
+		 MAINTEST
+
+finished
+
+		CALL @COM_read_message
+
+		TEST RETVAL
+		JZ loopeindeutig ; Keine Botschaft angekommen
+
+		CSNE OUTPUT, #1
+		CLRB LEDblue
+		CSNE OUTPUT, #2
+		SETB LEDblue
+	
+		CSNE OUTPUT, #3
+		CLRB LEDgreen
+		CSNE OUTPUT, #4
+		CLRB LEDgreen
+
+		JMP	loopeindeutig
+
+;--------------------------------------
+; Routinen Page 0
+;--------------------------------------
+
+
+
+;;; Globale Fehlerbehandlung 
+	
+ORG	$c00
+		;; Sicheren Betriebszustand einnehmen
+SAFE_STATE_HANDLER
+	CLRB LEDgreen
+	CLRB LEDblue
+:endless_loop
+	jmp :endless_loop	
+
+
