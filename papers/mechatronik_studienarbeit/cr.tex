@@ -53,14 +53,24 @@ Preisvergleich der möglichen Lieferanten ist wichtiger Bestandteil der
 Kostenbestimmung (und letztendlich des Einkaufs) gewesen.
 
 \subsection{Sicherheit}
-Zum Schutz vor Strom und Spannungsspitzen sowie weitestgehend vor
-falscher Bedienung durch einen Entwickler wurde bei der Auswahl der
-Komponenten als auch beim Layout auf Robustheit Wert gelegt. Die
-Platine sowie die Bauelemente enthalten eine Reihe von
-Schutzmechanismen wie Zenerdioden oder eine ,,Schmelzsicherung'' in
-Form einer besonders dünnen Leiterbahn. Die aktiven Komponenten sind
-außerdem selbst durch diverse Schutzmaßnahmen vor Überhitzung
-und/oder Stromspitzen geschützt.
+Sicherheit heißt in diesem Zusammenhang: Sicherheit vor Strom- und
+Spannungsspitzen zur Betriebszeit, Ausfallsicherheit zur Betriebszeit
+und Sicherheit der Komponenten vor Fehlbedienung durch den Entwickler.
+
+Komponenten mit Anschlussmöglichkeiten auf der Platine vertragen meist
+kurzfristige Strom und Spannungsspitzen und enthalten gegebenenfalls Zener-Dioden.
+Näheres dazu steht in der Beschreibung der einzelnen Komponenten in Kapitel \ref{cr_peripherie} Periepherie.
+Die Platien selbst enthält eine besonders dünne Leiterbahn, die, sollte der Entwickler doch einmal eine zu hohe Spannung anlegen, als
+Schmelzsicherung dient. So werden die teuren IC's vor Schaden bewahrt.
+
+Um von Ausfallsicherheit zur Betriebszeit auszugehen wäre ansich eine groß angelegte Testreihe im Läufer
+unter verschiedenen Testbedingungen von Nöten. Die bisherigen Versuche und Tests außerhalb des Läufers 
+waren auch erfolgreich. Ob es im Läufer dann noch ,,Überraschungen'' gibt läßt sich jetzt noch nicht sagen.
+Wie sich die mechatronischen Applikationen der Maschinenbauer im Fall einer Störung verhalten 
+obliegt letztendlich dem jeweiligen Entwickler. Die Relevanz für die Fahrsicherheit kann letztlich erst von ihm abgeschätzt werden.
+Das unten erwähnte Modulmodell für die Software soll dabei unter anderem 
+die Fehleranfälligkeit der Software verringern.
+
 
 \subsection{Design}
 Um sich in das Design des Läufers zu integrieren sind sowohl die
@@ -90,7 +100,7 @@ wurde durch einen SX28 gesteuert (zwei I/O-Ports weniger als der
 SX52). Die zwei erstellten Prototypen wurden Bald durch eine neue
 vierlagige scheckkartengroße Trägerplatine ersetzt. Erst die
 Entwicklung dieser zweiten Platine wurde von dieser Studienarbeit
-begleitet. Der zweite Iteration berücksichtigte dann eine Reihe
+begleitet. Der zweite Revision berücksichtigte dann eine Reihe
 weiterer Ideen zur Annäherung an das Ziel einer multifunktionalen
 Mechatronikapplikation für Maschinenbauingenieure.  Die
 Dimensionierung der passiven Bauelemente erlaubt eine Anpassung an
@@ -124,8 +134,8 @@ gezogen worden: Infineon/Siemens (C515-Familie), Motorola
   
 \item Infineons SABC515-Familie bietet mit zum Teil integrierten
   RS232-Bauelementen eine reiche Auswahl für
-  Kommunikationsanwendungen. Mit bis zu 24MHz erfüllt der
-  Mikrocontroller sind die Mikrocontroller für die vorgesehene
+  Kommunikationsanwendungen. Mit bis zu 24MHz sind die
+  Mikrocontroller für die vorgesehene
   Anwendungen schnell genug. Der Preis von 9 bis 14 Euro
   pro Mikrocontroller ist vergleichbar hoch. Desweiteren müssen für
   den SABC515 die Programme in externen Speicherbausteinen abgelegt
@@ -195,7 +205,7 @@ Einsatzumfeld erprobt werden können ohne große Kosten zu verursachen.
 Der SX52 hat fünf 8-Bit Ports die sowohl als Input als auch als Output
 nutzbar sind. Es existiert ein Stromsparmodus (Sleep-Mode) der zur
 Laufzeit an- und durch externe Quellen wieder abschalbar ist. Der
-MiKrocontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit
+Mikrocontroller hat eine Interrupt-funktion die ebenfalls zur Laufzeit
 aktivier- und deaktivierbar ist. Einer der fünf Ports kann als
 Interrupt oder Weck-Port konfiguriert werden. Das heißt ein Signal an
 diesem Port löst einen Interrupt aus bzw. ,,weckt'' den
@@ -235,6 +245,7 @@ Mikrocontroller aus dem Stromsparmodus.
 
 
 \subsection{Peripherie}
+\label{cr_peripherie}
 Im folgenden werden die genutzten Bauelemente und Funktionalitäten der
 Platine beschrieben.
 
@@ -301,7 +312,8 @@ In dieser Applikation wird das jeweilige Chip-Select über einen
   verträgt dabei kurzzeitige Stromspitzen von bis zu sechs Ampere.
   Die aus zwei Bausteinen resultierenden 4 Anschlüsse, können für vier
   in eine Richtung steuerbare Motoren oder zwei in beide Richtungen
-  steuerbare Motoren verwendet werden.
+  steuerbare Motoren verwendet werden. Eine weitere Anwendung wäre der 
+  Anschluss von Servomotoren.
   
 \item[Strommessung an der Brücke]
   Über Jumper läßt sich eine Rückkopplung der Brückenausgänge mit den
@@ -566,8 +578,9 @@ können den eben beschriebenen Kreislauf unterbrechen:
   während des Programmablaufes nicht verlassen wird.
   
 \item[Neustart durch ab- und einschalten der Versorgungsspannung]
-  Natürlich kann man den Microcontroller auch aus- und wieder
-  anschalten um das Programm zu unterbrechen.
+  Natürlich kann man den Mikrocontroller auch aus- und wieder
+  anschalten um das Programm zu unterbrechen. Man führt also
+  einen Hardware Reset durch.
 \end{description}
 
 Während des Programmablaufes werden Daten eingelesen, bearbeitet und
@@ -584,7 +597,7 @@ Bit im FSR wird dabei immer auf Null gesetzt. Um jetzt trotzdem die
 ungeraden Registerbänke adressieren zu können muß der Programmierer
 das entsprechende Bit im FSR-Register setzten. Diese umständliche
 handhabe ist auf die Kompatibilität mit dem SX32 zurückzuführen, der
-nur acht Registerbänke zur Verfügung stehen hat.
+nur acht Registerbänke zur Verfügung stellt.
 
 \subsubsection{Unterprogrammaufrufe}\label{cr_unterprog}
 Unterprogrammaufrufe werden mittels CALL-Befehl realisiert. Der SX52
@@ -604,13 +617,14 @@ Einschränkung geschickt umgeht.
 \subsubsection{Arbeitsregister}
 Der SX52 nutzt in der Summe 17 Register zur Verarbeitung von Daten zur
 Laufzeit. Die Register teilen sich auf in eine globale Bank und 16
-indirekt adressierbare Bänke. Jede Bank enthält 16 Register. Für die
+indirekt adressierbare Bänke (siehe Abbildung \ref{cr_register}).
+Jede Bank enthält 16 Register. Für die
 Adressierung der globalen Register sind keine Vorkehrungen nötig.  Um
 ein solches Register zu adressieren schreibt man einfach die absolute
 Adresse des Registers (direkte Adressierung). Um die 16 ,,normalen''
 Registerbänke zu referenzieren, muß zuvor die entsprechende
 Registerbank über das FSR angegeben werden. Erst dann kann man unter
-16 registern der eintsprechenden Bank wählen. Das heißt, das nur die
+16 Registern der entsprechenden Bank wählen. Das heißt, das nur die
 unteren vier Bit von Relevanz sind. Um eine solche (indirekte)
 Registeradressierung anzukündiger müssen die ersten vier Bit (den
 MSB\footnote{Most Significent Bits: höchstwertige Bits}MSB eine 1
@@ -637,7 +651,7 @@ nutzbar sind, zuletzt ver bleiben noch sechs ,,freie'' Register.
   \center
   \includegraphics[width=400pt]{register.eps}
   \caption{Aufbau der Registerbänke im SX52}
-  \label{register}
+  \label{cr_register}
 \end{figure}
 
 \subsection{Assembler-Direktiven}
@@ -665,7 +679,7 @@ BAR EQU     #%0000_0011 ; Konstante BAR hat den Wert drei
 \end{verbatim}
 
 \subsubsection{ORG-Direktive}
-Die ORG-Direktive dient der genauen Platzierung von Programmcode im
+Die ORG-Direktive dient der genauen Plazierung von Programmcode im
 Programmspeicher. Man definiert eine Adresse zwischen $000hex$ und
 $FFFhex$, an welcher der Programmcode dann im Programmspeicher stehen
 soll .
@@ -808,7 +822,7 @@ FOO     ; Macro FOO wird bei 20 (hex) eingefügt
   an die Adresse 000 (hexadezimal). In den Interruptsegmenten darf
   kein Interrupt-Rücksprungbefehl (RETI oder RETIW) stehen. Der muß
   am Ende der Makroliste stehen um sicherzustellen das alle Segmente
-  ausgeführt werden.
+  vor Beendigung der Interruptroutine ausgeführt werden.
 
 \item[INIT-Segment] Jedes Modul benötigt auch einen Bereich im
   Initialbereich des Gesamtprogramms zur Initialisierung seiner
@@ -921,7 +935,7 @@ Im folgenden werden beispielhaft Module für einige Bauelemente
 beschrieben.
 
 \begin{description}
-\item[Serielle Schnittstelle]\label[crRS232] Die serielle
+\item[Serielle Schnittstelle]\label{crRS232} Die serielle
   Datenübertragung ist in der Norm RS232 festgelegt.  Danach können
   zwei Computer über die Datenleitungen TxD (Transmit Data) und RxD
   (Receive Data) miteinander kommunizieren.  Ein Byte wird in unserem
@@ -933,7 +947,7 @@ beschrieben.
   synchronen Übertragung, ohne separates Taktsignal erfolgt.  Ein
   Empfänger muß das eintreffende Signal mit dem mehrfachen der
   möglichen Taktfrequenz abtasten und so das Taktsignal
-  rückgewinnen. Das setzt ein akkurates Timing voraus.  Um
+  rückgewinnen. Um
   sicherzustellen, das eine Zustandsänderung am Eingang registriert
   wird, wählt man als Abtastrate das vierfache der Zielfrequenz ab.
   Um beispielsweise bei einer Zielfrequenz $F$ von $115.200 Baud$ eine
@@ -981,25 +995,27 @@ ausreichend Zeit zur Ausführung bekommen.
   Größe $t_{i}$ bestimmt dann die Intensität mit der das am Ausgang
   angeschlossene Gerät betrieben wird.  Im folgenden wird $t_{i}$ auch
   Pulsweite genannt.  Ein angeschlossener Gleichstrommotor zum Beispiel
-  dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als normal.
-  Ändert man nun $t_{i}$ in die eine oder andere Richtung, so erzeugt
-  man Dim-Effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
+  dreht sich bei $t_{i} = 1/2 z_{i}$ nur halb so schnell als er es bei
+  durchgehendem Stromfluß tun würde.
+  Ändert man nun $t_{i}$ zur Laufzeit in die eine oder andere Richtung, so erzeugt
+  man Dimm-Effekte.  Ein Beispiel ist die Funktion $t_{i}=i*z_{i}/n$,
   die $t-{i}$ mit jedem Schritt an $n$ annähert und damit von $low$
   nach $high$ übergeht (siehe dazu Abbildung \ref{cr_pwm}).
   
   Auf die Platine sind die Brücken und die PWM-baren Low-Side-Switchs
-  für die Puls Weit Modulation vorgesehen.  Ein $z_{i}$ entspricht 256
+  für die Puls-Weit-Modulation vorgesehen.  Ein $z_{i}$ entspricht 256
   Interrupts. In jedem Interrupt wird ein Zähler iteriert bis dieser
   überläuft. Bei jedem Übelauf wird der Zustand auf $low$ bzw $high$
   gesetzt (je nachdem ob von Aus nach An oder umgekehrt moduliert
   wird). Im Hauptprogramm (CODE-Segment) wird dann der Zähler mit
   einer Variable verglichen die die Pulsweite bestimmt. Je nach
   Anwendung kann man nun die Pulsweite verändern, indem man sie
-  iteriert oder decrementiert bzw. unterschiedlich initialisiert.
+  inkrementiert oder dekrementiert bzw. unterschiedlich initialisiert.
 %reverse iterations
 \begin{figure}
   \center \includegraphics[width=400pt]{pwm.eps}
-  \caption{Puls Weit Modulation einer linearen Funktion}
+  \caption{Puls Weit Modulation einer linearen Funktion. Die fallende Flanke des PWM-Signals markiert jeweils das Ende eines Intervalls $z_i$.
+  Die dunklen Flächen markieren die Plusweiten $t_i$. Durch zunehmende Pulsweiten wird die lineare Funktion simuliert.}
   \label{cr_pwm}
 \end{figure}
 
@@ -1026,29 +1042,30 @@ SPI_NOTCON      EQU %0011_0000 ; zu keinem Gerät verbunden
   verschiedener Bitmuster.  Im Detail werden die Geräte wie folgt
   behandelt:
 \begin{description}
-\item{TLE} Es werden zwei 8-Bit Wörter in den Low Side Switch
-  übertragen. Das erste Wort Konfiguriert die Schitches für die
+\item{TLE:} Es werden zwei 8-Bit Wörter in den Low Side Switch
+  übertragen. Das erste Wort Konfiguriert die Switches für die
   einzelnen Pins, das zweite aktiviert die Einstellung dann
   gegebenenfalls.
-\item{ADC} Noch bevor der Analog-Digital-Wandler per Chip-Select
+\item{ADC:} Noch bevor der Analog-Digital-Wandler per Chip-Select
   aktiviert wird, werden 4 Bit zum auswählen des zu wandelnden Eingangs
   übertragen, erst nachdem Chip-Select auf $low$ gesenkt wurde,
   wird nach kurzer Verzögerung das Ergebnis an den Mikrocontroller
   geschickt.
   
-\item{DAC} Zwei $\times{}$ 12 Bit werden in das Shift-Register des
+\item{DAC:} Zwei $\times{}$ 12 Bit werden in das Shift-Register des
   Digital-Analog-Wandlers übertragen und dann, beim Wechsel des
   Chip-Select Signals von $low$ nach $high$, aktiviert. Das heißt die
   analogen Interpretation der 12-Bit-Muster liegen in Volt an den
   Ausgängen des Digital-Analog-Wandlers an.
-\item{CAN} Siehe dazu Kapitel \ref{jameson_kapitel}.
+\item{CAN:} Siehe dazu Kapitel \ref{jameson_kapitel}.
 \end{description}
 
-\item[Speicher] Für jede Operation (ob schreiben oder lesen) , wird
-  das Gerät über die Bits 1 bis 3 der ersten 8 Bit adressiert. in den
+\item[Speicher] Der Speicher ist über eigene Anschlüsse an den Mikrocontroller angeschlossen.
+Über eine serielle Datenleitung erfolgt der Datentransfer. Für jede Operation (ob schreiben oder lesen) , wird
+  das Gerät über die Bits 1 bis 3 der ersten 8 Bit adressiert. In den
   Bits 7 bis 4 steht die Slave ID (hier 1010). Das nullte Bit zeigt an
   ob eine Lese- (1) oder Schreibe-Operation (0) anschließt. Nach der
-  Adressierung sendet der Master beliebig viele acht-Bit Worte und
+  Adressierung sendet der Master (hier der Mikrocontroller) beliebig viele acht-Bit Worte und
   erhält nach jedem Word eine Bestätigung (engl. acknowledge) vom
   Speicherbaustein.  Bei der Lese-Operation unterscheidet man zwischen
   sequentiellem Lesen und selektivem Lesen.
@@ -1091,7 +1108,7 @@ anzupassen.
 Die Grundlagen für die Nutzung der Platine sind geschaffen. Um den
 Gebrauch noch komfortabler zu gestalten ist es wünschenswert eine
 didaktisch ausgereifte Anleitung auf Basis der bereits gehaltenen
-Schulung zu erstellen. Darüber hinaus ist eine ausführliche Technische
+Schulung zu erstellen. Darüber hinaus ist eine ausführliche technische
 Dokumentation wünschenswert.  Während meiner Recherchen für
 Beispielprogramme stieß ich auch auf einen C-Compiler für
 PIC-kompatible Mikrocontroller.  Würde man nun eine grafische
