@@ -12,7 +12,7 @@ markiert.\\ Die einzelnen Komponenten sind:
 \item
   Fahrerinformations-System
 \item
-  Ständer
+  Ausfahrbare Fahrzeugstütze
 \end{enumerate}
 
 \begin{figure}[hb]
@@ -89,7 +89,7 @@ Systeme stehen die aus der PC-Technik stammenden Schnittstellen jedoch
 im Allgemeinen nicht zur Verfügung.  Vielmehr dominieren Protokolle
 wie CAN und SPI\footnote{siehe Kapitel \ref{cr_kapitel}}.
 
-Für den Entwicker einer mechatronischen Komponente für den Läufer muß
+Für den Entwickler einer mechatronischen Komponente des Läufers muß
 die Kommunikation möglichst einfach zu handhaben sein.  Eine solche
 Forderung ergibt sich aus den Überlegungen in Kapitel
 \ref{mw_problem}. Die entwickelte Software muß diesem Umstand Rechnung
@@ -150,7 +150,7 @@ PDAs ausgenutzt.
   einen designorientierten Weg, der nicht unerheblich zu dem großen
   Erfolg des Läufers in der Öffentlichkeit sowie beim Aufbau von
   Industrie-Partnerschaften beigetragen hat.  Auch im Bereich der
-  graphischen Interaktion mit dem System soll ein designorientierte
+  graphischen Interaktion mit dem System soll ein designorientierter
   Weg möglich sein, um den Läufer als ,,rundes Produkt'' entwickeln zu
   können.
   
@@ -203,7 +203,7 @@ sollen.
   
   Die Forderung nach einem Farbdisplay ergibt sich aus der
   Design-Orientierung des Projektes sowie der Anforderung nach
-  GUI-Flexibilität.  Desweiteren spricht für ein Farbdisplay,daß man
+  GUI-Flexibilität.  Desweiteren spricht für ein Farbdisplay, daß man
   mit ihm Warnhinweise und normale Nachrichten des Systems auf dem
   Display farblich kodieren kann, wie man dies von anderen Geräten
   kennt.  So lassen sich durch Farbe gerade im Fahrbetrieb wichtige
@@ -229,8 +229,8 @@ sollen.
   subjektiv zu beurteilender, Bereich ist die optische Erscheinung des
   PDA.  Die Optik spielt aus technischer Sicht natürlich nur eine
   untergeordnete Rolle, wird jedoch im Projektkontext bedeutsam.
-  Erkennen lässt sich die Bedeutung des Designs für den Läufer an dem
-  Umstand, dass einige Elemente des Läufers nur unter ästhetischen
+  Erkennen läßt sich die Bedeutung des Designs für den Läufer an dem
+  Umstand, daß einige Elemente des Läufers nur unter ästhetischen
   Gesichtspunkten zu Stande gekommen sind.  Da sich unsere Arbeit in
   das Projekt integriert, müssen wir dem Gesichtspunkt Optik ebenfalls
   Bedeutung zumessen.
@@ -243,7 +243,7 @@ sollen.
   Läufers integrieren.
   
 \item[Anschlußmöglichkeiten:] Da das Projekt Läufer eines mit
-  ausser\-gewöhnlicher Dynamik ist, ist die Anschlussvielfalt an einem
+  außer\-gewöhnlicher Dynamik ist, ist die Anschlussvielfalt an einem
   PDA im Läufer ein wesentliches Argument, um sich spätere
   Erweiterungen nicht durch einen zu beschränkten PDA zu verbauen.
   
@@ -251,7 +251,7 @@ sollen.
   RS232\footnote{Im PC-Bereich auch häufig nur ,,serielle
     Schnittstelle'' genannt.}  Schnittstelle, da über die serielle
   Schnittstelle die Verbindung zu einer unserer Platinen hergestellt
-  wird.  Die Platine am anderen Ende der RS232-Schinttstelle verbindet
+  wird.  Die Platine am anderen Ende der RS232-Schnittstelle verbindet
   dann den PDA mit dem CAN-Bus. Zu Details der Kommunikation im Läufer
   siehe Kapitel \ref{jameson_kapitel}.
 \end{description}
@@ -268,7 +268,7 @@ Cockpit-Entwurfs für den Läufer.
 
 Die Einteilung nach Betriebssystem lieferte eine erste Kategorisierung
 des PDA-Marktes.  Zu jedem System sind relativ viele verschiedene PDAs
-am Markt, wordurch die Entscheidung für ein bestimmtes Betriebssystem
+am Markt, wodurch die Entscheidung für ein bestimmtes Betriebssystem
 die erste zu treffende war.
 
 \subsubsection{Übersicht über PDA-Betriebssysteme}
@@ -284,11 +284,11 @@ Einsatz im Läufer mitbringt.
   zur Marktführerschaft gebracht und ist auch auf den Geräten von
   Herstellern wie Sony, Handspring und anderen zu finden.
   
-  Folglich ist es verständlich, dass als erstes Geräte mit dem System
+  Folglich ist es verständlich, daß als erstes Geräte mit dem System
   des Marktführers ins Auge gefaßt wurden.  Bei den Geräten kann man
   aufgrund der großen Verbreitung mit einer guten Akzeptanz seitens
-  der Nutzers des Läufers rechnen.  Auch wird ein eventueller Kunde
-  mit hoher Wahrscheinlichkeit schon über ein solches Gerät verfügen.
+  der Nutzer des Läufers rechnen.  Auch wird ein eventueller Kunde mit
+  hoher Wahrscheinlichkeit schon über ein solches Gerät verfügen.
   
   Ein ,,Palm IIIx'' wurde dann auch Basis eines ersten Versuchs der
   Mechatronik, der im Rahmen einer Studienarbeit von Jörn
@@ -298,8 +298,8 @@ Einsatz im Läufer mitbringt.
   
   Allerdings verfügt PalmOS in seiner jetzigen Version nicht über
   Multitasking, was einen Einsatz im Läufer nicht ermöglicht.  Die
-  geforderte Erweiterbarkeit wird nicht in dem Maße sicherstellt, wie
-  es im Läufer erforderlich ist.
+  Erweiterbarkeit wird also nicht in dem Maße sicherstellt, wie es im
+  Läufer erforderlich ist.
   
   Im Bereich der Graphischen Gestaltung des Fahrerinterface erwiesen
   sich die verfügbaren Geräte mit PalmOS als recht eingeschränkt, da
@@ -308,8 +308,8 @@ Einsatz im Läufer mitbringt.
   ,,malen''.  Bei einem System wie PalmOS ist das jedoch kein
   Design-Fehler, sondern schlägt sich z.B. in der überwiegend
   konstanten und guten Bedienbarkeit der Software für die PalmOS-PDAs
-  nieder.  Die an sich gute Eigenschaft wirkt aber vor dem Hintergrund
-  unserer Aufgabe negativ aus.
+  nieder.  Die an sich gute Eigenschaft wirkt sich aber vor dem
+  Hintergrund unserer Aufgabe negativ aus.
   
   Die Programmierung eines PalmOS-PDAs erfolgt mit speziellen Tools.
   Allerdings haben sich Geräte mit PalmOS im Laufe der Zeit so weit
@@ -386,7 +386,7 @@ Tabelle \ref{mw_pda_os_tabelle} zeigt nochmals eine Übersicht der
 Systeme mit ihren individuellen Eigenschaften.
 
 PalmOS ist wegen der fehlenden Multitasking-Fähigkeit für unsere
-Aufgabe ungeeignet.  Somit musste die Entscheidung zwischen Linux und
+Aufgabe ungeeignet.  Somit mußte die Entscheidung zwischen Linux und
 Windows CE getroffen werden.
   
 Wir haben uns letztendlich für Linux entschieden, um uns die größte
@@ -418,7 +418,7 @@ nötig ist.
       \hline
     \end{tabular}
   \end{center}
-  \caption{Übersicht über die verschiedenen PDA-Betriebssysteme}
+  \caption[Übersicht PDA Betriebssysteme]{Übersicht über die verschiedenen PDA-Betriebssysteme. $\circ$: Nicht vorhanden / schlecht; +: Gut; ++: sehr gut} 
   \label{mw_pda_os_tabelle}
 \end{table}
 
@@ -495,7 +495,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   
   Der PDA macht von seiner äußeren Erscheinung mehr den Eindruck eines
   Spielgerätes für Kinder, was ja auch der Haupt-Markt des Anbieters
-  VTech ist.  Der PDA verfügt ausserdem nicht über ein Farb-Display,
+  VTech ist.  Der PDA verfügt außerdem nicht über ein Farb-Display,
   so daß er für das Projekt ebenfalls nicht in Frage kam.
   
   
@@ -518,7 +518,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   wiederbeschreibbares Flash-ROM, sondern nur ein ROM für das
   Betriebssystem, so daß ein Start von Linux immer über spezielles
   WindowsCE Programm namens ,,CyaCE'' erfolgen muß.  Im Rahmen einer
-  \emph{Produkt}entwicklung ist es jedoch nicht wünschenswert, dass
+  \emph{Produkt}entwicklung ist es jedoch nicht wünschenswert, daß
   sich ein potentieller Nutzer zu sehr mit den technischem
   Details des Fahrzeuges auseinandersetzen muß.
   
@@ -539,7 +539,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
     \center
     \includegraphics[width=7.0cm]{mw/bilder/Menu.eps}
     \caption[Der Compaq IPAQ]
-    {Der Compaq IPAQ mit der Demo-Software für die Cebit 2002}
+    {Der Compaq IPAQ mit der Demo-Software für die CeBIT 2002}
     \label{mw_ipaq_bild}
   \end{figure}
   
@@ -591,8 +591,8 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   
   Leider war das Gerät zu Beginn unserer Arbeit noch nicht verfügbar,
   so daß wir das von all seinen Daten her ideale Gerät leider nicht
-  verwenden konnten.  Auf der Cebit 2002 wurden erste Kontakte mit
-  Sharp geknüpft, um ein eventuelles Wechseln auf den Sarp Zaurus
+  verwenden konnten.  Auf der CeBIT 2002 wurden erste Kontakte mit
+  Sharp geknüpft, um ein eventuelles Wechseln auf den Sharp Zaurus
   vorzubereiten.
 
 \end{description}
@@ -669,8 +669,8 @@ der Entwickler mechatronischer Komponenten ebenso zu berücksichtigen
 wie die späteren Nutzer des Läufers.
 
 Für Entwickler ist es am wichtigsten, daß ihnen die Entwicklung für
-das System möglichst leicht gemacht wird.  Dies schließt eine
-ordentliche Programmierschnittstelle ebenso ein wie gute Werkzeuge zum
+das System möglichst leicht gemacht wird.  Dies schließt eine einfach
+nutzbare Programmierschnittstelle ebenso ein wie gute Werkzeuge zum
 Erstellen der Graphischen Benutzerschnittstelle.  Aber auch ein gutes
 Management der Softwareinstallation auf dem Gerät ist dem Entwickler
 wichtig.
@@ -690,10 +690,10 @@ aber auch für die für den Läufer speziell angefertigte Software.
 Compaq selbst unterstützt maßgeblich die Portierung des Linux-Kernels,
 ist aber mittlerweile aus der Entwicklung einer eigenen darauf
 aufsetzenden Distribution ausgestiegen, da mehrere aus der Sicht
-Compaqs besser Alternativen zur Verfügung stehen.  Zur Entstehungszeit
-der vorliegenden Ausarbeitung befindet sich Linux auf PDAs und
-insbesondere auf dem IPAQ unter dem Einfluß starker
-Entwicklertätigkeit, so daß viele Distributionen und Programme sich
+Compaqs bessere Alternativen zur Verfügung stehen.  Zur
+Entstehungszeit der vorliegenden Ausarbeitung befindet sich Linux auf
+PDAs und insbesondere auf dem IPAQ unter dem Einfluß starker
+Entwicklertätigkeit, so daß sich viele Distributionen und Programme
 noch im Zustand ,,Projekt'' befinden und erst nach und nach zu
 ,,Produkten'' werden.  Das prominenteste ,,Produkt'' dürfte der Sharp
 Zaurus sein, dessen Software weitgehend mit der freien Oberfläche OPIE
@@ -726,7 +726,9 @@ Die einzelnen Projekte sind:
   ,,Brot-Und-Butter'' Distribution von Linux auf dem IPAQ.  In ihr
   sind auch die früheren Compaq-Distri\-butionen aufgegangen.
   
-  Familiar verfügt über ein Debian-ähnliches Paketsystem, wodurch die
+  Familiar verfügt über ein Debian\footnote{Debian: eine auf vielen
+    Plattformen verfügbare, vollständig auf freier Software basierende
+    Linux-Distribution}-ähnliches Paketsystem, wodurch die
   Installation weiterer Software sehr einfach möglich ist.  Jede
   verfügbare Software ist hierzu in Pakete organisiert, die womöglich
   untereinander durch Beziehungen verbunden sind.  Die Pakete werden
@@ -796,13 +798,13 @@ Die einzelnen Projekte sind:
   vorausgesetzt die GUI paßt auf den Bildschirm des PDA.  Daraus folgt
   eine ungemeine Vereinfachung der Programmierung.
 
-
-  QT genießt außerdem den Ruf einer sehr guten Dokumentation, was
-  den Entwicklern mechatronischer Komponenten sicher zugute kommen
-  sollte.
+  
+  QT genießt außerdem den Ruf, über eine sehr gute Dokumentation zu
+  verfügen, was den Entwicklern mechatronischer Komponenten sicher
+  zugute kommen sollte.
   
   QTOPIA stellt nun eine komplette PDA-Umgebung auf Basis der
-  Klassenbibliothek QT zur Verfügung.  QTOPIA schliesst von
+  Klassenbibliothek QT zur Verfügung.  QTOPIA schließt von
   Rahmenbedingungen, wie verschiedenen Formen der Texteingabe
   (Handschrift, Virtuelle Tastatur, T9\footnote{Bei T9 werden wie beim
     Handy die Worte nach einigen wenigen Zeichen erkannt} etc.) ein.
@@ -854,13 +856,13 @@ bieten.
 
 Abbildung \ref{mw_schnittstellen} zeigt die grobe Architektur des DPI.
 Alle schraffiert dargestellten Bereiche werden durch das DPI
-abgedeckt.  Der Entwickler einer mechatronischen Komponenente
+abgedeckt.  Der Entwickler einer mechatronischen Komponente
 programmiert zu seinem Gerät lediglich einen \emph{Treiber}, der die
 durch das DPI implementierten Kommunikationsmöglichkeiten nutzt.
 Dadurch wird der Entwickler davon befreit, sich mit den internen
 Strukturen des DPI auseinanderzusetzen.
 
-Wie aus Abbildung \ref{mw_schnittstellen} ebanfalls hervorgeht, hat
+Wie aus Abbildung \ref{mw_schnittstellen} ebenfalls hervorgeht, hat
 das DPI aber eine zweite wichtige Aufgabe: Koordination der
 Kommunikation zwischen GUI\footnote{GUI = Graphical User Interface}
 und dem Treiber für das Gerät.  Diese Aufgabe des DPI ergibt sich
@@ -868,13 +870,14 @@ unmittelbar aus der Natur des Projektes: Es ist nicht abzusehen,
 welche mechatronischen Komponenten im ,,fertigen'' Läufer zu finden
 sein werden.  Folglich kann die Erstellung der GUI nicht Teil dieser
 Arbeit sein, die sich ja nicht bis zum Ende des Projektes Läufer
-hinnaus ausdehnt.  In Folge dessen muss die Entwicklung der GUI
-ausserhalb diser Arbeit beim Design des DPI Berücksichtigung finden.
+hinaus ausdehnt.  In Folge dessen muß die Entwicklung der GUI
+außerhalb dieser Arbeit beim Design des DPI Berücksichtigung finden.
 
-Auf diese beiden Aufgabenfelder des DPI Treiber - CAN-Bus sowie
-Treiber - GUI soll im folgenden detailiert eingegangen werden.  Dem
-voran stehen einige Anforderungen, die sich aus den schon weiter oben
-in Kapitel \ref{aufgabe_kapitel} auf Seite \pageref{aufgabe_kapitel}ff
+Auf diese beiden Aufgabenfelder des DPI Treiber $\Leftrightarrow$
+CAN-Bus sowie Treiber $\Leftrightarrow$ GUI soll im folgenden
+detailliert eingegangen werden.  Dem voran stehen einige
+Anforderungen, die sich aus den schon weiter oben in Kapitel
+\ref{aufgabe_kapitel} auf Seite \pageref{aufgabe_kapitel}ff
 beschriebenen Anforderungen an das Gesamtsystem herleiten.
 
 \subsection{Anforderungen}
@@ -906,9 +909,9 @@ Kommunikationsprotokolle im Läufer sei auf Kapitel
 \ref{jameson_kapitel} verwiesen.
 
 Um die Entwickler mechatronischer Komponenten für den Läufer
-voneinander zu trennen, ist eine Kommunikationsstruktur notwendig, die
-dem durch die Bereitstellung virtueller privater Verbindungen zwischen
-PDA Software und Platine Rechnung trägt.
+voneinander unabhängig zu machen, ist eine Kommunikationsstruktur
+notwendig, die dem durch die Bereitstellung virtueller privater
+Verbindungen zwischen PDA Software und Platine Rechnung trägt.
 
 Die Grundidee hinter der Kommunikation im Läufer ist die der
 objektorientierten Programmierung (OOP).  Wir verstehen das physische
@@ -925,7 +928,7 @@ sind also Statusmaschinen.  Ein physisches Gerät und sein Treiber
 stellen nun gekoppelte bzw. kommunizierende Statusmaschinen dar.  Wenn
 sich der Status des einen \emph{signifikant} ändert, teilt es diesen
 Statusübergang dem jeweils anderen über das Versenden einer Nachricht
-mit.  \emph{Signifikant} meint in diesem Zusammenhang, dass nur solche
+mit.  \emph{Signifikant} meint in diesem Zusammenhang, daß nur solche
 Statusübergänge dem anderen mitgeteilt werden, die für diesen auch von
 Bedeutung sind.  Dieser Zusammenhang soll nun anhand eines Beispiels
 erläutert werden:
@@ -947,13 +950,13 @@ anderen Übergänge sind intern, werden also vom Gerät selber initiiert.
 
 Wenn nun das Gerät z.B. eine Fehlfunktion feststellt, geht es in den
 Zustand $Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im
-PDA davon unterrichtet werden muss.  Nicht signifikant sind die
+PDA davon unterrichtet werden muß.  Nicht signifikant sind die
 Übergänge zwischen $Z1A$ und $Z1B$, da diese den inneren Zustand des
 physischen Gerätes wiederspiegeln.  Diese mit dem Treiber
 auszutauschen ist nicht nur unnötig, sondern auch gefährlich.  Wenn
 nämlich diese inneren Zustände vom Bus abhängen, ist ein sicherer
 Betrieb des Fahrzeugs ohne Bus nicht mehr gewährleistet.  Im Falle
-eines Blinkers schenit dies nicht kritisch zu sein, aber das
+eines Blinkers scheint dies nicht kritisch zu sein, aber das
 mechatronische System des Läufers wird auch z.B. den Antrieb
 enthalten.  Aus diesem Grund gilt für das Projekt der Grundsatz:
 \emph{Kein sicherheitsrelevanter Regelkreis auf dem Bus!}
@@ -983,7 +986,7 @@ Gerät ausgetauscht werden.  Bei den Nachrichten handelt es sich immer
 um einen Befehl (8Bit) mit optionalen Parametern (15Bytes).  Dieses
 Paradigma ähnelt wieder der OOP, ist allerdings eingeschränkter: Jedes
 Gerät kann lediglich maximal 256 externe Statusübergänge
-entgegennehmen.  Durch gespräche mit den anderen Projektteilnehmern
+entgegennehmen.  Durch Gespräche mit den anderen Projektteilnehmern
 wurde jedoch sichergestellt, daß diese Zahl ausreichend dimensioniert
 ist.  
 
@@ -1001,12 +1004,11 @@ Nachrichten auf den Microcontrollern finden sich in Kapitel
 
 \subsection{Implementierung}\label{mw_klasse}
 \subsubsection{Überblick}
-Ziel der Entwicklung des DPI ist es, die Entwicklung darauf
-aufsetzender Komponenten so einfach wie möglich zu machen, da die
-Entwickler, die die Komponenten entwickeln werden, sich neben der
-Programmierung auch noch anderen Teilen ihrer Komponente widmen
-müssen.  Die auf der entwickelten Bibliothek aufsetzenden Module sind
-genauer:
+Ziel der Entwicklung des DPI ist es, den Entwurf darauf aufsetzender
+Komponenten so einfach wie möglich zu machen, da die Entwickler der
+Komponenten sich neben der Programmierung auch noch anderen Teilen
+ihrer Komponente widmen müssen.  Die auf der entwickelten Bibliothek
+aufsetzenden Module sind genauer:
 
 \begin{description}
 \item[Treiber] Die Treiber stellen ein Interface zu den einzelnen
@@ -1018,10 +1020,10 @@ genauer:
   GUI als auch von ihrem Gerät am CANBus reagieren können.
   
 \item[GUI] Die GUI soll später das Interface zum Fahrer darstellen.
-  In ihr werden alle Fäden zusammengeführt werden, die als Methoden
-  aus den einzelnen Klassen laufen.  Dazu muß es für den Entwickler
-  der GUI einfach sein, auf die Methoden der Treiber zuzugreifen und
-  deren Statusmeldungen zu erhalten.
+  In ihr werden alle Fäden zusammengeführt, die als Methoden aus den
+  einzelnen Klassen laufen.  Dazu muß es für den Entwickler der GUI
+  einfach sein, auf die Methoden der Treiber zuzugreifen und deren
+  Statusmeldungen zu erhalten.
 \end{description}
 
 Die genannten Module sind nicht Teil der vorliegenden Studienarbeit,
@@ -1056,7 +1058,7 @@ aufsetzen wird, und QT selbst in C++ geschrieben ist, haben wir uns
 für C++ entschieden.
 
 Das weiter oben beschriebene Grundkonzept sowie die folgenden
-Implemenierungsdetails nutzen jedoch bewusst keine Sprachmittel, die
+Implemenierungsdetails nutzen jedoch bewußt keine Sprachmittel, die
 C++ kennt und Java nicht.  Es soll damit der Weg offengehalten werden,
 die Kommunikationsstruktur im Läufer einfach auf andere Systeme zu
 übertragen.  So wäre es z.B. mittelfristig denkbar, den PDA durch ein
@@ -1086,7 +1088,7 @@ Verschiedene Wege gehen:
   
   Eine Alternative hierzu wäre es, dem Treiber ein vermittelndes
   Objekt zu übergeben, das eine Methode enthält, die einen String
-  entgegennimmt.  Hierduch kann man die gewünschte Flexibilität
+  entgegennimmt.  Hierdurch kann man die gewünschte Flexibilität
   erreichen, da ein späterer Autor der GUI mittels Stringvergleichen
   erkennen kann, was für ein Ereignis aufgetreten ist.
   Stringvergleiche sind allerdings nicht sehr effizient und auch im
@@ -1227,7 +1229,7 @@ unnötig vergrößern.
 
 
 \subsubsection{Weg einer Nachricht}
-Um die Funktionsweise fassbar zu machen, soll hier ein kleiner
+Um die Funktionsweise faßbar zu machen, soll hier ein kleiner
 Überblick über den Weg einer Nachricht durch das System gegeben
 werden. Betrachtet wird hier natürlich nur der Weg im PDA, wohingegen
 in Kapitel \ref{jameson_kapitel} ab Seite \pageref{jameson_kapitel}
@@ -1387,17 +1389,17 @@ Maschinenbauern mit ihrer spezifischen Fachkenntnis ausgefüllt
 werden.
 
 Daß das Framework hinreichend Leistungsfähig ist, bewies die zügige
-Entwicklung der Demo für die Cebit 2002, bei der der Läufer und seine
+Entwicklung der Demo für die CeBIT 2002, bei der der Läufer und seine
 Mechatronik ausgestellt wurde.  Abbildung \ref{mw_cebit_gui} zeigt die
 hierzu entwickelte GUI.  Auch bei dieser Entwicklung hat sich die Wahl
 von Linux als PDA-System bewährt, da umfangreicher Support seitens der
 Entwickler auf den entsprechenden Mailinglisten gegeben wurde, ohne
-den eine solch schnelle Entwicklung sicher nicht möglich gewesen wäre.
+den eine solch schnelle Umsetzung sicher nicht möglich gewesen wäre.
 
 \begin{figure}
   \center \includegraphics[width=7.0cm]{mw/bilder/Menu.eps}
   \caption[Der Compaq IPAQ]
-  {Der Compaq IPAQ mit der Läufer-Software für die Cebit 2002}
+  {Der Compaq IPAQ mit der Läufer-Software für die CeBIT 2002}
   \label{mw_cebit_gui} 
 \end{figure} 
 
