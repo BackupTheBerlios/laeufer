@@ -1,16 +1,8 @@
 \section{Aufgabenstellung}
-
 Abbildung \ref{mw_seite} zeigt eine Seitenansicht des Läufers.  Dabei
 wurden die derzeit geplanten mechatronischen Komponenten markiert.\\
 Die einzelnen Komponenten sind:
 
-\begin{figure}
-  \center
-  \includegraphics[width=13.5cm]{mw/bilder/seitenansicht.eps}
-  \caption{Seitenansicht des Läufers mit Markierungen der
-    Mechatronischen Komponenten}
-  \label{mw_seite}
-\end{figure}
 
 \begin{enumerate}
 \item
@@ -22,6 +14,14 @@ Die einzelnen Komponenten sind:
 \item
   Ständer
 \end{enumerate}
+
+\begin{figure}[hb]
+  \center
+  \includegraphics[width=13.5cm]{mw/bilder/seitenansicht.eps}
+  \caption{Seitenansicht des Läufers mit Markierungen der
+    Mechatronischen Komponenten}
+  \label{mw_seite}
+\end{figure}
 
 Für die Zukunft sind weitere Komponenten möglich und auch eingeplant.
 Konkret angedacht wurde z.B. eine Anbindung eines GPS\footnote{Global
@@ -403,8 +403,6 @@ entwickeln und zu testen, ohne daß dazu ein PDA oder gar ein Emulator
 nötig ist.
 
 \begin{table}
-  \caption{Übersicht über die verschiedenen PDA-Betriebssysteme}
-  \label{mw_pda_os_tabelle}
   \begin{center}
     \begin{tabular}{|c|c|c|c|}
       \hline
@@ -420,6 +418,8 @@ nötig ist.
       \hline
     \end{tabular}
   \end{center}
+  \caption{Übersicht über die verschiedenen PDA-Betriebssysteme}
+  \label{mw_pda_os_tabelle}
 \end{table}
 
 
@@ -461,7 +461,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   des Yopy auf der CeBIT 2000 durch den damaligen G.Mate-Partner
   Samsung genährt.
 
-  \begin{figure}
+  \begin{figure}[h]
     \center
     \includegraphics[width=7.0cm]{mw/bilder/yopy.eps}
     \caption{Der G.Mate Yopy}
@@ -485,7 +485,8 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   sich um einen PDA der Firma VTech, der mit dem proprietären VT-OS
   als Betriebssystem betrieben wird.  VTech unterstützt allerdings
   auch die Entwicklung einer Linux-Distribution für den Helio.
-  \begin{figure}
+
+  \begin{figure}[h]
     \center
     \includegraphics[width=7.0cm]{mw/bilder/helio.eps}
     \caption{Der VTech Helio}
@@ -505,7 +506,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   spricht also vieles für den Cassiopeia. Abbildung \ref{mw_casio}
   zeigt den Cassiopeia.
   
-  \begin{figure}
+  \begin{figure}[h]
     \center
     \includegraphics[width=7.0cm]{mw/bilder/casio.eps}
     \caption{Der Casio Cassiopeia}
@@ -533,7 +534,8 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   ähnlich, der einzige Unterschied liegt in der standardmäßig
   ausgelieferten Software.  Der IPAQ kommt standardmäßig mit Windows
   CE, während der Sharp mit Linux ausgestattet wird.
-  \begin{figure}
+
+  \begin{figure}[h]
     \center
     \includegraphics[width=7.0cm]{mw/bilder/Menu.eps}
     \caption{Der Compaq IPAQ mit der Läufer-Software für die Cebit 2002}
@@ -573,7 +575,7 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
   206MHz Prozessor, 64MB RAM und 16MB Flash.  Auch das Display ist
   ähnlich dem des Compaq. Abbildung \ref{mw_sharp} zeigt dieses Gerät.
 
-  \begin{figure}
+  \begin{figure}[h]
     \center
     \includegraphics[width=7.0cm]{mw/bilder/sharp.eps}
     \caption{Der Sharp Zaurus}
@@ -595,29 +597,8 @@ Homepage von Linuxdevices\footnote{http://www.linuxdevices.com}.
 \end{description}
 
 \subsubsection{Entscheidung}
-Tabelle \ref{mw_pda_tabelle} zeigt nochmals eine Übersicht über die
-verschiedenen PDAs mit ihren individuellen Eigenschaften.  Die Wahl
-fiel letztlich auf einen Compaq IPAQ, da das Gerät nach den
-Informationen, die zur Zeit der Entscheidung im WWW zur Verfügung
-standen, über die weitestgehende Unterstützung unter Linux verfügt.
-Ein weiteres wesentliches Argument für dieses Gerät ist das reflektive
-Display. Dadurch wird eine Nutzung als zentrale Anzeige in einem
-Fahrzeug überhaupt erst möglich.  Durch das reflektive Display wird
-die Anzeige des IPAQ bei stärkerer Sonneneinstrahlung automatisch
-heller, so daß im Gegensatz zu z.B. Notebooks ein Ablesen auch im
-Sommer bei großer Helligkeit möglich ist.
 
-Leider war es zu Beginn der vorliegenden Arbeit nicht möglich, den
-Sharp Zaurus zu berücksichtigen, da er zu diesem Zeitpunkt nicht zur
-Verfügung stand.  Im weiteren Projektverlauf wird allerdings versucht,
-auf den Zaurus umzusteigen, da er über ähnliche Leistungen wie der
-IPAQ verfügt, jedoch direkt mit Linux ausgeliefert wird.  Die
-Verwendung eines Standard-PDA macht vor dem Hintergrund einer
-
-\emph{Produkt}entwicklung natürlich Sinn.
-\begin{table}
-  \caption{Übersicht über die verschiedenen Linux-fähigen PDAs}
-  \label{mw_pda_tabelle}
+\begin{table}[h]
   \begin{center}
     \begin{tabular}{|c|c|c|c|c|}
       \hline
@@ -637,7 +618,30 @@ Verwendung eines Standard-PDA macht vor dem Hintergrund einer
       \hline
     \end{tabular}
   \end{center}
+  \caption{Übersicht über die verschiedenen Linux-fähigen PDAs}
+  \label{mw_pda_tabelle}
 \end{table}
+
+
+Tabelle \ref{mw_pda_tabelle} zeigt nochmals eine Übersicht über die
+verschiedenen PDAs mit ihren individuellen Eigenschaften.  Die Wahl
+fiel letztlich auf einen Compaq IPAQ, da das Gerät nach den
+Informationen, die zur Zeit der Entscheidung im WWW zur Verfügung
+standen, über die weitestgehende Unterstützung unter Linux verfügt.
+Ein weiteres wesentliches Argument für dieses Gerät ist das reflektive
+Display. Dadurch wird eine Nutzung als zentrale Anzeige in einem
+Fahrzeug überhaupt erst möglich.  Durch das reflektive Display wird
+die Anzeige des IPAQ bei stärkerer Sonneneinstrahlung automatisch
+heller, so daß im Gegensatz zu z.B. Notebooks ein Ablesen auch im
+Sommer bei großer Helligkeit möglich ist.
+
+Leider war es zu Beginn der vorliegenden Arbeit nicht möglich, den
+Sharp Zaurus zu berücksichtigen, da er zu diesem Zeitpunkt nicht zur
+Verfügung stand.  Im weiteren Projektverlauf wird allerdings versucht,
+auf den Zaurus umzusteigen, da er über ähnliche Leistungen wie der
+IPAQ verfügt, jedoch direkt mit Linux ausgeliefert wird.  Die
+Verwendung eines Standard-PDA macht vor dem Hintergrund einer
+\emph{Produkt}entwicklung natürlich Sinn.
 
 
 \subsection{Zusammenfassung}
@@ -828,49 +832,50 @@ anderer auf QT aufsetzender Softwarepakete wie z.B. KDE.
 
 
 \newpage
-\section{Klassenbibliothek}
-Abbildung \ref{mw_schnittstellen} zeigt die von der Klassenbibliothek
-zu unterstützenden Schnittstellen (schraffiert).  Diese Schnittstellen
-sollen dem Entwickler mechatronischer Komponenten durch die
-Klassenbibliothek auf dem PDA zugänglich gemacht werden.
+\section{Treiberprogrammier-Schnittstelle}
+Neben der im Kapitel \ref{cr_kapitel} beschriebenen
+Programmierumgebung auf den Platinen benötigt der Entwickler
+mechatronischer Komponenten auch eine einfache Möglichkeit, um vom PDA
+aus auf die in Kapitel \ref{jameson_kapitel} datailiert beschriebenen
+Kommunikationswege im Läufer zugreifen zu können. Genau diese
+Möglichkeit soll ihm die Treiberprogrammier-Schnittstelle\footnote{Im
+  folgenden DPI für \emph{Driver Programming Interface abgekürzt}}
+bieten.
 
-Die den Entwicklern mechatronischer Komponenten zur Verfügung
-gestellte Programmierschnittstelle bestimmt maßgeblich deren
-Produktivität und die Qualität der von ihnen erstellten Software.  In
-folge dessen kommt der Klassenbibliothek eine besondere Bedeutung zu,
-die in etwa der des richtigen PDAs aus der Sicht der späteren Nutzer
-des Läufers entspricht.
+Wie aus Abbildung \ref{mw_schnittstellen} hervorgeht, hat das DPI aber
+eine zweite wichtige Aufgabe: Koordination der Kommunikation zwischen
+GUI\footnote{GUI = Graphical User Interface} und dem Treiber für das
+Gerät.  Dies ergibt sich unmittelbar aus der Natur des Projektes: Es
+ist nicht abzusehen, welche mechatronischen Komponenten im
+,,fertigen'' Läufer zu finden sein werden.  Folglich kann die
+Erstellung der GUI nicht Teil dieser Arbeit sein, die sich ja nicht
+über das Ende des Projektes Läufer hinnaus ausdehnt.  In Folge dessen
+muss die Entwicklung der GUI ausserhalb diser Arbeit beim Design des
+DPI Berücksichtigung finden.
 
-
-Auf die beiden Bereiche Treiber - CAN-Bus sowie Treiber - GUI soll im
-folgenden eingegangen werden.  Dem voran stehen einige Anforderungen,
-die sich aus den schon weiter oben in Kapitel \ref{aufgabe_kapitel}
-beschriebenen Anforderungen an das Gesamtsystem herleiten.
+Auf diese beiden Aufgabenfelder des DPI Treiber - CAN-Bus sowie
+Treiber - GUI soll im folgenden detailiert eingegangen werden.  Dem
+voran stehen einige Anforderungen, die sich aus den schon weiter oben
+in Kapitel \ref{aufgabe_kapitel} beschriebenen Anforderungen an das
+Gesamtsystem herleiten.
 
 \begin{figure}
-  \center
-  \includegraphics[width=7.0cm]{mw/bilder/schnittstellen.eps}
+  \center \includegraphics[width=7.0cm]{mw/bilder/schnittstellen.eps}
   \caption{Die abzudeckenden Schnittstellen (schraffiert)}
   \label{mw_schnittstellen}
 \end{figure}
 
 
 \subsection{Anforderungen}
-Die Programmierschnittstelle hat zwei wichtige Aufgaben: Die
-Bereitstellung einer einfach zu verwendenden Kommunikation zwischen
-PDA und Platinen sowie eine Schnittstellendefinition zwischen PDA
-Software und dem Interface, mit dem der Fahrer auf die Fahrzeugsysteme
-zugreifen kann.
-
-Dabei müssen die für das Projekt spezifischen Randbedingungen
-Beachtung finden: Zu den Randbedingungen zählt, daß mehrere Entwickler
-parallel und wahrscheinlich ohne Kenntnis voneinander an Komponenten
-für den Läufer arbeiten werden. Außerdem war zu Beginn der
-vorliegenden Arbeit noch nicht vollständig sicher, über welche
-mechatronischen Systeme der Läufer mal verfügen wird.  Trotz des
-unsicheren Umfeldes müssen die gesamten Software- und
-Hardware-Komponenten am Ende der Entwicklung an einer Stelle zentral
-zusammengeführt und kontrolliert werden können.
+Bei der Entwicklung des DPI müssen die für das Projekt spezifischen
+Randbedingungen Beachtung finden: Zu den Randbedingungen zählt, daß
+mehrere Entwickler parallel und wahrscheinlich ohne Kenntnis
+voneinander an Komponenten für den Läufer arbeiten bzw. arbeiten
+werden. Außerdem war zu Beginn der vorliegenden Arbeit noch nicht
+vollständig sicher, über welche mechatronischen Systeme der Läufer mal
+verfügen wird.  Trotz des unsicheren Umfeldes müssen die gesamten
+Software- und Hardware-Komponenten am Ende der Entwicklung an einer
+Stelle zentral zusammengeführt und kontrolliert werden können.
 
 Es ist also notwendig, die Entwickler so gut es möglich ist voneinander
 unabhängig zu machen, es aber trotzdem zu ermöglichen, deren Arbeit am
@@ -894,7 +899,7 @@ Gerät und auch seinen Treiber als \emph{Objekte}, die sich gegenseitig
 \emph{Nachrichten} schicken.  Diese Nachrichten sind im Läufer
 allerdings nicht so umfangreich selbst bestimmbar wie z.B. in einer
 objektorientierten Programmiersprache, wo sie durch Methoden
-verschickt werden können.  Vielmehr werden im Läufer wirklich
+modelliert werden können.  Vielmehr werden im Läufer wirklich
 Nachrichten\footnote{Konkret: Instanzen der Klasse {\tt Message}}.
 
 Die Objekte, also Treiber und physisches Gerät haben einen Status,
@@ -921,8 +926,8 @@ für einen Blinker dargestellt.  Die fett gezeichneten Übergänge werden
 dabei extern, also durch eine Nachricht des Treibers ausgelöst.  Wenn
 nun das Gerät eine Fehlfunktion feststellt, geht es in den Zustand
 $Z2$ über.  Dieser Übergang ist signifikant, da der Treiber im PDA
-davon unterrichtet werden muss.  Nicht signifikant sind die übergänge
-zwischen Z1A und Z1B, da diese den inneren Zustand des physischen
+davon unterrichtet werden muss.  Nicht signifikant sind die Übergänge
+zwischen $Z1A$ und $Z1B$, da diese den inneren Zustand des physischen
 Gerätes wiederspiegeln.  Diese mit dem Treiber auszutauschen ist nicht
 nur unnötig, sondern auch gefährlich.  Wenn nämlich diese inneren
 Zustände vom Bus abhängen, ist ein sicherer Betrieb des Fahrzeugs ohne
@@ -957,7 +962,7 @@ finden sich in Kapitel \ref{jameson_kapitel}.
 
 
 \subsection{Implementierung}\label{mw_klasse}
-Ziel der Entwicklung der Klassenbibliothek ist es, die Entwicklung
+Ziel der Entwicklung des DPI ist es, die Entwicklung
 darauf aufsetzender Komponenten so einfach wie möglich zu machen, da
 die Entwickler, die die Komponenten entwickeln werden, sich neben der
 Programmierung auch noch anderen Teilen ihrer Komponente widmen
@@ -969,10 +974,9 @@ genauer:
   mechatronischen Komponenten her.  Dazu sollen sie das Gerät durch
   eine Klasse repräsentieren, die als Methoden die speziellen
   Fähigkeiten des Gerätes exportiert.  Hierzu ist es nötig, den
-  Entwicklern durch die Klassenbibliothek ein Interface zum CANBus
-  zur Verfügung zu stellen.  Außerdem müssen die Treiber auf
-  Nachrichten sowohl von der GUI als auch von ihrem Gerät am CANBus
-  reagieren können.
+  Entwicklern durch das DPI ein Interface zum CANBus zur Verfügung zu
+  stellen.  Außerdem müssen die Treiber auf Nachrichten sowohl von der
+  GUI als auch von ihrem Gerät am CANBus reagieren können.
   
 \item[GUI] Die GUI soll später das Interface zum Fahrer darstellen.
   In ihr werden alle Fäden zusammengeführt werden, die als Methoden
@@ -1184,13 +1188,13 @@ entwickeln zu müssen.
 Ein Entwickler z.B. eines Blinkers sollte die Möglichkeit erhalten,
 seine Hardware zu testen, ohne tatsächlich schon den Treiber dazu
 entwickelt zu haben. Der Entwickler weiß, welche ID\footnote{Diese
-  jeder Komponente eindeutig zugeordnete Nummer muß allerdings für
-  jedes mechatronische Gesamtsystem zentral vergeben werden, da ein
-  globaler Addressraum, wie ihn z.B. Ethernet bietet, nicht zur
-  verfügung steht.}sein Gerät hat und welche Operationen es versteht.
-Folglich kann er die korrekte Funktionsweise durch manuelle Eingaben
-und Beobachten der Reaktion seines Gerätes überprüfen. Beobachten kann
-er entweder Änderungen am Gerät selber (z.B.: Lampe blinkt) oder aber
+jeder Komponente eindeutig zugeordnete Nummer muß allerdings für jedes
+mechatronische Gesamtsystem zentral vergeben werden, da ein globaler
+Addressraum, wie ihn z.B. Ethernet bietet, nicht zur verfügung
+steht.}sein Gerät hat und welche Operationen es versteht.  Folglich
+kann er die korrekte Funktionsweise durch manuelle Eingaben und
+Beobachten der Reaktion seines Gerätes überprüfen. Beobachten kann er
+entweder Änderungen am Gerät selber (z.B.: Lampe blinkt) oder aber
 Rückmeldungen des Gerätes über den CAN-Bus.  Um den
 Hardware-Entwicklern die Arbeit zu erleichtern, ermöglicht der
 DebugTreiber nun genau das: Manuelles Senden und Empfangen von
