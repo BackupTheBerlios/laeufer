@@ -1565,6 +1565,8 @@ DATA_SEG_COM MACRO
 	com_addr0		DS 1 ; Temp-Variable
 	com_addr1		DS 1 ; Temp-Variable
 
+	com_port		DS 1
+
 	com_f_sent	EQU com_flags.0	; Botschaft verschickt?
 	ENDM
 
@@ -1677,15 +1679,20 @@ _can_send_mlp
 
 	CALL @SPI_CAN_read_status_instr
 
+	SET_BANK COM_BANK
+	
 	MOV OUTPUT, #%0011_0000	; TX-Bank 0
+	MOV com_port, #1
 	SB RETVAL.2
 	JMP :have_writer	; TX-Bank 0 ist frei
 	
 	MOV OUTPUT, #%0100_0000	; TX-Bank 1
+	MOV com_port, #2
 	SB RETVAL.4
 	JMP :have_writer	; TX-Bank 1 ist frei
 	
 	MOV OUTPUT, #%0101_0000	; TX-Bank 2
+	MOV com_port, #4
 	SB RETVAL.6
 	JMP :have_writer	; TX-Bank 2 ist frei
 	
@@ -1716,6 +1723,10 @@ _can_send_mlp
 	OR PARAM2, #$05		; TXBnDLC
 	CALL @SPI_CAN_write_instr ; Payload-Groesse schreiben
 
+	SET_BANK COM_BANK
+	MOV PARAM1, com_port
+	CALL @SPI_CAN_RTS	; Fire, Mr Worf!
+	
 	MOV RETVAL, #1
 	RETP
 	
